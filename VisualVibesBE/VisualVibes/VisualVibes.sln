@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34622.214
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualVibes.App", "VisualVibes.App\VisualVibes.App.csproj", "{2C3ECBF5-B809-4CD8-9A67-E41C9B390BC6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualVibes.Domain", "VisualVibes.Domain\VisualVibes.Domain.csproj", "{F8B9A4ED-9B35-4FEF-9014-41626D6F5BBC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2C3ECBF5-B809-4CD8-9A67-E41C9B390BC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C3ECBF5-B809-4CD8-9A67-E41C9B390BC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C3ECBF5-B809-4CD8-9A67-E41C9B390BC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C3ECBF5-B809-4CD8-9A67-E41C9B390BC6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8B9A4ED-9B35-4FEF-9014-41626D6F5BBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8B9A4ED-9B35-4FEF-9014-41626D6F5BBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8B9A4ED-9B35-4FEF-9014-41626D6F5BBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8B9A4ED-9B35-4FEF-9014-41626D6F5BBC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1781BCE8-E608-448C-AC6E-9859E6A50DD9}
+	EndGlobalSection
+EndGlobal
