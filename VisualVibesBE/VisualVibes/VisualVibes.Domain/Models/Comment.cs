@@ -1,8 +1,7 @@
-﻿namespace VisualVibes.Domain.Models
+﻿namespace VisualVibes.Domain.Models.BaseEntity
 {
-    public class Comment
+    public class Comment : BaseEntity
     {
-        public Guid CommentId { get; set; }
         public Guid UserId { get; set; }
         public Guid PostId { get; set; }
         public string Text { get; set; }

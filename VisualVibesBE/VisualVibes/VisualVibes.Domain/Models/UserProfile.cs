@@ -1,8 +1,7 @@
-﻿namespace VisualVibes.Domain.Models
+﻿namespace VisualVibes.Domain.Models.BaseEntity
 {
-    public class UserProfile
+    public class UserProfile : BaseEntity
     {
-        public Guid UserProfileId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }

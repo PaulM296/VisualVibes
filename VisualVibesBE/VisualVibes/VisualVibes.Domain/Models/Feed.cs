@@ -1,8 +1,7 @@
 ﻿namespace VisualVibes.Domain.Models
 {
-    public class Feed
+    public class Feed : BaseEntity
     {
-        public Guid UserId { get; set; }
         public List<Post> Posts { get; set; }
     }
 }
