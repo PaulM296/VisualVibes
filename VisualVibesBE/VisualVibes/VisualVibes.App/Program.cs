@@ -1,8 +1,8 @@
-﻿using VisualVibes.Domain.Models;
+﻿using VisualVibes.Domain.Models.BaseEntity;
 
 var user1 = new User
 {
-    UserId = Guid.NewGuid(),
+    Id = Guid.NewGuid(),
     Username = "Paulinho",
     Password = "123456789",
     UserFeed = new Feed()
@@ -10,14 +10,14 @@ var user1 = new User
 
 var feed1 = new Feed
 {
-    UserId = user1.UserId,
+    Id = user1.Id,
     Posts = new List<Post>()
 };
 user1.UserFeed = feed1;
 
 var userProfile1 = new UserProfile
 {
-    UserProfileId = Guid.NewGuid(),
+    Id = Guid.NewGuid(),
     FirstName = "Paul",
     LastName = "Micluta",
     Email = "paulmicluta@gmail.com",
@@ -27,25 +27,25 @@ var userProfile1 = new UserProfile
 
 var user2 = new User
 {
-    UserId = Guid.NewGuid(),
+    Id = Guid.NewGuid(),
     Username = "Waganaha",
     Password = "123456",
     UserFeed = new Feed
     {
-        UserId = Guid.NewGuid(),
+        Id = Guid.NewGuid(),
         Posts = new List<Post>()
     }
 };
 var feed2 = new Feed
 {
-    UserId = user2.UserId,
+    Id = user2.Id,
     Posts = new List<Post>()
 };
 user2.UserFeed = feed2;
 
 var userProfile2 = new UserProfile
 {
-    UserProfileId = Guid.NewGuid(),
+    Id = Guid.NewGuid(),
     FirstName = "Casian",
     LastName = "Anton",
     Email = "casian.anton@gmail.com",
@@ -55,26 +55,26 @@ var userProfile2 = new UserProfile
 
 var user3 = new User
 {
-    UserId = Guid.NewGuid(),
+    Id = Guid.NewGuid(),
     Username = "LukeX19",
     Password = "987654321",
     UserFeed = new Feed
     {
-        UserId = Guid.NewGuid(),
+        Id = Guid.NewGuid(),
         Posts = new List<Post>()
     }
 };
 
 var feed3 = new Feed
 {
-    UserId = user3.UserId,
+    Id = user3.Id,
     Posts = new List<Post>()
 };
 user3.UserFeed = feed3;
 
 var userProfile3 = new UserProfile
 {
-    UserProfileId = Guid.NewGuid(),
+    Id = Guid.NewGuid(),
     FirstName = "Catalin",
     LastName = "Mircea",
     Email = "catalin.mircea@gmail.com",
@@ -84,25 +84,25 @@ var userProfile3 = new UserProfile
 
 var user4 = new User
 {
-    UserId = Guid.NewGuid(),
+    Id = Guid.NewGuid(),
     Username = "Sheina",
     Password = "987654",
     UserFeed = new Feed
     {
-        UserId = Guid.NewGuid(),
+        Id = Guid.NewGuid(),
         Posts = new List<Post>()
     }
 };
 var feed4 = new Feed
 {
-    UserId = user4.UserId,
+    Id = user4.Id,
     Posts = new List<Post>()
 };
 user4.UserFeed = feed4;
 
 var userProfile4 = new UserProfile
 {
-    UserProfileId = Guid.NewGuid(),
+    Id = Guid.NewGuid(),
     FirstName = "Diana",
     LastName = "Andreea",
     Email = "diana_andreea@gmail.com",
@@ -112,26 +112,26 @@ var userProfile4 = new UserProfile
 
 var user5 = new User
 {
-    UserId = Guid.NewGuid(),
+    Id = Guid.NewGuid(),
     Username = "Alexa",
     Password = "456123789",
     UserFeed = new Feed
     {
-        UserId = Guid.NewGuid(),
+        Id = Guid.NewGuid(),
         Posts = new List<Post>()
     }
 };
 
 var feed5 = new Feed
 {
-    UserId = user5.UserId,
+    Id = user5.Id,
     Posts = new List<Post>()
 };
 user5.UserFeed = feed5;
 
 var userProfile5 = new UserProfile
 {
-    UserProfileId = Guid.NewGuid(),
+    Id = Guid.NewGuid(),
     FirstName = "Alexandra",
     LastName = "Miruna",
     Email = "alexandra_miruna@gmail.com",

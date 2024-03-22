@@ -1,4 +1,4 @@
-﻿namespace VisualVibes.Domain.Models
+﻿namespace VisualVibes.Domain.Models.BaseEntity
 {
     public class Feed : BaseEntity
     {

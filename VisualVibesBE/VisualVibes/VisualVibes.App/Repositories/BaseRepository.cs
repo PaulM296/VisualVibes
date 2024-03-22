@@ -3,31 +3,43 @@ using VisualVibes.Domain.Models.BaseEntity;
 
 namespace VisualVibes.App.Repositories
 {
-    public abstract class Repository<T> : IRepository<T> where T : BaseEntity
+    public abstract class BaseRepository<T> : IBaseRepository<T> where T : BaseEntity
     {
+        private static IList<T> _entities = new List<T>();
         public void Add(T entity)
         {
-            throw new NotImplementedException();
+            if(_entities.Contains(entity))
+            {
+                Console.WriteLine($"Could not add the {nameof(T)}, because it already exists.");
+                return;
+            }
+            _entities.Add(entity);
         }
 
-        public IList<T> GetAll()
+        public ICollection<T> GetAll()
         {
-            throw new NotImplementedException();
+            return _entities;
         }
 
-        public T GetById(int id)
+        public T GetById(Guid id)
         {
-            throw new NotImplementedException();
+            return _entities.FirstOrDefault(e => e.Id == id);
         }
 
         public void Remove(T entity)
         {
-            throw new NotImplementedException();
+            if(!_entities.Contains(entity))
+            {
+                Console.WriteLine("The entity does not exist, therefore it could not be removed.");
+                return;
+            }
+            _entities.Remove(entity);
         }
 
-        public void Update(T entity)
+        public void Update(T updatedEntity)
         {
-            throw new NotImplementedException();
+            int index = _entities.IndexOf(updatedEntity);
+            _entities[index] = updatedEntity;
         }
     }
 }

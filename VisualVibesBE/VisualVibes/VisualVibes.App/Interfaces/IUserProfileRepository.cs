@@ -2,7 +2,7 @@
 
 namespace VisualVibes.App.Interfaces
 {
-    public interface IUsersProfileRepository : IBaseRepository<UserProfile>
+    public interface IUserProfileRepository : IBaseRepository<UserProfile>
     {
     }
 }
