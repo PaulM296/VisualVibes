@@ -5,5 +5,9 @@ namespace VisualVibes.App.Repositories
 {
     public class FeedRepository : BaseRepository<Feed>, IFeedRepository
     {
+        public FeedRepository(FileSystemLogger logger) : base(logger)
+        {
+
+        }
     }
 }

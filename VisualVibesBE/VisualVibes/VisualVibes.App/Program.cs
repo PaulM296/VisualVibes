@@ -1,4 +1,8 @@
-﻿using VisualVibes.Domain.Models.BaseEntity;
+﻿using VisualVibes.App;
+using VisualVibes.App.Repositories;
+using VisualVibes.Domain.Models.BaseEntity;
+
+var logger = new FileSystemLogger("logs");
 
 var user1 = new User
 {
@@ -143,3 +147,51 @@ Console.WriteLine($"User:\n\t-Username: {user1.Username} \n\t-Password: {user1.P
     $"\nProfile: \n\t-Last name: {userProfile1.LastName} \n\t-First name: {userProfile1.FirstName}" +
     $"\n\t-Email: {userProfile1.Email} \n\t-Birth date: {userProfile1.DateOfBirth} \n\t-Profile picture: {userProfile1.ProfilePicture}");
 
+var userRepository = new UserRepository(logger);
+var allUsersTest = userRepository.GetAllAsync();
+
+userRepository.AddAsync(user1);
+userRepository.AddAsync(user2);
+userRepository.AddAsync(user3);
+userRepository.AddAsync(user4);
+userRepository.AddAsync(user5);
+userRepository.AddAsync(user5);
+userRepository.AddAsync(user1);
+
+var allUsers = await userRepository.GetAllAsync();
+
+foreach(var user in allUsers)
+{
+    Console.WriteLine($"User:\n\tUserId: {user.Id}\n\t-Username: {user.Username}\n\t-Password: {user.Password}\n\t");
+}
+
+userRepository.GetAllAsync();
+userRepository.GetByIdAsync(user1.Id);
+userRepository.GetByIdAsync(user2.Id);
+userRepository.GetByIdAsync(user3.Id);
+userRepository.GetByIdAsync(Guid.NewGuid());
+userRepository.GetByIdAsync(user4.Id);
+userRepository.GetByIdAsync(user5.Id);
+userRepository.GetByIdAsync(Guid.NewGuid());
+
+userRepository.RemoveAsync(user1);
+userRepository.RemoveAsync(user5);
+userRepository.RemoveAsync(user5);
+
+foreach (var user in allUsers)
+{
+    Console.WriteLine($"User:\n\tUserId: {user.Id}\n\t-Username: {user.Username}\n\t-Password: {user.Password}\n\t");
+}
+user2.Username = "ChangedUsername";
+userRepository.UpdateAsync(user2);
+
+foreach (var user in allUsers)
+{
+    Console.WriteLine($"User:\n\tUserId: {user.Id}\n\t-Username: {user.Username}\n\t-Password: {user.Password}\n\t");
+}
+
+
+string loggingFilePath = "C:\\Users\\paul.micluta\\Desktop\\VisualVibes\\VisualVibes\\VisualVibesBE\\VisualVibes\\VisualVibes.App\\bin\\Debug\\net8.0\\logs\\Logs_26-03-2024.txt";
+string loggingContent = await logger.ReadLogFileAsync(loggingFilePath);
+
+Console.WriteLine(loggingContent);

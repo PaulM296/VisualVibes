@@ -5,5 +5,9 @@ namespace VisualVibes.App.Repositories
 {
     public class ReactionRepository : BaseRepository<Reaction>, IReactionRepository
     {
+        public ReactionRepository(FileSystemLogger logger) : base(logger)
+        {
+
+        }
     }
 }

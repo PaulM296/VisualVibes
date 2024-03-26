@@ -5,6 +5,9 @@ namespace VisualVibes.App.Repositories
 {
     public class PostRepository : BaseRepository<Post>, IPostRepository
     {
+        public PostRepository(FileSystemLogger logger) : base(logger)
+        {
 
+        }
     }
 }
