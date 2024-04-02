@@ -7,7 +7,7 @@ using VisualVibes.Infrastructure.Repositories;
 
 var diContainer = new ServiceCollection()
                  .AddScoped<IUserRepository, UserRepository>()
-                 .AddTransient<FileSystemLogger>(provider => new FileSystemLogger("logs"))
+                 .AddTransient(provider => new FileSystemLogger("logs"))
                  .BuildServiceProvider();
 
 var logger = diContainer.GetRequiredService<FileSystemLogger>();
