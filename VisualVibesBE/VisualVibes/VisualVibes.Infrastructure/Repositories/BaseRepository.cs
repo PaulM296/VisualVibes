@@ -1,7 +1,8 @@
-﻿using VisualVibes.App.Interfaces;
+﻿using VisualVibes.App;
+using VisualVibes.App.Interfaces;
 using VisualVibes.Domain.Models.BaseEntity;
 
-namespace VisualVibes.App.Repositories
+namespace VisualVibes.Infrastructure.Repositories
 {
     public abstract class BaseRepository<T> : IBaseRepository<T> where T : BaseEntity
     {
@@ -14,7 +15,7 @@ namespace VisualVibes.App.Repositories
         }
         public void Add(T entity)
         {
-            if(_entities.Contains(entity))
+            if (_entities.Contains(entity))
             {
                 Console.WriteLine($"Could not add the {nameof(T)}, because it already exists.");
                 return;
@@ -62,11 +63,11 @@ namespace VisualVibes.App.Repositories
             var user = _entities.FirstOrDefault(e => e.Id == id);
             if (user == null)
             {
-               await _logger.LogAsync(nameof(GetByIdAsync), isSuccess: false);
+                await _logger.LogAsync(nameof(GetByIdAsync), isSuccess: false);
             }
             else
             {
-               await  _logger.LogAsync(nameof(GetByIdAsync), isSuccess: true);
+                await _logger.LogAsync(nameof(GetByIdAsync), isSuccess: true);
             }
             return user;
         }
@@ -98,14 +99,14 @@ namespace VisualVibes.App.Repositories
         {
             int index = _entities.IndexOf(updatedEntity);
             _entities[index] = updatedEntity;
-            
+
         }
         public async Task<T> UpdateAsync(T updatedEntity)
         {
             int index = _entities.IndexOf(updatedEntity);
             if (index == -1)
             {
-               await _logger.LogAsync(nameof(Update), isSuccess: false);
+                await _logger.LogAsync(nameof(Update), isSuccess: false);
             }
             else
             {
@@ -114,6 +115,6 @@ namespace VisualVibes.App.Repositories
             }
             return _entities[index];
         }
-   
+
     }
 }

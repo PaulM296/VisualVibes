@@ -1,8 +1,16 @@
-﻿using VisualVibes.App;
-using VisualVibes.App.Repositories;
+﻿using Microsoft.Extensions.DependencyInjection;
+using VisualVibes.App;
+using VisualVibes.App.Interfaces;
 using VisualVibes.Domain.Models.BaseEntity;
+using VisualVibes.Infrastructure.Repositories;
 
-var logger = new FileSystemLogger("logs");
+
+var diContainer = new ServiceCollection()
+                 .AddScoped<IUserRepository, UserRepository>()
+                 .AddTransient<FileSystemLogger>(provider => new FileSystemLogger("logs"))
+                 .BuildServiceProvider();
+
+var logger = diContainer.GetRequiredService<FileSystemLogger>();
 
 var user1 = new User
 {
@@ -147,7 +155,8 @@ Console.WriteLine($"User:\n\t-Username: {user1.Username} \n\t-Password: {user1.P
     $"\nProfile: \n\t-Last name: {userProfile1.LastName} \n\t-First name: {userProfile1.FirstName}" +
     $"\n\t-Email: {userProfile1.Email} \n\t-Birth date: {userProfile1.DateOfBirth} \n\t-Profile picture: {userProfile1.ProfilePicture}");
 
-var userRepository = new UserRepository(logger);
+
+var userRepository = diContainer.GetRequiredService<IUserRepository>();
 var allUsersTest = userRepository.GetAllAsync();
 
 userRepository.AddAsync(user1);

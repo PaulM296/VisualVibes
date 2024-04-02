@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\VisualVibes.App\VisualVibes.App.csproj" />
+  </ItemGroup>
+
 </Project>
