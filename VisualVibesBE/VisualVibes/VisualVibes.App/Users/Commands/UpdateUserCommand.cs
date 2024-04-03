@@ -1,8 +1,9 @@
 ﻿using MediatR;
-using VisualVibes.App.Users.Responses;
+using VisualVibes.App.DTOs;
 using VisualVibes.Domain.Models.BaseEntity;
 
 namespace VisualVibes.App.Users.Commands
 {
-    public record RemoveUser(Guid Id) : IRequest<Unit>;
+    public record UpdateUserCommand(UserDto UserDto) : IRequest<UserDto>;
 }
+

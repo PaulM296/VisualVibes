@@ -12,12 +12,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Users\QueriesHandler\" />
-    <Folder Include="Users\Queries\" />
+    <PackageReference Include="MediatR" Version="12.2.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MediatR" Version="12.2.0" />
+    <Folder Include="UserProfiles\QueriesHandler\" />
+    <Folder Include="UserProfiles\Queries\" />
   </ItemGroup>
 
 </Project>

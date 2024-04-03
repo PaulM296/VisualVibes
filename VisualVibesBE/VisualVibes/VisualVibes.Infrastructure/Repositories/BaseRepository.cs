@@ -97,14 +97,16 @@ namespace VisualVibes.Infrastructure.Repositories
 
         public T Update(T updatedEntity)
         {
-            int index = _entities.IndexOf(updatedEntity);
+            var entity = _entities.FirstOrDefault(e => e.Id == updatedEntity.Id);
+            int index = _entities.IndexOf(entity);
             _entities[index] = updatedEntity;
             return updatedEntity;
         }
         public async Task<T> UpdateAsync(T updatedEntity)
         {
-            int index = _entities.IndexOf(updatedEntity);
-            if (index == -1)
+            var entity = _entities.FirstOrDefault(e => e.Id == updatedEntity.Id);
+            var index = _entities.IndexOf(entity);
+            if (entity == null)
             {
                 await _logger.LogAsync(nameof(Update), isSuccess: false);
             }
@@ -115,6 +117,5 @@ namespace VisualVibes.Infrastructure.Repositories
             }
             return _entities[index];
         }
-
     }
 }
