@@ -4,8 +4,8 @@ namespace VisualVibes.App.Interfaces
 {
     public interface IBaseRepository<T> where T : BaseEntity
     {
-        void Add(T entity);
-        void Update(T entity);
+        T Add(T entity);
+        T Update(T entity);
         void Remove(T entity);
         ICollection<T> GetAll();
         T GetById(Guid id);

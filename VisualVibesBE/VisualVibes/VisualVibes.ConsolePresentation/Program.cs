@@ -7,6 +7,13 @@ using VisualVibes.Infrastructure.Repositories;
 
 var diContainer = new ServiceCollection()
                  .AddScoped<IUserRepository, UserRepository>()
+                 .AddScoped<IPostRepository, PostRepository>()
+                 .AddScoped<ICommentRepository, CommentRepository>()
+                 .AddScoped<IReactionRepository, ReactionRepository>()
+                 .AddScoped<IUserProfileRepository, UserProfileRepository>()
+                 .AddScoped<IFeedRepository, FeedRepository>()
+                 .AddScoped<IMessageRepository, MessageRepository>()
+                 .AddScoped<IConversationRepository, ConversationRepository>()
                  .AddTransient(provider => new FileSystemLogger("logs"))
                  .BuildServiceProvider();
 

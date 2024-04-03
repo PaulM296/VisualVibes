@@ -13,14 +13,14 @@ namespace VisualVibes.Infrastructure.Repositories
         {
             _logger = logger;
         }
-        public void Add(T entity)
+        public T Add(T entity)
         {
             if (_entities.Contains(entity))
             {
                 Console.WriteLine($"Could not add the {nameof(T)}, because it already exists.");
-                return;
             }
             _entities.Add(entity);
+            return entity;
         }
         public async Task<T> AddAsync(T entity)
         {
@@ -95,11 +95,11 @@ namespace VisualVibes.Infrastructure.Repositories
             return entity;
         }
 
-        public void Update(T updatedEntity)
+        public T Update(T updatedEntity)
         {
             int index = _entities.IndexOf(updatedEntity);
             _entities[index] = updatedEntity;
-
+            return updatedEntity;
         }
         public async Task<T> UpdateAsync(T updatedEntity)
         {
