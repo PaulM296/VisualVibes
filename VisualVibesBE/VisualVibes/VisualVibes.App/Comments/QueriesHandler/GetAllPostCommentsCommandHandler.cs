@@ -5,11 +5,11 @@ using VisualVibes.App.Interfaces;
 
 namespace VisualVibes.App.Comments.QueriesHandler
 {
-    public class GetAllPostCommentsCommandHandler : IRequestHandler<GetAllPostCommentsCommand, ICollection<CommentDto>>
+    public class GetAllCommentsCommandHandler : IRequestHandler<GetAllPostCommentsCommand, ICollection<CommentDto>>
     {
         private readonly ICommentRepository _commentRepository;
 
-        public GetAllPostCommentsCommandHandler(ICommentRepository commentRepository)
+        public GetAllCommentsCommandHandler(ICommentRepository commentRepository)
         {
             _commentRepository = commentRepository;
         }

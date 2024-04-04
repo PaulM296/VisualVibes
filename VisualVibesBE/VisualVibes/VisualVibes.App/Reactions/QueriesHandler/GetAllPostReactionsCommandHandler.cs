@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using VisualVibes.App.Comments.Queries;
 using VisualVibes.App.DTOs;
 using VisualVibes.App.Interfaces;
 using VisualVibes.App.Reactions.Queries;
