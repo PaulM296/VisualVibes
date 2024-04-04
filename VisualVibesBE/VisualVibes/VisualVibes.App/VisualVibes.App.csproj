@@ -16,8 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Comments\QueriesHandler\" />
-    <Folder Include="Comments\Queries\" />
     <Folder Include="UserProfiles\QueriesHandler\" />
     <Folder Include="UserProfiles\Queries\" />
   </ItemGroup>

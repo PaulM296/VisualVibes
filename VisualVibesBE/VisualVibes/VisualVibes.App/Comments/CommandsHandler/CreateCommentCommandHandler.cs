@@ -22,6 +22,7 @@ namespace VisualVibes.App.Comments.CommandsHandler
             {
                 Id = request.CommentDto.Id,
                 UserId = request.CommentDto.UserId,
+                PostId = request.CommentDto.PostId,
                 Text = request.CommentDto.Text,
                 CreatedAt = request.CommentDto.CreatedAt
             };
