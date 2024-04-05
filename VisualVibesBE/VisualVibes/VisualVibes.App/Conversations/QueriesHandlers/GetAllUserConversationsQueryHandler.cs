@@ -5,14 +5,14 @@ using VisualVibes.App.Interfaces;
 
 namespace VisualVibes.App.Conversations.QueriesHandlers
 {
-    public class GetAllUserConversationsCommandHandler : IRequestHandler<GetAllUserConversationsCommand, ICollection<ConversationDto>>
+    public class GetAllUserConversationsQueryHandler : IRequestHandler<GetAllUserConversationsQuery, ICollection<ConversationDto>>
     {
         private readonly IConversationRepository _conversationRepository;
-        public GetAllUserConversationsCommandHandler(IConversationRepository conversationRepository)
+        public GetAllUserConversationsQueryHandler(IConversationRepository conversationRepository)
         {
             _conversationRepository = conversationRepository;
         }
-        public async Task<ICollection<ConversationDto>> Handle(GetAllUserConversationsCommand request, CancellationToken cancellationToken)
+        public async Task<ICollection<ConversationDto>> Handle(GetAllUserConversationsQuery request, CancellationToken cancellationToken)
         {
             var conversations = await _conversationRepository.GetAllAsync();
 
