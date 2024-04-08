@@ -19,7 +19,8 @@ namespace VisualVibes.App.DTOs
                 SenderId = message.SenderId,
                 ReceiverId = message.ReceiverId,
                 ConversationId = message.ConversationId,
-                Content = message.Content
+                Content = message.Content,
+                Timestamp = message.Timestamp
             };
         }
     }

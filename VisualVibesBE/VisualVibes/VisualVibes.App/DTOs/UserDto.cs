@@ -7,10 +7,8 @@ namespace VisualVibes.App.DTOs
         public Guid Id { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
-        public UserProfile UserProfile { get; set; }
-        public Feed UserFeed { get; set; }
-        public List<User> Followers { get; set; }
-        public List<User> Following { get; set; }
+        public List<UserDto> Followers { get; set; }
+        public List<UserDto> Following { get; set; }
 
         public static UserDto FromUser(User User)
         {
@@ -19,10 +17,8 @@ namespace VisualVibes.App.DTOs
                 Id = User.Id,
                 Username = User.Username,
                 Password = User.Password,
-                UserProfile = User.UserProfile,
-                UserFeed = User.UserFeed,
-                Followers = User.Followers,
-                Following = User.Following
+                Followers = User.Followers.Select(u => FromUser(u)).ToList(),
+                Following = User.Following.Select(u => FromUser(u)).ToList()
             };
         }
     }

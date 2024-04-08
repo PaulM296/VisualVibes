@@ -6,16 +6,15 @@ namespace VisualVibes.Infrastructure.Repositories
 {
     public class CommentRepository : BaseRepository<Comment>, ICommentRepository
     {
-        private static IList<Comment> _comments = new List<Comment>();
         private readonly FileSystemLogger _logger;
         public CommentRepository(FileSystemLogger logger) : base(logger)
         {
-
+            _logger = logger;
         }
 
         public async Task<ICollection<Comment>> GetAllAsync(Guid postId)
         {
-            var commentsForPost = _comments.Where(c => c.PostId == postId).ToList();
+            var commentsForPost = GetAll().Where(c => c.PostId == postId).ToList();
 
             if (commentsForPost.Count == 0)
             {

@@ -16,11 +16,12 @@ namespace VisualVibes.App.Comments.CommandsHandler
         }
         public async Task<Unit> Handle(RemoveCommentCommand request, CancellationToken cancellationToken)
         {
-            var comment = new Comment()
+            var commentToRemove = await _commentRepository.GetByIdAsync(request.Id);
+            if(commentToRemove == null)
             {
-                Id = request.Id
+                throw new Exception($"Comment with ID {request.Id} not found.");
             };
-            await _commentRepository.RemoveAsync(comment);
+            await _commentRepository.RemoveAsync(commentToRemove);
             return Unit.Value;
         }
     }

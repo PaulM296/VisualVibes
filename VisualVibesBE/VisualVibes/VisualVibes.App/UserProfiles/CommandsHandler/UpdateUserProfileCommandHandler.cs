@@ -18,8 +18,7 @@ namespace VisualVibes.App.UserProfiles.CommandsHandler
         {
             var userProfile = new UserProfile()
             {
-                Id = Guid.NewGuid(),
-                User = request.UserProfileDto.User,
+                Id = request.UserProfileDto.Id,
                 ProfilePicture = request.UserProfileDto.ProfilePicture,
                 DateOfBirth = request.UserProfileDto.DateOfBirth,
                 FirstName = request.UserProfileDto.FirstName,

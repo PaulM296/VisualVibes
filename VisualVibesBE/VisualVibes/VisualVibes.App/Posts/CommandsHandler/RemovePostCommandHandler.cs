@@ -16,11 +16,12 @@ namespace VisualVibes.App.Posts.CommandsHandler
 
         public async Task<Unit> Handle(RemovePostCommand request, CancellationToken cancellationToken)
         {
-            var post = new Post
+            var postToRemove = await _postRepository.GetByIdAsync(request.Id);
+            if (postToRemove == null)
             {
-                Id = request.Id
-            };
-            await _postRepository.RemoveAsync(post);
+                throw new Exception($"Post with ID {request.Id} not found.");
+            }
+            await _postRepository.RemoveAsync(postToRemove);
             return Unit.Value;
         }
     }

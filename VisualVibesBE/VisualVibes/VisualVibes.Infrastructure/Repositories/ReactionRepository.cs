@@ -7,16 +7,15 @@ namespace VisualVibes.Infrastructure.Repositories
 {
     public class ReactionRepository : BaseRepository<Reaction>, IReactionRepository
     {
-        private static IList<Reaction> _reactions = new List<Reaction>();
         private readonly FileSystemLogger _logger;
         public ReactionRepository(FileSystemLogger logger) : base(logger)
         {
-            
+            _logger = logger;
         }
 
         public async Task<ICollection<Reaction>> GetAllAsync(Guid postId)
         {
-            var reactionsForPost = _reactions.Where(r => r.PostId == postId).ToList();
+            var reactionsForPost = GetAll().Where(r => r.PostId == postId).ToList();
 
             if (reactionsForPost.Count == 0)
             {

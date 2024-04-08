@@ -5,7 +5,6 @@ namespace VisualVibes.App.DTOs
     public class UserProfileDto
     {
         public Guid Id { get; set; }
-        public User User { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
@@ -18,13 +17,20 @@ namespace VisualVibes.App.DTOs
             return new UserProfileDto
             {
                 Id = UserProfile.Id,
-                User = UserProfile.User,
                 FirstName = UserProfile.FirstName,
                 LastName = UserProfile.LastName,
                 Email = UserProfile.Email,
                 ProfilePicture = UserProfile.ProfilePicture,
                 DateOfBirth = UserProfile.DateOfBirth,
                 Bio = UserProfile.Bio
+            };
+        }
+
+        public UserProfile FromUserProfileDto()
+        {
+            return new UserProfile
+            {
+                
             };
         }
 

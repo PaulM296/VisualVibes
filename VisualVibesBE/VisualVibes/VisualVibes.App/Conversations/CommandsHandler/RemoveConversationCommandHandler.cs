@@ -15,11 +15,12 @@ namespace VisualVibes.App.Conversations.CommandsHandler
         }
         public async Task<Unit> Handle(RemoveConversationCommand request, CancellationToken cancellationToken)
         {
-            var conversation = new Conversation
+            var conversationToRemove = await _conversationRepository.GetByIdAsync(request.Id);
+            if(conversationToRemove == null)
             {
-                Id = request.Id,
-            };
-            await _conversationRepository.RemoveAsync(conversation);
+                throw new Exception($"Conversation with ID {request.Id} not found.");
+            }
+            _conversationRepository.RemoveAsync(conversationToRemove);
             return Unit.Value;
         }
     }

@@ -15,12 +15,13 @@ namespace VisualVibes.App.Messages.CommandsHandler
         }
         public async Task<Unit> Handle(RemoveMessagedCommand request, CancellationToken cancellationToken)
         {
-            var message = new Message()
+            var messageToRemove = await _messageRepository.GetByIdAsync(request.Id);
+            if (messageToRemove == null)
             {
-                Id = request.Id,
+                throw new Exception($"User with ID {request.Id} not found.");
             };
 
-            await _messageRepository.RemoveAsync(message);
+            await _messageRepository.RemoveAsync(messageToRemove);
             return Unit.Value;
 
         }

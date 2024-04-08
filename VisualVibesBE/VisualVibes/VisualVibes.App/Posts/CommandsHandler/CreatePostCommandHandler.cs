@@ -22,8 +22,6 @@ namespace VisualVibes.App.Posts.CommandsHandler
                 UserId = request.PostDto.UserId,
                 Caption = request.PostDto.Caption,
                 Pictures = request.PostDto.Pictures,
-                Reactions = request.PostDto.Reactions,
-                Comment = request.PostDto.Comment,
                 CreatedAt = request.PostDto.CreatedAt
             };
             var createdPost = await _postRepository.AddAsync(post);

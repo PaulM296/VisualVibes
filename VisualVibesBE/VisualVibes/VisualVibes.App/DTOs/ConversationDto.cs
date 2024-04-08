@@ -7,7 +7,6 @@ namespace VisualVibes.App.DTOs
         public Guid Id { get; set; }
         public Guid FirstParticipantId { get; set; }
         public Guid SecondParticipantId { get; set; }
-        public List<Message> ConversationMessages { get; set; }
 
         public static ConversationDto FromConversation(Conversation conversation)
         {
@@ -16,7 +15,6 @@ namespace VisualVibes.App.DTOs
                 Id = conversation.Id,
                 FirstParticipantId = conversation.FirstParticipantId,
                 SecondParticipantId = conversation.SecondParticipantId,
-                ConversationMessages = conversation.ConversationMessages
             };
         }
     }

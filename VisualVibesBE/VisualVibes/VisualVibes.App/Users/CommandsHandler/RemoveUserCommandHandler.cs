@@ -15,11 +15,13 @@ namespace VisualVibes.App.Users.CommandsHandler
         }
         public async Task<Unit> Handle(RemoveUserCommand request, CancellationToken cancellationToken)
         {
-            var user = new User
+            var userToRemove = await _userRepository.GetByIdAsync(request.Id);
+            if (userToRemove == null)
             {
-                Id = request.Id
-            };
-            await _userRepository.RemoveAsync(user);
+                throw new Exception($"User with ID {request.Id} not found.");
+            }
+
+            await _userRepository.RemoveAsync(userToRemove);
             return Unit.Value;
         }
     }

@@ -6,16 +6,15 @@ namespace VisualVibes.Infrastructure.Repositories
 {
     public class MessageRepository : BaseRepository<Message>, IMessageRepository
     {
-        private static IList<Message> _messages = new List<Message>();
         private readonly FileSystemLogger _logger;
         public MessageRepository(FileSystemLogger logger) : base(logger)
         {
-
+            _logger = logger;
         }
 
         public async Task<ICollection<Message>> GetAllAsync(Guid conversationId)
         {
-            var messagesForConversation = _messages.Where(c => c.ConversationId == conversationId).ToList();
+            var messagesForConversation = GetAll().Where(c => c.ConversationId == conversationId).ToList();
 
             if (messagesForConversation.Count == 0)
             {

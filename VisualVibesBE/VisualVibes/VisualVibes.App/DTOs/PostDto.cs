@@ -8,8 +8,6 @@ namespace VisualVibes.App.DTOs
         public Guid UserId { get; set; }
         public string Caption { get; set; }
         public string Pictures { get; set; }
-        public List<Reaction> Reactions { get; set; }
-        public List<Comment> Comment { get; set; }
         public DateTime CreatedAt { get; set; }
 
         public static PostDto FromPost(Post post)
@@ -20,8 +18,6 @@ namespace VisualVibes.App.DTOs
                 UserId = post.UserId,
                 Caption = post.Caption,
                 Pictures = post.Pictures,
-                Reactions = post.Reactions,
-                Comment = post.Comment,
                 CreatedAt = post.CreatedAt
             };
         }

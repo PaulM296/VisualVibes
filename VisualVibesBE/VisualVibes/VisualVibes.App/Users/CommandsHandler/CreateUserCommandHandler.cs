@@ -18,13 +18,11 @@ namespace VisualVibes.App.Users.CommandsHandler
         {
             var user = new User() 
             { 
-                Id = Guid.NewGuid(),
+                Id = request.UserDto.Id,
                 Username = request.UserDto.Username, 
                 Password = request.UserDto.Password,
-                UserProfile = request.UserDto.UserProfile,
-                UserFeed = request.UserDto.UserFeed,
-                Followers = request.UserDto.Followers, 
-                Following = request.UserDto.Following 
+                Followers = new List<User>(),
+                Following = new List<User>()
             };
             var createdUser = await _userRepository.AddAsync(user);
             return UserDto.FromUser(createdUser);

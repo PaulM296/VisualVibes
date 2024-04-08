@@ -20,7 +20,6 @@ namespace VisualVibes.App.Conversations.CommandsHandler
                 Id = request.ConversationDto.Id,
                 FirstParticipantId = request.ConversationDto.FirstParticipantId,
                 SecondParticipantId = request.ConversationDto.SecondParticipantId,
-                ConversationMessages = request.ConversationDto.ConversationMessages
             };
             var createdConversation = _conversationRepository.AddAsync(conversation);
             return ConversationDto.FromConversation(conversation);

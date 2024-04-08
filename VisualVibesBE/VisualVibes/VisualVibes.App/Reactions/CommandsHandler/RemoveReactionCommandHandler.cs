@@ -15,11 +15,14 @@ namespace VisualVibes.App.Reactions.CommandsHandler
         }
         public async Task<Unit> Handle(RemoveReactionCommand request, CancellationToken cancellationToken)
         {
-            var reaction = new Reaction()
+            var reactionToRemove = await _reactionRepository.GetByIdAsync(request.Id);
+
+            if(reactionToRemove == null)
             {
-                Id = request.Id
+                throw new Exception($"Reaction with ID {request.Id} not found.");
             };
-            await _reactionRepository.RemoveAsync(reaction);
+
+            await _reactionRepository.RemoveAsync(reactionToRemove);
             return Unit.Value;
         }
     }
