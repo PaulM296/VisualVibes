@@ -20,7 +20,7 @@ namespace VisualVibes.App.Conversations.CommandsHandler
             {
                 throw new Exception($"Conversation with ID {request.Id} not found.");
             }
-            _conversationRepository.RemoveAsync(conversationToRemove);
+            await _conversationRepository.RemoveAsync(conversationToRemove);
             return Unit.Value;
         }
     }

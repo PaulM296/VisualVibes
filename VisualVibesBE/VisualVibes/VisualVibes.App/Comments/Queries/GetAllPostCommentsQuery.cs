@@ -3,5 +3,5 @@ using VisualVibes.App.DTOs;
 
 namespace VisualVibes.App.Comments.Queries
 {
-    public record GetAllPostCommentsCommand(Guid PostId) : IRequest<ICollection<CommentDto>>;
+    public record GetAllPostCommentsQuery(Guid PostId) : IRequest<ICollection<CommentDto>>;
 }

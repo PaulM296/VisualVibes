@@ -22,8 +22,6 @@ namespace VisualVibes.App.Users.CommandsHandler
                 Id = request.UserDto.Id,
                 Username = request.UserDto.Username,
                 Password = request.UserDto.Password,
-                Followers = request.UserDto.Followers.Select(u => new User { Id = u.Id }).ToList(),
-                Following = request.UserDto.Following.Select(u => new User { Id = u.Id }).ToList()
             };
             var updatedUser = await _userRepository.UpdateAsync(user);
             return UserDto.FromUser(updatedUser);

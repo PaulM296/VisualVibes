@@ -18,7 +18,7 @@ namespace VisualVibes.App.Messages.CommandsHandler
         {
             var message = new Message()
             {
-                Id = request.MessageDto.Id,
+                Id = Guid.NewGuid(),
                 SenderId = request.MessageDto.SenderId,
                 ReceiverId = request.MessageDto.ReceiverId,
                 ConversationId = request.MessageDto.ConversationId,

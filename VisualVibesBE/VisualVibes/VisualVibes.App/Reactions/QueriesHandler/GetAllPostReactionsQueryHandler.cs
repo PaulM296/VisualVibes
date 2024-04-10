@@ -5,16 +5,16 @@ using VisualVibes.App.Reactions.Queries;
 
 namespace VisualVibes.App.Reactions.QueriesHandler
 {
-    public class GetAllPostReactionsCommandHandler : IRequestHandler<GetAllPostReactionsCommand, ICollection<ReactionDto>>
+    public class GetAllPostReactionsQueryHandler : IRequestHandler<GetAllPostReactionsQuery, ICollection<ReactionDto>>
     {
         public readonly IReactionRepository _reactionRepository;
 
-        public GetAllPostReactionsCommandHandler(IReactionRepository reactionRepository)
+        public GetAllPostReactionsQueryHandler(IReactionRepository reactionRepository)
         {
             _reactionRepository = reactionRepository;
         }
 
-        public async Task<ICollection<ReactionDto>> Handle(GetAllPostReactionsCommand request, CancellationToken cancellationToken)
+        public async Task<ICollection<ReactionDto>> Handle(GetAllPostReactionsQuery request, CancellationToken cancellationToken)
         {
             var reactions = await _reactionRepository.GetAllAsync(request.PostId);
 

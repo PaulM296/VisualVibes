@@ -20,7 +20,7 @@ namespace VisualVibes.App.Comments.CommandsHandler
         {
             var comment = new Comment()
             {
-                Id = request.CommentDto.Id,
+                Id = Guid.NewGuid(),
                 UserId = request.CommentDto.UserId,
                 PostId = request.CommentDto.PostId,
                 Text = request.CommentDto.Text,

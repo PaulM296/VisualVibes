@@ -7,9 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VisualVibes.App", "VisualVi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VisualVibes.Domain", "VisualVibes.Domain\VisualVibes.Domain.csproj", "{F8B9A4ED-9B35-4FEF-9014-41626D6F5BBC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualVibes.Infrastructure", "VisualVibes.Infrastructure\VisualVibes.Infrastructure.csproj", "{018D07E1-4C86-4715-B54E-A93CF112FAAA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VisualVibes.Infrastructure", "VisualVibes.Infrastructure\VisualVibes.Infrastructure.csproj", "{018D07E1-4C86-4715-B54E-A93CF112FAAA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualVibes.ConsolePresentation", "VisualVibes.ConsolePresentation\VisualVibes.ConsolePresentation.csproj", "{78517F58-91DE-4CC8-AA13-8E040E17450E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VisualVibes.ConsolePresentation", "VisualVibes.ConsolePresentation\VisualVibes.ConsolePresentation.csproj", "{78517F58-91DE-4CC8-AA13-8E040E17450E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualVibes.Tests", "VisualVibes.Tests\VisualVibes.Tests.csproj", "{D2D99778-4C17-4EB6-B326-4AFD1BB8965B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{78517F58-91DE-4CC8-AA13-8E040E17450E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{78517F58-91DE-4CC8-AA13-8E040E17450E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{78517F58-91DE-4CC8-AA13-8E040E17450E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D2D99778-4C17-4EB6-B326-4AFD1BB8965B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2D99778-4C17-4EB6-B326-4AFD1BB8965B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2D99778-4C17-4EB6-B326-4AFD1BB8965B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2D99778-4C17-4EB6-B326-4AFD1BB8965B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

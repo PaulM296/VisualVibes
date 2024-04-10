@@ -17,7 +17,7 @@ namespace VisualVibes.App.Reactions.CommandsHandler
         {
             var reaction = new Reaction()
             {
-                Id = request.ReactionDto.Id,
+                Id = Guid.NewGuid(),
                 UserId = request.ReactionDto.UserId,
                 PostId = request.ReactionDto.PostId,
                 ReactionType = request.ReactionDto.ReactionType,

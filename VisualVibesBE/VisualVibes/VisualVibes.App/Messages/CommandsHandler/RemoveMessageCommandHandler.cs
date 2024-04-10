@@ -5,7 +5,7 @@ using VisualVibes.Domain.Models.BaseEntity;
 
 namespace VisualVibes.App.Messages.CommandsHandler
 {
-    public class RemoveMessageCommandHandler : IRequestHandler<RemoveMessagedCommand, Unit>
+    public class RemoveMessageCommandHandler : IRequestHandler<RemoveMessageCommand, Unit>
     {
         private readonly IMessageRepository _messageRepository;
 
@@ -13,7 +13,7 @@ namespace VisualVibes.App.Messages.CommandsHandler
         {
             _messageRepository = messageRepository;
         }
-        public async Task<Unit> Handle(RemoveMessagedCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(RemoveMessageCommand request, CancellationToken cancellationToken)
         {
             var messageToRemove = await _messageRepository.GetByIdAsync(request.Id);
             if (messageToRemove == null)

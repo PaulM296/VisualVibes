@@ -5,16 +5,16 @@ using VisualVibes.App.Interfaces;
 
 namespace VisualVibes.App.Comments.QueriesHandler
 {
-    public class GetAllCommentsCommandHandler : IRequestHandler<GetAllPostCommentsCommand, ICollection<CommentDto>>
+    public class GetAllPostCommentsQueryHandler : IRequestHandler<GetAllPostCommentsQuery, ICollection<CommentDto>>
     {
         private readonly ICommentRepository _commentRepository;
 
-        public GetAllCommentsCommandHandler(ICommentRepository commentRepository)
+        public GetAllPostCommentsQueryHandler(ICommentRepository commentRepository)
         {
             _commentRepository = commentRepository;
         }
 
-        public async Task<ICollection<CommentDto>> Handle(GetAllPostCommentsCommand request, CancellationToken cancellationToken)
+        public async Task<ICollection<CommentDto>> Handle(GetAllPostCommentsQuery request, CancellationToken cancellationToken)
         {
             var comments = await _commentRepository.GetAllAsync(request.PostId);
 

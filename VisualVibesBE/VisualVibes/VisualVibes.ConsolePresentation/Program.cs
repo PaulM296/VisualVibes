@@ -48,17 +48,13 @@ var userDto = new UserDto
     Id = Guid.NewGuid(),
     Username = "Paulinho",
     Password = "123456789",
-    Followers = new List<UserDto>(),
-    Following = new List<UserDto>()
 };
 
 var userDto2 = new UserDto
 {
     Id = Guid.NewGuid(),
     Username = "Waganaha",
-    Password = "456123",
-    Followers = new List<UserDto>(),
-    Following = new List<UserDto>()
+    Password = "456123"
 };
 
 var createdUser = await mediator.Send(new CreateUserCommand(userDto));
@@ -74,8 +70,6 @@ try
         Id = createdUser.Id,
         Username = "UpdatedUsername",
         Password = "UpdatedPassword",
-        Followers = new List<UserDto>(),
-        Following = new List<UserDto>()
     };
     var updatedUser = await mediator.Send(new UpdateUserCommand(updatedUserDto));
     Console.WriteLine($"User ID: {createdUser.Id}, Username: {updatedUser.Username} , Password: {updatedUser.Password}");
@@ -245,7 +239,7 @@ var updatedComment = await mediator.Send(new UpdateCommentCommand(updatedComment
 Console.WriteLine($"Updated comment: ID: {updatedComment.Id}, User ID: {updatedComment.UserId}," +
     $" Post ID: {updatedComment.PostId}, Text: {updatedComment.Text}, Created At: {updatedComment.CreatedAt}");
 
-var getAllPostComments = new GetAllPostCommentsCommand(postDto.Id);
+var getAllPostComments = new GetAllPostCommentsQuery(postDto.Id);
 var postComments = await mediator.Send(getAllPostComments);
 
 foreach (var comment in postComments)
@@ -281,7 +275,7 @@ var createdReactionCommand2 = await mediator.Send(new CreateReactionCommand(reac
 Console.WriteLine($"Reaction ID: {createdReactionCommand2.Id}, User ID: {createdReactionCommand2.UserId}," +
     $" Post ID: {createdReactionCommand2.PostId}, ReactionType: {createdReactionCommand2.ReactionType}");
 
-var getAllPostReactions = new GetAllPostReactionsCommand(postDto.Id);
+var getAllPostReactions = new GetAllPostReactionsQuery(postDto.Id);
 var postReactions = await mediator.Send(getAllPostReactions);
 
 foreach (var reaction in postReactions)
@@ -329,7 +323,7 @@ Console.WriteLine("\n\nTesting RemoveMessage.\n");
 
 try
 {
-    await mediator.Send(new RemoveMessagedCommand(createdMessage1.Id));
+    await mediator.Send(new RemoveMessageCommand(createdMessage1.Id));
     Console.WriteLine($"Message deleted successfully");
 }
 catch (Exception ex)

@@ -25,14 +25,5 @@ namespace VisualVibes.App.DTOs
                 Bio = UserProfile.Bio
             };
         }
-
-        public UserProfile FromUserProfileDto()
-        {
-            return new UserProfile
-            {
-                
-            };
-        }
-
     }
 }

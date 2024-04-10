@@ -17,8 +17,6 @@ namespace VisualVibes.App.DTOs
                 Id = User.Id,
                 Username = User.Username,
                 Password = User.Password,
-                Followers = User.Followers.Select(u => FromUser(u)).ToList(),
-                Following = User.Following.Select(u => FromUser(u)).ToList()
             };
         }
     }
