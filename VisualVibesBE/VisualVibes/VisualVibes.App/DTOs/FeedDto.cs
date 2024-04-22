@@ -11,8 +11,8 @@ namespace VisualVibes.App.DTOs
         {
             return new FeedDto 
             { 
-                Id = feed.Id, 
-                Posts = feed.Posts.Select(p => PostDto.FromPost(p)).ToList()
+                //Id = feed.Id, 
+                //Posts = feed.Posts.Select(p => PostDto.FromPost(p)).ToList()
             };
         }
     }

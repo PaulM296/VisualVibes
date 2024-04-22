@@ -25,8 +25,7 @@ namespace VisualVibes.Tests.MessageTests
             var messageDto = new MessageDto
             {
                 Id = Guid.NewGuid(),
-                SenderId = Guid.NewGuid(),
-                ReceiverId = Guid.NewGuid(),
+                UserId = Guid.NewGuid(),
                 ConversationId = Guid.NewGuid(),
                 Content = "This is a message test",
                 Timestamp = DateTime.UtcNow,
@@ -35,8 +34,7 @@ namespace VisualVibes.Tests.MessageTests
             var message = new Message
             {
                 Id = messageDto.Id,
-                SenderId = messageDto.SenderId,
-                ReceiverId = messageDto.ReceiverId,
+                UserId = messageDto.UserId,
                 ConversationId = messageDto.ConversationId,
                 Content = messageDto.Content,
                 Timestamp = messageDto.Timestamp
@@ -45,8 +43,8 @@ namespace VisualVibes.Tests.MessageTests
             var createMessageCommand = new CreateMessageCommand(messageDto);
 
             _messageRepositoryMock
-                .Setup(x => x.AddAsync(It.Is<Message>(y => y.SenderId == messageDto.SenderId &&
-                y.ReceiverId == messageDto.ReceiverId && y.ConversationId == messageDto.ConversationId && 
+                .Setup(x => x.AddAsync(It.Is<Message>(y => y.UserId == messageDto.UserId &&
+                y.ConversationId == messageDto.ConversationId && 
                 y.Content == messageDto.Content && y.Timestamp == messageDto.Timestamp))).ReturnsAsync(message);
 
             //Act
@@ -54,8 +52,7 @@ namespace VisualVibes.Tests.MessageTests
 
             //Assert
             Assert.NotNull(result);
-            Assert.Equal(message.SenderId, result.SenderId);
-            Assert.Equal(message.ReceiverId, result.ReceiverId);
+            Assert.Equal(message.UserId, result.UserId);
             Assert.Equal(message.ConversationId, result.ConversationId);
             Assert.Equal(message.Content, result.Content);
             Assert.Equal(message.Timestamp, result.Timestamp);

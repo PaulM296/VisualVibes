@@ -1,7 +1,5 @@
 ﻿using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Data.Common;
 using VisualVibes.App;
 using VisualVibes.App.Comments.Commands;
 using VisualVibes.App.Comments.Queries;
@@ -18,9 +16,8 @@ using VisualVibes.App.Reactions.Queries;
 using VisualVibes.App.UserProfiles.Commands;
 using VisualVibes.App.Users.Commands;
 using VisualVibes.App.Users.Queries;
-using VisualVibes.App.Users.QueriesHandler;
 using VisualVibes.Domain.Enum;
-using VisualVibes.Domain.Models.BaseEntity;
+using VisualVibes.Infrastructure;
 using VisualVibes.Infrastructure.Repositories;
 
 
@@ -35,6 +32,7 @@ var diContainer = new ServiceCollection()
                  .AddScoped<IConversationRepository, ConversationRepository>()
                  .AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(IUserRepository).Assembly))
                  .AddTransient(provider => new FileSystemLogger("logs"))
+                 .AddDbContext<VisualVibesDbContext>()
                  .BuildServiceProvider();
 
 var logger = diContainer.GetRequiredService<FileSystemLogger>();
@@ -163,8 +161,7 @@ Console.WriteLine("\n\nTesting MessageDto.\n");
 var messageDto = new MessageDto
 {
     Id = Guid.NewGuid(),
-    SenderId = userDto.Id,
-    ReceiverId = userDto2.Id,
+    UserId = userDto.Id,
     ConversationId = conversationDto.Id,
     Content = "Hello, how are you?",
     Timestamp = DateTime.UtcNow
@@ -173,27 +170,26 @@ var messageDto = new MessageDto
 var messageDto2 = new MessageDto
 {
     Id = Guid.NewGuid(),
-    SenderId = userDto2.Id,
-    ReceiverId = userDto.Id,
+    UserId = userDto2.Id,
     ConversationId = conversationDto.Id,
     Content = "I'm doing well, thank you! What about you?",
     Timestamp = DateTime.UtcNow.AddHours(0.5)
 };
 
 var createdMessage1 = await mediator.Send(new CreateMessageCommand(messageDto));
-Console.WriteLine($"Created message: ID: {createdMessage1.Id}, Sender: {createdMessage1.SenderId}," +
-    $" Receiver: {createdMessage1.ReceiverId}, Content: {createdMessage1.Content}");
+Console.WriteLine($"Created message: ID: {createdMessage1.Id}, Sender: {createdMessage1.UserId}," +
+    $" Content: {createdMessage1.Content}");
 
 var createdMessage2 = await mediator.Send(new CreateMessageCommand(messageDto2));
-Console.WriteLine($"Created message: ID: {createdMessage2.Id}, Sender: {createdMessage2.SenderId}, " +
-    $"Receiver: {createdMessage2.ReceiverId}, Content: {createdMessage2.Content}");
+Console.WriteLine($"Created message: ID: {createdMessage2.Id}, Sender: {createdMessage2.UserId}, " +
+    $" Content: {createdMessage2.Content}");
 
 var getAllConversationMessagesQuery = new GetAllConversationMessagesQuery(conversationDto.Id);
 var conversationMessages = await mediator.Send(getAllConversationMessagesQuery);
 
 foreach (var message in conversationMessages)
 {
-    Console.WriteLine($"Message ID: {message.Id}, Sender: {message.SenderId}, Receiver: {message.ReceiverId}, Content: {message.Content}");
+    Console.WriteLine($"Message ID: {message.Id}, Sender: {message.UserId}, Content: {message.Content}");
 }
 
 Console.WriteLine("\n\nTesting CommentDto.\n");
@@ -287,7 +283,7 @@ Console.WriteLine("\n\nTesting RemoveUserDto.\n");
 
 try
 {
-    await mediator.Send(new RemoveUserCommand(userDto.Id));
+    await mediator.Send(new RemoveUserCommand(createdUser.Id));
     Console.WriteLine($"User deleted successfully");
 }
 catch (Exception ex)
@@ -335,7 +331,7 @@ Console.WriteLine("\n\nTesting RemoveComment.\n");
 
 try
 {
-    await mediator.Send(new RemoveCommentCommand(commentDto.Id));
+    await mediator.Send(new RemoveCommentCommand(createdCommentDto2.Id));
     Console.WriteLine($"Comment deleted successfully");
 }
 catch (Exception ex)
@@ -347,7 +343,7 @@ Console.WriteLine("\n\nTesting RemoveReaction.\n");
 
 try
 {
-    await mediator.Send(new RemoveReactionCommand(reactionDto1.Id));
+    await mediator.Send(new RemoveReactionCommand(createdReactionCommand2.Id));
     Console.WriteLine($"Reaction deleted successfully");
 }
 catch (Exception ex)

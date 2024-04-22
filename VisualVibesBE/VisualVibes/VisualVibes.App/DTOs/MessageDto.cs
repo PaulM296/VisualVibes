@@ -5,8 +5,7 @@ namespace VisualVibes.App.DTOs
     public class MessageDto
     {
         public Guid Id { get; set; }
-        public Guid SenderId { get; set; }
-        public Guid ReceiverId { get; set; }
+        public Guid UserId { get; set; }
         public Guid ConversationId { get; set; }
         public string Content { get; set; }
         public DateTime Timestamp { get; set; }
@@ -16,8 +15,7 @@ namespace VisualVibes.App.DTOs
             return new MessageDto
             {
                 Id = message.Id,
-                SenderId = message.SenderId,
-                ReceiverId = message.ReceiverId,
+                UserId = message.UserId,
                 ConversationId = message.ConversationId,
                 Content = message.Content,
                 Timestamp = message.Timestamp
