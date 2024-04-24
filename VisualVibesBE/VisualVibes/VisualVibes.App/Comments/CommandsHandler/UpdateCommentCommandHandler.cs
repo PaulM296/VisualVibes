@@ -8,23 +8,22 @@ namespace VisualVibes.App.Comments.CommandsHandler
 {
     public class UpdateCommentCommandHandler : IRequestHandler<UpdateCommentCommand, CommentDto>
     {
-        private readonly ICommentRepository _commentRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public UpdateCommentCommandHandler(ICommentRepository commentRepository) 
+        public UpdateCommentCommandHandler(IUnitOfWork unitOfWork) 
         {
-            _commentRepository = commentRepository;
+            _unitOfWork = unitOfWork;
         }
         public async Task<CommentDto> Handle(UpdateCommentCommand request, CancellationToken cancellationToken)
         {
-            var comment = new Comment()
-            {
-                Id = request.CommentDto.Id,
-                UserId = request.CommentDto.UserId,
-                PostId = request.CommentDto.PostId,
-                Text = request.CommentDto.Text,
-                CreatedAt = request.CommentDto.CreatedAt
-            };
-            var updatedComment = await _commentRepository.UpdateAsync(comment);
+            var getComment = await _unitOfWork.CommentRepository.GetByIdAsync(request.CommentDto.Id);
+
+            getComment.Text = request.CommentDto.Text;
+            getComment.CreatedAt = request.CommentDto.CreatedAt;
+
+            var updatedComment = await _unitOfWork.CommentRepository.UpdateAsync(getComment);
+            await _unitOfWork.SaveAsync(); 
+
             return CommentDto.FromComment(updatedComment);
         }
     }

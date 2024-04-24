@@ -8,22 +8,25 @@ namespace VisualVibes.App.Reactions.CommandsHandler
 {
     public class CreateReactionCommandHandler : IRequestHandler<CreateReactionCommand, ReactionDto>
     {
-        private readonly IReactionRepository _reactionRepository;
-        public CreateReactionCommandHandler(IReactionRepository reactionRepository) 
+        private readonly IUnitOfWork _unitOfWork;
+        public CreateReactionCommandHandler(IUnitOfWork unitOfWork) 
         {
-            _reactionRepository = reactionRepository;
+            _unitOfWork = unitOfWork;
         }
         public async Task<ReactionDto> Handle(CreateReactionCommand request, CancellationToken cancellationToken)
         {
             var reaction = new Reaction()
             {
-                Id = Guid.NewGuid(),
+                Id = request.ReactionDto.Id,
                 UserId = request.ReactionDto.UserId,
                 PostId = request.ReactionDto.PostId,
                 ReactionType = request.ReactionDto.ReactionType,
                 Timestamp = request.ReactionDto.Timestamp
             };
-            var createdReaction = await _reactionRepository.AddAsync(reaction);
+
+            var createdReaction = await _unitOfWork.ReactionRepository.AddAsync(reaction);
+            await _unitOfWork.SaveAsync();
+
             return ReactionDto.FromReaction(createdReaction);
         }
     }

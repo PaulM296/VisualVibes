@@ -15,9 +15,23 @@ namespace VisualVibes.Infrastructure
         public DbSet<Feed> Feeds { get; set; }
         public DbSet<Reaction> Reactions { get; set; }
 
+        public VisualVibesDbContext(DbContextOptions options) : base(options)
+        {
+            
+        }
+
+        public VisualVibesDbContext()
+        {
+            
+        }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Server=ROMOB41178;Database=VisualVibes-Web;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=True");
+        
+            if(!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseSqlServer(@"Server=ROMOB41178;Database=VisualVibes-Web;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=True");
+            }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

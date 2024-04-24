@@ -6,7 +6,7 @@ namespace VisualVibes.Infrastructure.Repositories
 {
     public class PostRepository : BaseRepository<Post>, IPostRepository
     {
-        public PostRepository(FileSystemLogger logger) : base(logger)
+        public PostRepository(VisualVibesDbContext context, FileSystemLogger logger) : base(context, logger)
         {
 
         }

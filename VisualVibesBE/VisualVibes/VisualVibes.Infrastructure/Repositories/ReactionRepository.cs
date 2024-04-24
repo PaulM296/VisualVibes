@@ -1,21 +1,20 @@
-﻿using System.Xml.Linq;
-using VisualVibes.App;
+﻿using VisualVibes.App;
 using VisualVibes.App.Interfaces;
 using VisualVibes.Domain.Models.BaseEntity;
+using Microsoft.EntityFrameworkCore;
 
 namespace VisualVibes.Infrastructure.Repositories
 {
     public class ReactionRepository : BaseRepository<Reaction>, IReactionRepository
     {
-        private readonly FileSystemLogger _logger;
-        public ReactionRepository(FileSystemLogger logger) : base(logger)
+        public ReactionRepository(VisualVibesDbContext context, FileSystemLogger logger) : base(context, logger)
         {
-            _logger = logger;
+
         }
 
         public async Task<ICollection<Reaction>> GetAllAsync(Guid postId)
         {
-            var reactionsForPost = GetAll().Where(r => r.PostId == postId).ToList();
+            var reactionsForPost = await _context.Reactions.Where(r => r.PostId == postId).ToListAsync();
 
             if (reactionsForPost.Count == 0)
             {

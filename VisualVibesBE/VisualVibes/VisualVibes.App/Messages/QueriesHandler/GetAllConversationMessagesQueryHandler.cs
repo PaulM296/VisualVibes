@@ -2,19 +2,20 @@
 using VisualVibes.App.DTOs;
 using VisualVibes.App.Interfaces;
 using VisualVibes.App.Messages.Queries;
+using VisualVibes.Domain.Models.BaseEntity;
 
 namespace VisualVibes.App.Messages.QueriesHandler
 {
     public class GetAllConversationMessagesQueryHandler : IRequestHandler<GetAllConversationMessagesQuery, ICollection<MessageDto>>
     {
-        private readonly IMessageRepository _messageRepository;
-        public GetAllConversationMessagesQueryHandler(IMessageRepository messageRepository) 
+        private readonly IUnitOfWork _unitOfWork;
+        public GetAllConversationMessagesQueryHandler(IUnitOfWork unitOfWork) 
         {
-            _messageRepository = messageRepository;
+            _unitOfWork = unitOfWork;
         }
         public async Task<ICollection<MessageDto>> Handle(GetAllConversationMessagesQuery request, CancellationToken cancellationToken)
         {
-            var messages = await _messageRepository.GetAllAsync(request.ConversationId);
+            var messages = await _unitOfWork.MessageRepository.GetAllAsync(request.ConversationId);
 
             if (messages.Count == 0)
             {
@@ -26,6 +27,8 @@ namespace VisualVibes.App.Messages.QueriesHandler
             {
                 messagesDtos.Add(MessageDto.FromMessage(message));
             }
+
+            var messagesDto = messages.Select(MessageDto.FromMessage).ToList();
 
             return messagesDtos;
         }

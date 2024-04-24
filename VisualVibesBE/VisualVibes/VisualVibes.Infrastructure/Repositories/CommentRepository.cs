@@ -1,20 +1,20 @@
 ﻿using VisualVibes.App;
 using VisualVibes.App.Interfaces;
 using VisualVibes.Domain.Models.BaseEntity;
+using Microsoft.EntityFrameworkCore;
 
 namespace VisualVibes.Infrastructure.Repositories
 {
     public class CommentRepository : BaseRepository<Comment>, ICommentRepository
     {
-        private readonly FileSystemLogger _logger;
-        public CommentRepository(FileSystemLogger logger) : base(logger)
+        public CommentRepository(VisualVibesDbContext context, FileSystemLogger logger) : base(context, logger)
         {
-            _logger = logger;
+
         }
 
         public async Task<ICollection<Comment>> GetAllAsync(Guid postId)
         {
-            var commentsForPost = GetAll().Where(c => c.PostId == postId).ToList();
+            var commentsForPost = await _context.Comments.Where(c => c.PostId == postId).ToListAsync();
 
             if (commentsForPost.Count == 0)
             {

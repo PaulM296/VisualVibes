@@ -8,25 +8,32 @@ namespace VisualVibes.App.UserProfiles.CommandsHandler
 {
     public class UpdateUserProfileCommandHandler : IRequestHandler<UpdateUserProfileCommand, UserProfileDto>
     {
-        private readonly IUserProfileRepository _userProfileRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public UpdateUserProfileCommandHandler(IUserProfileRepository userProfileRepository)
+        public UpdateUserProfileCommandHandler(IUnitOfWork unitOfWork)
         {
-            _userProfileRepository = userProfileRepository;
+            _unitOfWork = unitOfWork;
         }
+            
         public async Task<UserProfileDto> Handle(UpdateUserProfileCommand request, CancellationToken cancellationToken)
         {
-            var userProfile = new UserProfile()
+            var getUserProfile = await _unitOfWork.UserProfileRepository.GetByIdAsync(request.UserProfileDto.Id);
+
+            if (getUserProfile == null)
             {
-                Id = request.UserProfileDto.Id,
-                ProfilePicture = request.UserProfileDto.ProfilePicture,
-                DateOfBirth = request.UserProfileDto.DateOfBirth,
-                FirstName = request.UserProfileDto.FirstName,
-                LastName = request.UserProfileDto.LastName,
-                Email = request.UserProfileDto.Email,
-                Bio = request.UserProfileDto.Bio
-            };
-            var updatedUserProfile = await _userProfileRepository.UpdateAsync(userProfile);
+                throw new Exception("UserProfile not found");
+            }
+
+            getUserProfile.ProfilePicture = request.UserProfileDto.ProfilePicture;
+            getUserProfile.DateOfBirth = request.UserProfileDto.DateOfBirth;
+            getUserProfile.FirstName = request.UserProfileDto.FirstName;
+            getUserProfile.LastName = request.UserProfileDto.LastName;
+            getUserProfile.Email = request.UserProfileDto.Email;
+            getUserProfile.Bio = request.UserProfileDto.Bio;
+
+            var updatedUserProfile = await _unitOfWork.UserProfileRepository.UpdateAsync(getUserProfile);
+            await _unitOfWork.SaveAsync();
+
             return UserProfileDto.FromUserProfile(updatedUserProfile);
         }
     }

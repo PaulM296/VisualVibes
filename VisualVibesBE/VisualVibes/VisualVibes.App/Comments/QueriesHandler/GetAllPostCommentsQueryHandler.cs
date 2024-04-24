@@ -7,27 +7,23 @@ namespace VisualVibes.App.Comments.QueriesHandler
 {
     public class GetAllPostCommentsQueryHandler : IRequestHandler<GetAllPostCommentsQuery, ICollection<CommentDto>>
     {
-        private readonly ICommentRepository _commentRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public GetAllPostCommentsQueryHandler(ICommentRepository commentRepository)
+        public GetAllPostCommentsQueryHandler(IUnitOfWork unitOfWork)
         {
-            _commentRepository = commentRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<ICollection<CommentDto>> Handle(GetAllPostCommentsQuery request, CancellationToken cancellationToken)
         {
-            var comments = await _commentRepository.GetAllAsync(request.PostId);
+            var comments = await _unitOfWork.CommentRepository.GetAllAsync(request.PostId);
 
             if (comments.Count == 0)
             {
                 throw new ApplicationException("Comments not found");
             }
 
-            var commentDtos = new List<CommentDto>();
-            foreach (var comment in comments)
-            {
-                commentDtos.Add(CommentDto.FromComment(comment));
-            }
+            var commentDtos = comments.Select(CommentDto.FromComment).ToList();
 
             return commentDtos;
         }

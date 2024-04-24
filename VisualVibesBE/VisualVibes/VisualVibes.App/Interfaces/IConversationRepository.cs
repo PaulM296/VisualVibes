@@ -4,6 +4,6 @@ namespace VisualVibes.App.Interfaces
 {
     public interface IConversationRepository : IBaseRepository<Conversation>
     {
-
+        Task<List<Conversation>> GetAllByUserIdAsync(Guid userId);
     }
 }

@@ -8,22 +8,29 @@ namespace VisualVibes.App.Users.CommandsHandler
 {
     public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, UserDto>
     {
-        private readonly IUserRepository _userRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public UpdateUserCommandHandler(IUserRepository userRepository) 
+        public UpdateUserCommandHandler(IUnitOfWork unitOfWork)
         {
-            _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<UserDto> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
         {
-            var user = new User()
+            var user = await _unitOfWork.UserRepository.GetByIdAsync(request.UserDto.Id);
+
+            if (user == null)
             {
-                Id = request.UserDto.Id,
-                Username = request.UserDto.Username,
-                Password = request.UserDto.Password,
-            };
-            var updatedUser = await _userRepository.UpdateAsync(user);
+                throw new Exception("User not found");
+            }
+
+            user.Username = request.UserDto.Username;
+            user.Password = request.UserDto.Password;
+
+            var updatedUser = await _unitOfWork.UserRepository.UpdateAsync(user);
+
+            await _unitOfWork.SaveAsync();
+
             return UserDto.FromUser(updatedUser);
         }
     }

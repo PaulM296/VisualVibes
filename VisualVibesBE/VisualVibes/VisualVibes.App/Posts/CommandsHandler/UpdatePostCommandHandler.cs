@@ -9,23 +9,27 @@ namespace VisualVibes.App.Posts.CommandsHandler
 {
     public class UpdatePostCommandHandler : IRequestHandler<UpdatePostCommand, PostDto>
     {
-        private readonly IPostRepository _postRepository;
-        public UpdatePostCommandHandler(IPostRepository postRepository) 
+        private readonly IUnitOfWork _unitOfWork;
+        public UpdatePostCommandHandler(IUnitOfWork unitOfWork) 
         {
-            _postRepository = postRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<PostDto> Handle(UpdatePostCommand request, CancellationToken cancellationToken)
         {
-            var post = new Post()
+            var getPost = await _unitOfWork.PostRepository.GetByIdAsync(request.PostDto.Id);
+
+            if(getPost ==  null)
             {
-                Id = request.PostDto.Id,
-                UserId = request.PostDto.UserId,
-                Caption = request.PostDto.Caption,
-                Pictures = request.PostDto.Pictures,
-                CreatedAt = request.PostDto.CreatedAt
-            };
-            var updatedPost = await _postRepository.UpdateAsync(post);
+                throw new Exception("Post not found");
+            }
+
+            getPost.Caption = request.PostDto.Caption;
+            getPost.Pictures = request.PostDto.Pictures;
+
+            var updatedPost = await _unitOfWork.PostRepository.UpdateAsync(getPost);
+            await _unitOfWork.SaveAsync();
+
             return PostDto.FromPost(updatedPost);
         }
     }

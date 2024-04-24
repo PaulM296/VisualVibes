@@ -7,21 +7,24 @@ namespace VisualVibes.App.Messages.CommandsHandler
 {
     public class RemoveMessageCommandHandler : IRequestHandler<RemoveMessageCommand, Unit>
     {
-        private readonly IMessageRepository _messageRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public RemoveMessageCommandHandler(IMessageRepository messageRepository) 
+        public RemoveMessageCommandHandler(IUnitOfWork unitOfWork) 
         {
-            _messageRepository = messageRepository;
+            _unitOfWork = unitOfWork;
         }
         public async Task<Unit> Handle(RemoveMessageCommand request, CancellationToken cancellationToken)
         {
-            var messageToRemove = await _messageRepository.GetByIdAsync(request.Id);
+            var messageToRemove = await _unitOfWork.MessageRepository.GetByIdAsync(request.Id);
+
             if (messageToRemove == null)
             {
                 throw new Exception($"User with ID {request.Id} not found.");
             };
 
-            await _messageRepository.RemoveAsync(messageToRemove);
+            await _unitOfWork.MessageRepository.RemoveAsync(messageToRemove);
+            await _unitOfWork.SaveAsync();
+
             return Unit.Value;
 
         }

@@ -8,24 +8,26 @@ namespace VisualVibes.App.Messages.CommandsHandler
 {
     public class CreateMessageCommandHandler : IRequestHandler<CreateMessageCommand, MessageDto>
     {
-        private readonly IMessageRepository _messageRepository;
-        public CreateMessageCommandHandler(IMessageRepository messageRepository)
+        private readonly IUnitOfWork _unitOfWork;
+        public CreateMessageCommandHandler(IUnitOfWork unitOfWork)
         {
-            _messageRepository = messageRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<MessageDto> Handle(CreateMessageCommand request, CancellationToken cancellationToken)
         {
             var message = new Message()
             {
-                Id = Guid.NewGuid(),
+                Id = request.MessageDto.Id,
                 UserId = request.MessageDto.UserId,
                 ConversationId = request.MessageDto.ConversationId,
                 Content = request.MessageDto.Content,
                 Timestamp = request.MessageDto.Timestamp
             };
 
-            var createdMessage = await _messageRepository.AddAsync(message);
+            var createdMessage = await _unitOfWork.MessageRepository.AddAsync(message);
+            await _unitOfWork.SaveAsync();
+
             return MessageDto.FromMessage(createdMessage);
         }
     }

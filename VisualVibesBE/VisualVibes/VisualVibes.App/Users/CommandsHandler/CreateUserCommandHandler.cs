@@ -8,21 +8,24 @@ namespace VisualVibes.App.Users.CommandsHandler
 {
     public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, UserDto>
     {
-        private readonly IUserRepository _userRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public CreateUserCommandHandler(IUserRepository userRepository) 
+        public CreateUserCommandHandler(IUnitOfWork unitOfWork)
         {
-            _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
         }
         public async Task<UserDto> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
-            var user = new User() 
-            { 
-                Id = Guid.NewGuid(),
-                Username = request.UserDto.Username, 
+            var user = new User()
+            {
+                Id = request.UserDto.Id,
+                Username = request.UserDto.Username,
                 Password = request.UserDto.Password,
             };
-            var createdUser = await _userRepository.AddAsync(user);
+
+            var createdUser = await _unitOfWork.UserRepository.AddAsync(user);
+            await _unitOfWork.SaveAsync();
+
             return UserDto.FromUser(createdUser);
         }
     }

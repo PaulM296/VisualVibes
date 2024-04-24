@@ -7,20 +7,22 @@ namespace VisualVibes.App.Posts.QueriesHandler
 {
     public class GetPostByIdQueryHandler : IRequestHandler<GetPostByIdQuery, PostDto>
     {
-        public readonly IPostRepository _postRepository;
+        public readonly IUnitOfWork _unitOfWork;
 
-        public GetPostByIdQueryHandler(IPostRepository postRepository)
+        public GetPostByIdQueryHandler(IUnitOfWork unitOfWork)
         {
-            _postRepository = postRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<PostDto> Handle(GetPostByIdQuery request, CancellationToken cancellationToken)
         {
-            var post = await _postRepository.GetByIdAsync(request.PostId);
+            var post = await _unitOfWork.PostRepository.GetByIdAsync(request.PostId);
+
             if (post == null)
             {
                 throw new ApplicationException("Post not found");
             }
+
             return PostDto.FromPost(post);
         }
     }

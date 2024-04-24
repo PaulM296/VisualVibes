@@ -8,21 +8,23 @@ namespace VisualVibes.App.Reactions.CommandsHandler
 {
     public class RemoveReactionCommandHandler : IRequestHandler<RemoveReactionCommand, Unit>
     {
-        private readonly IReactionRepository _reactionRepository;
-        public RemoveReactionCommandHandler(IReactionRepository reactionRepository) 
+        private readonly IUnitOfWork _unitOfWork;
+        public RemoveReactionCommandHandler(IUnitOfWork unitOfWork) 
         {
-            _reactionRepository = reactionRepository;
+            _unitOfWork = unitOfWork;
         }
         public async Task<Unit> Handle(RemoveReactionCommand request, CancellationToken cancellationToken)
         {
-            var reactionToRemove = await _reactionRepository.GetByIdAsync(request.Id);
+            var reactionToRemove = await _unitOfWork.ReactionRepository.GetByIdAsync(request.Id);
 
             if(reactionToRemove == null)
             {
                 throw new Exception($"Reaction with ID {request.Id} not found.");
             };
 
-            await _reactionRepository.RemoveAsync(reactionToRemove);
+            await _unitOfWork.ReactionRepository.RemoveAsync(reactionToRemove);
+            await _unitOfWork.SaveAsync();
+
             return Unit.Value;
         }
     }

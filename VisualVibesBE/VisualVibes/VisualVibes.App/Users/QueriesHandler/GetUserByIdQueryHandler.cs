@@ -7,17 +7,17 @@ namespace VisualVibes.App.Users.QueriesHandler
 {
     public class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery, UserDto>
     {
-        public readonly IUserRepository _userRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public GetUserByIdQueryHandler(IUserRepository userRepository)
+        public GetUserByIdQueryHandler(IUnitOfWork unitOfWork)
         {
-            _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<UserDto> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetByIdAsync(request.userId);
-            
+            var user = await _unitOfWork.UserRepository.GetByIdAsync(request.userId);
+
             if (user == null)
             {
                 throw new ApplicationException("User not found!");

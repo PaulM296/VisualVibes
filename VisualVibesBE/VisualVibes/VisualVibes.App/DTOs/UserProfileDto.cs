@@ -1,10 +1,12 @@
-﻿using VisualVibes.Domain.Models.BaseEntity;
+﻿using MediatR;
+using VisualVibes.Domain.Models.BaseEntity;
 
 namespace VisualVibes.App.DTOs
 {
     public class UserProfileDto
     {
         public Guid Id { get; set; }
+        public Guid UserId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
@@ -17,6 +19,7 @@ namespace VisualVibes.App.DTOs
             return new UserProfileDto
             {
                 Id = UserProfile.Id,
+                UserId = UserProfile.UserId,
                 FirstName = UserProfile.FirstName,
                 LastName = UserProfile.LastName,
                 Email = UserProfile.Email,

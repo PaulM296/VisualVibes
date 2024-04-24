@@ -8,19 +8,23 @@ namespace VisualVibes.App.Conversations.CommandsHandler
 {
     public class RemoveConversationCommandHandler : IRequestHandler<RemoveConversationCommand, Unit>
     {
-        private readonly IConversationRepository _conversationRepository;
-        public RemoveConversationCommandHandler(IConversationRepository conversationRepository)
+        private readonly IUnitOfWork _unitOfWork;
+        public RemoveConversationCommandHandler(IUnitOfWork unitOfWork)
         {
-            _conversationRepository = conversationRepository;
+            _unitOfWork = unitOfWork;
         }
         public async Task<Unit> Handle(RemoveConversationCommand request, CancellationToken cancellationToken)
         {
-            var conversationToRemove = await _conversationRepository.GetByIdAsync(request.Id);
+            var conversationToRemove = await _unitOfWork.ConversationRepository.GetByIdAsync(request.Id);
+
             if(conversationToRemove == null)
             {
                 throw new Exception($"Conversation with ID {request.Id} not found.");
             }
-            await _conversationRepository.RemoveAsync(conversationToRemove);
+
+            await _unitOfWork.ConversationRepository.RemoveAsync(conversationToRemove);
+            await _unitOfWork.SaveAsync();
+
             return Unit.Value;
         }
     }

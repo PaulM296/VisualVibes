@@ -30,6 +30,7 @@ var diContainer = new ServiceCollection()
                  .AddScoped<IFeedRepository, FeedRepository>()
                  .AddScoped<IMessageRepository, MessageRepository>()
                  .AddScoped<IConversationRepository, ConversationRepository>()
+                 .AddScoped<IUnitOfWork, UnitOfWork>()
                  .AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(IUserRepository).Assembly))
                  .AddTransient(provider => new FileSystemLogger("logs"))
                  .AddDbContext<VisualVibesDbContext>()
@@ -46,13 +47,6 @@ var userDto = new UserDto
     Id = Guid.NewGuid(),
     Username = "Paulinho",
     Password = "123456789",
-};
-
-var userDto2 = new UserDto
-{
-    Id = Guid.NewGuid(),
-    Username = "Waganaha",
-    Password = "456123"
 };
 
 var createdUser = await mediator.Send(new CreateUserCommand(userDto));
@@ -77,11 +71,20 @@ catch (Exception ex)
     Console.WriteLine($"Error: {ex.Message}");
 }
 
+var userDto2 = new UserDto
+{
+    Id = Guid.NewGuid(),
+    Username = "Waganaha",
+    Password = "456123"
+};
+var createdUser2 = await mediator.Send(new CreateUserCommand(userDto2));
+
 Console.WriteLine("\n\nTesting UserProfileDto.\n");
 
 var userProfileDto = new UserProfileDto
 {
     Id = Guid.NewGuid(),
+    UserId = createdUser.Id,
     ProfilePicture = "profilePicture.jpg",
     DateOfBirth = new DateTime(2000, 06, 29),
     FirstName = "Paul",
@@ -96,6 +99,7 @@ Console.WriteLine($"Profile created successfully! ID: {createdProfile.Id}, Bio: 
 var updatedUserProfile = new UserProfileDto
 {
     Id = createdProfile.Id,
+    UserId = userProfileDto.UserId,
     ProfilePicture = "profilePicture.jpg",
     DateOfBirth = new DateTime(2000, 06, 29),
     FirstName = "Paul",
@@ -119,7 +123,6 @@ var postDto = new PostDto
 };
 
 var createdPost = await mediator.Send(new CreatePostCommand(postDto));
-
 Console.WriteLine($"Created post: ID: {createdPost.Id}, From UserId: {postDto.UserId}, Caption: {createdPost.Caption}");
 
 var retrievedPost = await mediator.Send(new GetPostByIdQuery(createdPost.Id));
@@ -142,8 +145,8 @@ Console.WriteLine("\n\nTesting ConversationDto.\n");
 var conversationDto = new ConversationDto
 {
     Id = Guid.NewGuid(),
-    FirstParticipantId = userDto.Id,
-    SecondParticipantId = userDto2.Id
+    FirstParticipantId = createdUser.Id,
+    SecondParticipantId = createdUser2.Id
 };
 
 var createdConversation = await mediator.Send(new CreateConversationCommand(conversationDto));
@@ -153,7 +156,7 @@ Console.WriteLine($"User ID: {createdConversation.Id}, FirstParticipant: {create
 var conversations = await mediator.Send(new GetAllUserConversationsQuery(createdConversation.FirstParticipantId));
 foreach (var conversation in conversations)
 {
-    Console.WriteLine($"Conversation ID: {conversation.Id}, First Participant: {conversation.FirstParticipantId}, Second Participant: {conversation.SecondParticipantId}");
+    Console.WriteLine($"\n\n\nConversation ID: {conversation.Id}, First Participant: {conversation.FirstParticipantId}, Second Participant: {conversation.SecondParticipantId}");
 }
 
 Console.WriteLine("\n\nTesting MessageDto.\n");
@@ -189,7 +192,7 @@ var conversationMessages = await mediator.Send(getAllConversationMessagesQuery);
 
 foreach (var message in conversationMessages)
 {
-    Console.WriteLine($"Message ID: {message.Id}, Sender: {message.UserId}, Content: {message.Content}");
+    Console.WriteLine($"\n\n\nMessage ID: {message.Id}, Sender: {message.UserId}, Content: {message.Content}");
 }
 
 Console.WriteLine("\n\nTesting CommentDto.\n");
@@ -276,7 +279,7 @@ var postReactions = await mediator.Send(getAllPostReactions);
 
 foreach (var reaction in postReactions)
 {
-    Console.WriteLine($"Comment ID: {reaction.Id}, UserId: {reaction.UserId}, PostId: {reaction.PostId}, ReactionType: {reaction.ReactionType}");
+    Console.WriteLine($"\n\nComment ID: {reaction.Id}, UserId: {reaction.UserId}, PostId: {reaction.PostId}, ReactionType: {reaction.ReactionType}");
 }
 
 Console.WriteLine("\n\nTesting RemoveUserDto.\n");
