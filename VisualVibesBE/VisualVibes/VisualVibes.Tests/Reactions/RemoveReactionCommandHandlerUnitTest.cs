@@ -12,12 +12,16 @@ namespace VisualVibes.Tests.Reactions
     public class RemoveReactionCommandHandlerUnitTest
     {
         private readonly Mock<IReactionRepository> _reactionRepositoryMock;
+        private readonly Mock<IUnitOfWork> _unitOfWorkMock;
         private RemoveReactionCommandHandler _removeReactionCommandHandler;
 
         public RemoveReactionCommandHandlerUnitTest()
         {
             _reactionRepositoryMock = new Mock<IReactionRepository>();
-            _removeReactionCommandHandler = new RemoveReactionCommandHandler(_reactionRepositoryMock.Object);
+            _unitOfWorkMock = new Mock<IUnitOfWork>();
+
+            _unitOfWorkMock.Setup(uow => uow.ReactionRepository).Returns(_reactionRepositoryMock.Object);
+            _removeReactionCommandHandler = new RemoveReactionCommandHandler(_unitOfWorkMock.Object);
         }
 
         [Fact]
@@ -53,6 +57,7 @@ namespace VisualVibes.Tests.Reactions
             //Assert
             _reactionRepositoryMock.Verify(x => x.GetByIdAsync(reactionDto.Id), Times.Once);
             _reactionRepositoryMock.Verify(x => x.RemoveAsync(reaction), Times.Once);
+            _unitOfWorkMock.Verify(uow => uow.SaveAsync(), Times.Once);
         }
     }
 }

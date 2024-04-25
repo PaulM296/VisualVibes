@@ -10,12 +10,17 @@ namespace VisualVibes.Tests.Reactions
     public class CreateReactionCommandHandlerUnitTest
     {
         private readonly Mock<IReactionRepository> _reactionRepositoryMock;
+        private readonly Mock<IUnitOfWork> _unitOfWorkMock;
         private CreateReactionCommandHandler _createReactionCommandHandler;
+
 
         public CreateReactionCommandHandlerUnitTest()
         {
             _reactionRepositoryMock = new Mock<IReactionRepository>();
-            _createReactionCommandHandler = new CreateReactionCommandHandler(_reactionRepositoryMock.Object);
+            _unitOfWorkMock = new Mock<IUnitOfWork>();
+
+            _unitOfWorkMock.Setup(uow => uow.ReactionRepository).Returns(_reactionRepositoryMock.Object);
+            _createReactionCommandHandler = new CreateReactionCommandHandler(_unitOfWorkMock.Object);
         }
 
         [Fact]
@@ -56,6 +61,7 @@ namespace VisualVibes.Tests.Reactions
             Assert.Equal(reaction.PostId, result.PostId);
             Assert.Equal(reaction.ReactionType, result.ReactionType);
             Assert.Equal(reaction.Timestamp, result.Timestamp);
+            _unitOfWorkMock.Verify(uow => uow.SaveAsync(), Times.Once);
         }
     }
 }

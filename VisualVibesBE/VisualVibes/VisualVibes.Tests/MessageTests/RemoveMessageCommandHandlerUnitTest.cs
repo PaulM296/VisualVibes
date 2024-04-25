@@ -10,12 +10,16 @@ namespace VisualVibes.Tests.MessageTests
     public class RemoveMessageCommandHandlerUnitTest
     {
         private readonly Mock<IMessageRepository> _messageRepositoryMock;
+        private readonly Mock<IUnitOfWork> _unitOfWorkMock;
         private RemoveMessageCommandHandler _removeMessageCommandHandler;
 
         public RemoveMessageCommandHandlerUnitTest()
         {
             _messageRepositoryMock = new Mock<IMessageRepository>();
-            _removeMessageCommandHandler = new RemoveMessageCommandHandler(_messageRepositoryMock.Object);
+            _unitOfWorkMock = new Mock<IUnitOfWork>();
+
+            _unitOfWorkMock.Setup(uow => uow.MessageRepository).Returns(_messageRepositoryMock.Object);
+            _removeMessageCommandHandler = new RemoveMessageCommandHandler(_unitOfWorkMock.Object);
         }
 
         [Fact]
@@ -51,6 +55,7 @@ namespace VisualVibes.Tests.MessageTests
             //Assert
             _messageRepositoryMock.Verify(x => x.GetByIdAsync(messageDto.Id), Times.Once);
             _messageRepositoryMock.Verify(x => x.RemoveAsync(message), Times.Once);
+            _unitOfWorkMock.Verify(uow => uow.SaveAsync(), Times.Once);
         }
     }
 }

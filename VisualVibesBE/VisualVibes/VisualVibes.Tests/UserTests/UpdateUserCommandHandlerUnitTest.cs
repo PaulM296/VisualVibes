@@ -11,10 +11,14 @@ namespace VisualVibes.Tests.UserTests
     {
         private UpdateUserCommandHandler _updateUserCommandHandler;
         private readonly Mock<IUserRepository> _userRepositoryMock;
+        private readonly Mock<IUnitOfWork> _unitOfWorkMock;
         public UpdateUserCommandHandlerUnitTest()
         {
             _userRepositoryMock = new Mock<IUserRepository>();
-            _updateUserCommandHandler = new UpdateUserCommandHandler(_userRepositoryMock.Object);
+            _unitOfWorkMock = new Mock<IUnitOfWork>();
+
+            _unitOfWorkMock.Setup(uow => uow.UserRepository).Returns(_userRepositoryMock.Object);
+            _updateUserCommandHandler = new UpdateUserCommandHandler(_unitOfWorkMock.Object);
         }
 
         [Fact]
@@ -45,8 +49,10 @@ namespace VisualVibes.Tests.UserTests
             var updateUserCommand = new UpdateUserCommand(updatedUserDto);
 
             _userRepositoryMock
-                .Setup(x => x.UpdateAsync(It.Is<User>(y => y.Username == updatedUserDto.Username &&
-                y.Password == updatedUserDto.Password))).ReturnsAsync(user);
+            .Setup(x => x.GetByIdAsync(userDto.Id)).ReturnsAsync(user);
+            _userRepositoryMock
+                .Setup(x => x.UpdateAsync(It.IsAny<User>()))
+                .ReturnsAsync((User u) => u);
 
             //Act
             var result = await _updateUserCommandHandler.Handle(updateUserCommand, new CancellationToken());
@@ -55,7 +61,7 @@ namespace VisualVibes.Tests.UserTests
             Assert.NotNull(result);
             Assert.Equal(user.Username, result.Username);
             Assert.Equal(user.Password, result.Password);
-
+            _unitOfWorkMock.Verify(uow => uow.SaveAsync(), Times.Once);
         }
     }
 }

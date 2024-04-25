@@ -12,12 +12,16 @@ namespace VisualVibes.Tests.Comments
     public class CreateCommentCommandHandlerUnitTest
     {
         private readonly Mock<ICommentRepository> _commentRepositoryMock;
+        private readonly Mock<IUnitOfWork> _unitOfWorkMock;
         private CreateCommentCommandHandler _createCommentCommandHandler;
 
         public CreateCommentCommandHandlerUnitTest()
         {
             _commentRepositoryMock = new Mock<ICommentRepository>();
-            _createCommentCommandHandler = new CreateCommentCommandHandler(_commentRepositoryMock.Object);
+            _unitOfWorkMock = new Mock<IUnitOfWork>();
+
+            _unitOfWorkMock.Setup(uow => uow.CommentRepository).Returns(_commentRepositoryMock.Object);
+            _createCommentCommandHandler = new CreateCommentCommandHandler(_unitOfWorkMock.Object);
         }
 
         [Fact]
@@ -58,6 +62,7 @@ namespace VisualVibes.Tests.Comments
             Assert.Equal(comment.PostId, result.PostId);
             Assert.Equal(comment.Text, result.Text);
             Assert.Equal(comment.CreatedAt, result.CreatedAt);
+            _unitOfWorkMock.Verify(uow => uow.SaveAsync(), Times.Once);
         }
     }
 }

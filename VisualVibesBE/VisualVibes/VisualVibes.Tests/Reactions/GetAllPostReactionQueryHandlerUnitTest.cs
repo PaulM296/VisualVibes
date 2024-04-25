@@ -11,12 +11,16 @@ namespace VisualVibes.Tests.Reactions
     public class GetAllPostReactionQueryHandlerUnitTest
     {
         private readonly Mock<IReactionRepository> _reactionRepositoryMock;
+        private readonly Mock<IUnitOfWork> _unitOfWorkMock;
         private GetAllPostReactionsQueryHandler _getAllPostReactionsQueryHandler;
 
         public GetAllPostReactionQueryHandlerUnitTest()
         {
             _reactionRepositoryMock = new Mock<IReactionRepository>();
-            _getAllPostReactionsQueryHandler = new GetAllPostReactionsQueryHandler(_reactionRepositoryMock.Object);
+            _unitOfWorkMock = new Mock<IUnitOfWork>();
+
+            _unitOfWorkMock.Setup(uow => uow.ReactionRepository).Returns(_reactionRepositoryMock.Object);
+            _getAllPostReactionsQueryHandler = new GetAllPostReactionsQueryHandler(_unitOfWorkMock.Object);
         }
 
         [Fact] 
@@ -69,6 +73,7 @@ namespace VisualVibes.Tests.Reactions
             //Assert
             Assert.NotNull(result);
             Assert.Equal(reactionDtos.Count, result.Count);
+            _unitOfWorkMock.Verify(uow => uow.SaveAsync(), Times.Never);
         }
     }
 }

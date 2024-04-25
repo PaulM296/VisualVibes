@@ -10,12 +10,16 @@ namespace VisualVibes.Tests.UserTests
     public class RemoveUserCommandHandlerUnitTest
     {
         private RemoveUserCommandHandler _removeUserCommandHandler;
-        private Mock<IUserRepository> _userRepositoryMock;
+        private readonly Mock<IUserRepository> _userRepositoryMock;
+        private readonly Mock<IUnitOfWork> _unitOfWorkMock;
 
         public RemoveUserCommandHandlerUnitTest()
         {
             _userRepositoryMock = new Mock<IUserRepository>();
-            _removeUserCommandHandler = new RemoveUserCommandHandler(_userRepositoryMock.Object);
+            _unitOfWorkMock = new Mock<IUnitOfWork>();
+
+            _unitOfWorkMock.Setup(uow => uow.UserRepository).Returns(_userRepositoryMock.Object);
+            _removeUserCommandHandler = new RemoveUserCommandHandler(_unitOfWorkMock.Object);
         }
 
         [Fact]
@@ -46,6 +50,7 @@ namespace VisualVibes.Tests.UserTests
             //Assert
             _userRepositoryMock.Verify(x => x.GetByIdAsync(userDto.Id), Times.Once);
             _userRepositoryMock.Verify(x => x.RemoveAsync(user), Times.Once);
+            _unitOfWorkMock.Verify(uow => uow.SaveAsync(), Times.Once);
         }
     }
 }

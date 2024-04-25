@@ -10,12 +10,16 @@ namespace VisualVibes.Tests.UserTests
     public class GetUserByIdQueryHandlerUnitTest
     {
         private readonly Mock<IUserRepository> _userRepositoryMock;
+        private readonly Mock<IUnitOfWork> _unitOfWorkMock;
         private GetUserByIdQueryHandler _getUserByIdQueryHandler;
 
         public GetUserByIdQueryHandlerUnitTest()
         {
             _userRepositoryMock = new Mock<IUserRepository>();
-            _getUserByIdQueryHandler = new GetUserByIdQueryHandler(_userRepositoryMock.Object);
+            _unitOfWorkMock = new Mock<IUnitOfWork>();
+
+            _unitOfWorkMock.Setup(uow => uow.UserRepository).Returns(_userRepositoryMock.Object);
+            _getUserByIdQueryHandler = new GetUserByIdQueryHandler(_unitOfWorkMock.Object);
         }
 
         [Fact]
@@ -49,6 +53,7 @@ namespace VisualVibes.Tests.UserTests
             Assert.Equal(userDto.Username, result.Username);
             Assert.Equal(userDto.Password, result.Password);
             Assert.Equal(userDto.Id, result.Id);
+            _unitOfWorkMock.Verify(uow => uow.SaveAsync(), Times.Never);
         }
     }
 }

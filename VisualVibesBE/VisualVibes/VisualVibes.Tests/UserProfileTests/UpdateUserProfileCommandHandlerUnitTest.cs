@@ -11,10 +11,14 @@ namespace VisualVibes.Tests.UserProfileTests
     {
         private UpdateUserProfileCommandHandler _updateUserProfileCommandHandler;
         private readonly Mock<IUserProfileRepository> _userProfileRepositoryMock;
+        private readonly Mock<IUnitOfWork> _unitOfWorkMock;
         public UpdateUserProfileCommandHandlerUnitTest()
         {
             _userProfileRepositoryMock = new Mock<IUserProfileRepository>();
-            _updateUserProfileCommandHandler = new UpdateUserProfileCommandHandler(_userProfileRepositoryMock.Object);
+            _unitOfWorkMock = new Mock<IUnitOfWork>();
+
+            _unitOfWorkMock.Setup(uow => uow.UserProfileRepository).Returns(_userProfileRepositoryMock.Object);
+            _updateUserProfileCommandHandler = new UpdateUserProfileCommandHandler(_unitOfWorkMock.Object);
         }
 
         [Fact]
@@ -57,6 +61,10 @@ namespace VisualVibes.Tests.UserProfileTests
             var updateUserProfileCommand = new UpdateUserProfileCommand(updatedUserProfileDto);
 
             _userProfileRepositoryMock
+                .Setup(x => x.GetByIdAsync(userProfileDto.Id))
+                .ReturnsAsync(userProfile);
+
+            _userProfileRepositoryMock
                 .Setup(x => x.UpdateAsync(It.Is<UserProfile>(y => y.Id == updatedUserProfileDto.Id &&
                 y.ProfilePicture == updatedUserProfileDto.ProfilePicture && y.DateOfBirth == updatedUserProfileDto.DateOfBirth &&
                 y.FirstName == updatedUserProfileDto.FirstName && y.LastName == updatedUserProfileDto.LastName &&
@@ -73,6 +81,7 @@ namespace VisualVibes.Tests.UserProfileTests
             Assert.Equal(userProfile.LastName, result.LastName);
             Assert.Equal(userProfile.Email, result.Email);
             Assert.Equal(userProfile.Bio, result.Bio);
+            _unitOfWorkMock.Verify(uow => uow.SaveAsync(), Times.Once);
         }
     }
 }

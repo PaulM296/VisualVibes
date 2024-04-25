@@ -10,12 +10,16 @@ namespace VisualVibes.Tests.Comments
     public class GetAllPostCommentsQueryHandlerUnitTest
     {
         private readonly Mock<ICommentRepository> _commentRepositoryMock;
+        private readonly Mock<IUnitOfWork> _unitOfWorkMock;
         private GetAllPostCommentsQueryHandler _getAllPostCommentsQueryHandler;
 
         public GetAllPostCommentsQueryHandlerUnitTest()
         {
             _commentRepositoryMock = new Mock<ICommentRepository>();
-            _getAllPostCommentsQueryHandler = new GetAllPostCommentsQueryHandler(_commentRepositoryMock.Object);
+            _unitOfWorkMock = new Mock<IUnitOfWork>();
+
+            _unitOfWorkMock.Setup(uow => uow.CommentRepository).Returns(_commentRepositoryMock.Object);
+            _getAllPostCommentsQueryHandler = new GetAllPostCommentsQueryHandler(_unitOfWorkMock.Object);
         }
 
         [Fact]
@@ -69,6 +73,7 @@ namespace VisualVibes.Tests.Comments
             //Assert
             Assert.NotNull(result);
             Assert.Equal(commentsDtos.Count, result.Count);
+            _unitOfWorkMock.Verify(uow => uow.SaveAsync(), Times.Never);
         }
     }
 }

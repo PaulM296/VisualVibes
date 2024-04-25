@@ -10,12 +10,16 @@ namespace VisualVibes.Tests.Comments
     public class RemoveCommentCommandHandlerUnitTest
     {
         private readonly Mock<ICommentRepository> _commentRepositoryMock;
+        private readonly Mock<IUnitOfWork> _unitOfWorkMock;
         private RemoveCommentCommandHandler _removeCommentCommandHandler;
 
         public RemoveCommentCommandHandlerUnitTest()
         {
             _commentRepositoryMock = new Mock<ICommentRepository>();
-            _removeCommentCommandHandler = new RemoveCommentCommandHandler(_commentRepositoryMock.Object);
+            _unitOfWorkMock = new Mock<IUnitOfWork>();
+
+            _unitOfWorkMock.Setup(uow => uow.CommentRepository).Returns(_commentRepositoryMock.Object);
+            _removeCommentCommandHandler = new RemoveCommentCommandHandler(_unitOfWorkMock.Object);
         }
 
         [Fact]
@@ -51,6 +55,7 @@ namespace VisualVibes.Tests.Comments
             //Assert
             _commentRepositoryMock.Verify(x => x.GetByIdAsync(commentDto.Id), Times.Once);
             _commentRepositoryMock.Verify(x => x.RemoveAsync(comment), Times.Once);
+            _unitOfWorkMock.Verify(uow => uow.SaveAsync(), Times.Once);
         }
     }
 }

@@ -12,10 +12,14 @@ namespace VisualVibes.Tests.UserProfileTests
     {
         private CreateUserProfileCommandHandler _createUserProfileCommandHandler;
         private readonly Mock<IUserProfileRepository> _userProfileRepositoryMock;
+        private readonly Mock<IUnitOfWork> _unitOfWorkMock;
         public CreateUserProfileCommandHandlerUnitTest()
         {
             _userProfileRepositoryMock = new Mock<IUserProfileRepository>();
-            _createUserProfileCommandHandler = new CreateUserProfileCommandHandler(_userProfileRepositoryMock.Object);
+            _unitOfWorkMock = new Mock<IUnitOfWork>();
+
+            _unitOfWorkMock.Setup(uow => uow.UserProfileRepository).Returns(_userProfileRepositoryMock.Object);
+            _createUserProfileCommandHandler = new CreateUserProfileCommandHandler(_unitOfWorkMock.Object);
         }
 
         [Fact]
@@ -33,6 +37,13 @@ namespace VisualVibes.Tests.UserProfileTests
                 Bio = "TestBio"
             };
 
+            var user = new User
+            {
+                Id = userProfileDto.UserId,
+                Username = "ExistingUser",
+                Password = "ExistingPassword"
+            };
+
             var userProfile = new UserProfile
             {
                 Id = userProfileDto.Id,
@@ -45,6 +56,9 @@ namespace VisualVibes.Tests.UserProfileTests
             };
 
             var createUserProfileCommand = new CreateUserProfileCommand(userProfileDto);
+
+            _unitOfWorkMock.Setup(uow => uow.UserRepository.GetByIdAsync(userProfileDto.UserId))
+                .ReturnsAsync(user);
 
             _userProfileRepositoryMock
                 .Setup(x => x.AddAsync(It.Is<UserProfile>( y => y.ProfilePicture == userProfileDto.ProfilePicture &&
@@ -63,6 +77,7 @@ namespace VisualVibes.Tests.UserProfileTests
             Assert.Equal(userProfile.LastName, result.LastName);
             Assert.Equal(userProfile.Email, result.Email);
             Assert.Equal(userProfile.Bio, result.Bio);
+            _unitOfWorkMock.Verify(uow => uow.SaveAsync(), Times.Once);
         }
     }
 }

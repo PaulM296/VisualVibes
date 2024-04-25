@@ -31,8 +31,6 @@ namespace VisualVibes.Infrastructure
             UserProfileRepository = userProfileRepository;
         }
 
-        
-
         public async Task BeginTransactionAsync()
         {
             await _context.Database.BeginTransactionAsync();

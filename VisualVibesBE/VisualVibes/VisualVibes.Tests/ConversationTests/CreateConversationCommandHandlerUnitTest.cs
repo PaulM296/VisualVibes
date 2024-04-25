@@ -10,12 +10,16 @@ namespace VisualVibes.Tests.ConversationTests
     public class CreateConversationCommandHandlerUnitTest
     {
         private readonly Mock<IConversationRepository> _conversationRepositoryMock;
+        private readonly Mock<IUnitOfWork> _unitOfWorkMock;
         private CreateConversationCommandHandler _createConversationCommandHandler;
 
         public CreateConversationCommandHandlerUnitTest()
         {
             _conversationRepositoryMock = new Mock<IConversationRepository>();
-            _createConversationCommandHandler = new CreateConversationCommandHandler(_conversationRepositoryMock.Object);
+            _unitOfWorkMock = new Mock<IUnitOfWork>();
+
+            _unitOfWorkMock.Setup(uow => uow.ConversationRepository).Returns(_conversationRepositoryMock.Object);
+            _createConversationCommandHandler = new CreateConversationCommandHandler(_unitOfWorkMock.Object);
         }
 
         [Fact]
@@ -49,6 +53,7 @@ namespace VisualVibes.Tests.ConversationTests
             Assert.NotNull(result);
             Assert.Equal(conversation.FirstParticipantId, result.FirstParticipantId);
             Assert.Equal(conversation.SecondParticipantId, result.SecondParticipantId);
+            _unitOfWorkMock.Verify(uow => uow.SaveAsync(), Times.Once);
         }
     }
 }

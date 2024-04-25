@@ -11,12 +11,16 @@ namespace VisualVibes.Tests.ConversationTests
     public class GetAllUserConversationsQueryHandlerUnitTest
     {
         private readonly Mock<IConversationRepository> _conversationRepositoryMock;
+        private readonly Mock<IUnitOfWork> _unitOfWorkMock;
         private GetAllUserConversationsQueryHandler _getAllUserConversationsQueryHandler;
 
         public GetAllUserConversationsQueryHandlerUnitTest()
         {
             _conversationRepositoryMock = new Mock<IConversationRepository>();
-            _getAllUserConversationsQueryHandler = new GetAllUserConversationsQueryHandler(_conversationRepositoryMock.Object);
+            _unitOfWorkMock = new Mock<IUnitOfWork>();
+
+            _unitOfWorkMock.Setup(uow => uow.ConversationRepository).Returns(_conversationRepositoryMock.Object);
+            _getAllUserConversationsQueryHandler = new GetAllUserConversationsQueryHandler(_unitOfWorkMock.Object);
         }
 
         [Fact]
@@ -55,7 +59,7 @@ namespace VisualVibes.Tests.ConversationTests
             var getAllUserConversationsQuery = new GetAllUserConversationsQuery(userId);
 
             _conversationRepositoryMock
-                .Setup(x => x.GetAllAsync())
+                .Setup(x => x.GetAllByUserIdAsync(userId))
                 .ReturnsAsync(conversations);
 
             //Act
@@ -64,6 +68,10 @@ namespace VisualVibes.Tests.ConversationTests
             //Assert
             Assert.NotNull(result);
             Assert.Equal(conversationDtos.Count, result.Count);
+            foreach (var conversation in result)
+            {
+                Assert.Contains(conversation.Id, conversations.Select(c => c.Id));
+            }
         }
     }
 }

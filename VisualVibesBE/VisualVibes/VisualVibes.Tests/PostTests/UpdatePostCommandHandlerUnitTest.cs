@@ -11,10 +11,14 @@ namespace VisualVibes.Tests.PostTests
     {
         private UpdatePostCommandHandler _updatePostCommandHandler;
         private readonly Mock<IPostRepository> _postRepositoryMock;
+        private readonly Mock<IUnitOfWork> _unitOfWorkMock;
         public UpdatePostCommandHandlerUnitTest()
         {
             _postRepositoryMock = new Mock<IPostRepository>();
-            _updatePostCommandHandler = new UpdatePostCommandHandler(_postRepositoryMock.Object);
+            _unitOfWorkMock = new Mock<IUnitOfWork>();
+
+            _unitOfWorkMock.Setup(uow => uow.PostRepository).Returns(_postRepositoryMock.Object);
+            _updatePostCommandHandler = new UpdatePostCommandHandler(_unitOfWorkMock.Object);
         }
 
         [Fact]
@@ -51,6 +55,8 @@ namespace VisualVibes.Tests.PostTests
             var updatePostCommand = new UpdatePostCommand(updatedPostDto);
 
             _postRepositoryMock
+            .Setup(x => x.GetByIdAsync(postDto.Id)).ReturnsAsync(post);
+            _postRepositoryMock
                 .Setup(x => x.UpdateAsync(It.Is<Post>(y => y.UserId == updatedPostDto.UserId
                 && y.Pictures == updatedPostDto.Pictures && y.Caption == updatedPostDto.Caption
                 && y.CreatedAt == updatedPostDto.CreatedAt))).ReturnsAsync(post);
@@ -64,6 +70,7 @@ namespace VisualVibes.Tests.PostTests
             Assert.Equal(post.Pictures, result.Pictures);
             Assert.Equal(post.Caption, result.Caption);
             Assert.Equal(post.CreatedAt, result.CreatedAt);
+            _unitOfWorkMock.Verify(uow => uow.SaveAsync(), Times.Once);
         }
     }
 }

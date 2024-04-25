@@ -11,12 +11,16 @@ namespace VisualVibes.Tests.UserTests
     {
 
         private CreateUserCommandHandler _createUserCommandHandler;
-        private Mock<IUserRepository> _userRepositoryMock;
+        private readonly Mock<IUserRepository> _userRepositoryMock;
+        private readonly Mock<IUnitOfWork> _unitOfWorkMock;
 
         public CreateUserCommandHandlerUnitTest()
         {
             _userRepositoryMock = new Mock<IUserRepository>();
-            _createUserCommandHandler = new CreateUserCommandHandler(_userRepositoryMock.Object);
+            _unitOfWorkMock = new Mock<IUnitOfWork>();
+
+            _unitOfWorkMock.Setup(uow => uow.UserRepository).Returns(_userRepositoryMock.Object);
+            _createUserCommandHandler = new CreateUserCommandHandler(_unitOfWorkMock.Object);
         }
 
         [Fact]
@@ -50,6 +54,7 @@ namespace VisualVibes.Tests.UserTests
             Assert.NotNull(result);
             Assert.Equal(user.Username, result.Username);
             Assert.Equal(user.Password, result.Password);
+            _unitOfWorkMock.Verify(uow => uow.SaveAsync(), Times.Once);
         }
     }
 }

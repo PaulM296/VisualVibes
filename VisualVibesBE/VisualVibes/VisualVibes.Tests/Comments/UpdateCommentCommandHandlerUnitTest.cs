@@ -10,12 +10,16 @@ namespace VisualVibes.Tests.Comments
     public class UpdateCommentCommandHandlerUnitTest
     {
         private readonly Mock<ICommentRepository> _commentRepositoryMock;
+        private readonly Mock<IUnitOfWork> _unitOfWorkMock;
         private UpdateCommentCommandHandler _updateCommentCommandHandler;
 
         public UpdateCommentCommandHandlerUnitTest()
         {
             _commentRepositoryMock = new Mock<ICommentRepository>();
-            _updateCommentCommandHandler = new UpdateCommentCommandHandler(_commentRepositoryMock.Object);
+            _unitOfWorkMock = new Mock<IUnitOfWork>();
+
+            _unitOfWorkMock.Setup(uow => uow.CommentRepository).Returns(_commentRepositoryMock.Object);
+            _updateCommentCommandHandler = new UpdateCommentCommandHandler(_unitOfWorkMock.Object);
         }
 
         [Fact]
@@ -52,6 +56,8 @@ namespace VisualVibes.Tests.Comments
             var updateCommentCommand = new UpdateCommentCommand(updatedCommentDto);
 
             _commentRepositoryMock
+                .Setup(x => x.GetByIdAsync(commentDto.Id)).ReturnsAsync(comment);
+            _commentRepositoryMock
                 .Setup(x => x.UpdateAsync(It.Is<Comment>(y => y.UserId == updatedCommentDto.UserId &&
                 y.PostId == updatedCommentDto.PostId && y.Text == updatedCommentDto.Text &&
                 y.CreatedAt == updatedCommentDto.CreatedAt))).ReturnsAsync(comment);
@@ -65,6 +71,7 @@ namespace VisualVibes.Tests.Comments
             Assert.Equal(comment.PostId, result.PostId);
             Assert.Equal(comment.Text, result.Text);
             Assert.Equal(comment.CreatedAt, result.CreatedAt);
+            _unitOfWorkMock.Verify(uow => uow.SaveAsync(), Times.Once);
         }
     }
 }

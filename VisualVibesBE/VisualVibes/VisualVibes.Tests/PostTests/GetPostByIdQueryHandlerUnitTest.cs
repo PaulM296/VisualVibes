@@ -10,12 +10,16 @@ namespace VisualVibes.Tests.PostTests
     public class GetPostByIdQueryHandlerUnitTest
     {
         private readonly Mock<IPostRepository> _postRepositoryMock;
+        private readonly Mock<IUnitOfWork> _unitOfWorkMock;
         private GetPostByIdQueryHandler _getPostByIdQueryHandler;
 
         public GetPostByIdQueryHandlerUnitTest()
         {
             _postRepositoryMock = new Mock<IPostRepository>();
-            _getPostByIdQueryHandler = new GetPostByIdQueryHandler(_postRepositoryMock.Object);
+            _unitOfWorkMock = new Mock<IUnitOfWork>();
+
+            _unitOfWorkMock.Setup(uow => uow.PostRepository).Returns(_postRepositoryMock.Object);
+            _getPostByIdQueryHandler = new GetPostByIdQueryHandler(_unitOfWorkMock.Object);
         }
 
         [Fact]
@@ -55,6 +59,7 @@ namespace VisualVibes.Tests.PostTests
             Assert.Equal(post.Pictures, result.Pictures);
             Assert.Equal(post.Caption, result.Caption);
             Assert.Equal(post.CreatedAt, result.CreatedAt);
+            _unitOfWorkMock.Verify(uow => uow.SaveAsync(), Times.Never);
         }
     }
 }

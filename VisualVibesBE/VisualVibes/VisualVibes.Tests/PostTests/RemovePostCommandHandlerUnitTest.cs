@@ -12,12 +12,16 @@ namespace VisualVibes.Tests.PostTests
     public class RemovePostCommandHandlerUnitTest
     {
         private RemovePostCommandHandler _removePostCommandHandler;
-        private Mock<IPostRepository> _postRepositoryMock;
+        private readonly Mock<IPostRepository> _postRepositoryMock;
+        private readonly Mock<IUnitOfWork> _unitOfWorkMock;
 
         public RemovePostCommandHandlerUnitTest()
         {
             _postRepositoryMock = new Mock<IPostRepository>();
-            _removePostCommandHandler = new RemovePostCommandHandler(_postRepositoryMock.Object);
+            _unitOfWorkMock = new Mock<IUnitOfWork>();
+
+            _unitOfWorkMock.Setup(uow => uow.PostRepository).Returns(_postRepositoryMock.Object);
+            _removePostCommandHandler = new RemovePostCommandHandler(_unitOfWorkMock.Object);
         }
 
         [Fact]
@@ -53,6 +57,7 @@ namespace VisualVibes.Tests.PostTests
             //Assert
             _postRepositoryMock.Verify(x => x.GetByIdAsync(postDto.Id), Times.Once);
             _postRepositoryMock.Verify(x => x.RemoveAsync(post), Times.Once);
+            _unitOfWorkMock.Verify(uow => uow.SaveAsync(), Times.Once);
         }
     }
 }
