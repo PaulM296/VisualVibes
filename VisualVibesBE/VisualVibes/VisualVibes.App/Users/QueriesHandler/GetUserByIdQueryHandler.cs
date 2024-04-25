@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using VisualVibes.App.DTOs;
+using VisualVibes.App.Exceptions;
 using VisualVibes.App.Interfaces;
 using VisualVibes.App.Users.Queries;
 
@@ -16,11 +17,11 @@ namespace VisualVibes.App.Users.QueriesHandler
 
         public async Task<UserDto> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
         {
-            var user = await _unitOfWork.UserRepository.GetByIdAsync(request.userId);
+            var user = await _unitOfWork.UserRepository.GetByIdAsync(request.UserId);
 
             if (user == null)
             {
-                throw new ApplicationException("User not found!");
+                throw new UserNotFoundException($"Could not get the user with Id {request.UserId}, because it doesn't exist!");
             }
 
             return UserDto.FromUser(user);

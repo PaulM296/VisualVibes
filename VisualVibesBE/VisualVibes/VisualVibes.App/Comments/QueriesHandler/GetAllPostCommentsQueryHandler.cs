@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using VisualVibes.App.Comments.Queries;
 using VisualVibes.App.DTOs;
+using VisualVibes.App.Exceptions;
 using VisualVibes.App.Interfaces;
 
 namespace VisualVibes.App.Comments.QueriesHandler
@@ -20,7 +21,7 @@ namespace VisualVibes.App.Comments.QueriesHandler
 
             if (comments.Count == 0)
             {
-                throw new ApplicationException("Comments not found");
+                throw new CommentsNotFoundException($"Could not get the comments from PostId {request.PostId}, because it doesn't have any yet!");
             }
 
             var commentDtos = comments.Select(CommentDto.FromComment).ToList();

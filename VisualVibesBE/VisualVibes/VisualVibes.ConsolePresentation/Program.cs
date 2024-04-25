@@ -282,74 +282,74 @@ foreach (var reaction in postReactions)
     Console.WriteLine($"\n\nComment ID: {reaction.Id}, UserId: {reaction.UserId}, PostId: {reaction.PostId}, ReactionType: {reaction.ReactionType}");
 }
 
-Console.WriteLine("\n\nTesting RemoveUserDto.\n");
+//Console.WriteLine("\n\nTesting RemoveUserDto.\n");
 
-try
-{
-    await mediator.Send(new RemoveUserCommand(createdUser.Id));
-    Console.WriteLine($"User deleted successfully");
-}
-catch (Exception ex)
-{
-    Console.WriteLine($"Error removing user: {ex.Message}");
-}
+//try
+//{
+//    await mediator.Send(new RemoveUserCommand(createdUser.Id));
+//    Console.WriteLine($"User deleted successfully");
+//}
+//catch (Exception ex)
+//{
+//    Console.WriteLine($"Error removing user: {ex.Message}");
+//}
 
-Console.WriteLine("\n\nTesting RemovePostDto.\n");
+//Console.WriteLine("\n\nTesting RemovePostDto.\n");
 
-try
-{
-    await mediator.Send(new RemovePostCommand(createdPost.Id));
-    Console.WriteLine($"Post deleted successfully");
-}
-catch (Exception ex)
-{
-    Console.WriteLine($"Error removing post: {ex.Message}");
-}
+//try
+//{
+//    await mediator.Send(new RemovePostCommand(createdPost.Id));
+//    Console.WriteLine($"Post deleted successfully");
+//}
+//catch (Exception ex)
+//{
+//    Console.WriteLine($"Error removing post: {ex.Message}");
+//}
 
-Console.WriteLine("\n\nTesting RemoveConversationDto.\n");
+//Console.WriteLine("\n\nTesting RemoveConversationDto.\n");
 
-try
-{
-    await mediator.Send(new RemoveConversationCommand(createdConversation.Id));
-    Console.WriteLine($"Conversation deleted successfully");
-}
-catch (Exception ex)
-{
-    Console.WriteLine($"Error removing conversation: {ex.Message}");
-}
+//try
+//{
+//    await mediator.Send(new RemoveConversationCommand(createdConversation.Id));
+//    Console.WriteLine($"Conversation deleted successfully");
+//}
+//catch (Exception ex)
+//{
+//    Console.WriteLine($"Error removing conversation: {ex.Message}");
+//}
 
-Console.WriteLine("\n\nTesting RemoveMessage.\n");
+//Console.WriteLine("\n\nTesting RemoveMessage.\n");
 
-try
-{
-    await mediator.Send(new RemoveMessageCommand(createdMessage1.Id));
-    Console.WriteLine($"Message deleted successfully");
-}
-catch (Exception ex)
-{
-    Console.WriteLine($"Error removing message: {ex.Message}");
-}
+//try
+//{
+//    await mediator.Send(new RemoveMessageCommand(createdMessage1.Id));
+//    Console.WriteLine($"Message deleted successfully");
+//}
+//catch (Exception ex)
+//{
+//    Console.WriteLine($"Error removing message: {ex.Message}");
+//}
 
-Console.WriteLine("\n\nTesting RemoveComment.\n");
+//Console.WriteLine("\n\nTesting RemoveComment.\n");
 
-try
-{
-    await mediator.Send(new RemoveCommentCommand(createdCommentDto2.Id));
-    Console.WriteLine($"Comment deleted successfully");
-}
-catch (Exception ex)
-{
-    Console.WriteLine($"Error removing comment: {ex.Message}");
-}
+//try
+//{
+//    await mediator.Send(new RemoveCommentCommand(createdCommentDto2.Id));
+//    Console.WriteLine($"Comment deleted successfully");
+//}
+//catch (Exception ex)
+//{
+//    Console.WriteLine($"Error removing comment: {ex.Message}");
+//}
 
-Console.WriteLine("\n\nTesting RemoveReaction.\n");
+//Console.WriteLine("\n\nTesting RemoveReaction.\n");
 
-try
-{
-    await mediator.Send(new RemoveReactionCommand(createdReactionCommand2.Id));
-    Console.WriteLine($"Reaction deleted successfully");
-}
-catch (Exception ex)
-{
-    Console.WriteLine($"Error removing reaction: {ex.Message}");
-}
+//try
+//{
+//    await mediator.Send(new RemoveReactionCommand(createdReactionCommand2.Id));
+//    Console.WriteLine($"Reaction deleted successfully");
+//}
+//catch (Exception ex)
+//{
+//    Console.WriteLine($"Error removing reaction: {ex.Message}");
+//}

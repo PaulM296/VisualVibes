@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using VisualVibes.App.Exceptions;
 using VisualVibes.App.Interfaces;
 using VisualVibes.App.Users.Commands;
 using VisualVibes.Domain.Models.BaseEntity;
@@ -20,7 +21,7 @@ namespace VisualVibes.App.Users.CommandsHandler
 
             if (userToRemove == null)
             {
-                throw new Exception($"User with ID {request.Id} not found.");
+                throw new UserNotFoundException($"The user with ID {request.Id} doesn't exist and it could not be removed!");
             }
 
             await _unitOfWork.UserRepository.RemoveAsync(userToRemove);

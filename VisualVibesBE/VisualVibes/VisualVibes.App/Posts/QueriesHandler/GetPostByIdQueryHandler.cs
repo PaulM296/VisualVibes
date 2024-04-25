@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using VisualVibes.App.DTOs;
+using VisualVibes.App.Exceptions;
 using VisualVibes.App.Interfaces;
 using VisualVibes.App.Posts.Queries;
 
@@ -20,7 +21,7 @@ namespace VisualVibes.App.Posts.QueriesHandler
 
             if (post == null)
             {
-                throw new ApplicationException("Post not found");
+                throw new PostNotFoundException($"Could not get the post with Id {request.PostId}, because it doesn't exist!");
             }
 
             return PostDto.FromPost(post);

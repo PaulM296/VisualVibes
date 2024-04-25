@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using VisualVibes.App.DTOs;
+using VisualVibes.App.Exceptions;
 using VisualVibes.App.Interfaces;
 using VisualVibes.App.Users.Commands;
 using VisualVibes.Domain.Models.BaseEntity;
@@ -21,7 +22,7 @@ namespace VisualVibes.App.Users.CommandsHandler
 
             if (user == null)
             {
-                throw new Exception("User not found");
+                throw new UserNotFoundException($"The user with ID {request.UserDto.Id} doesn't exist and it could not be updated!");
             }
 
             user.Username = request.UserDto.Username;

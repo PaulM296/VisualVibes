@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using VisualVibes.App.Conversations.Queries;
 using VisualVibes.App.DTOs;
+using VisualVibes.App.Exceptions;
 using VisualVibes.App.Interfaces;
 
 namespace VisualVibes.App.Conversations.QueriesHandlers
@@ -18,7 +19,7 @@ namespace VisualVibes.App.Conversations.QueriesHandlers
 
             if (conversations.Count == 0)
             {
-                throw new ApplicationException("Conversations not found");
+                throw new ConversationNotFoundException($"Could not get the conversations for UserId {request.UserId}, because it doesn't have any yet!");
             }
 
             var conversationDtos = conversations.Select(ConversationDto.FromConversation).ToList();

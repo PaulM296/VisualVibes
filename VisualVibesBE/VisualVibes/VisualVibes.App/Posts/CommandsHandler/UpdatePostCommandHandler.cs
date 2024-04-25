@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using VisualVibes.App.DTOs;
+using VisualVibes.App.Exceptions;
 using VisualVibes.App.Interfaces;
 using VisualVibes.App.Posts.Commands;
 using VisualVibes.App.Users.Queries;
@@ -21,7 +22,7 @@ namespace VisualVibes.App.Posts.CommandsHandler
 
             if(getPost ==  null)
             {
-                throw new Exception("Post not found");
+                throw new PostNotFoundException($"The post with ID {request.PostDto.Id} doesn't exist and it could not be updated!");
             }
 
             getPost.Caption = request.PostDto.Caption;

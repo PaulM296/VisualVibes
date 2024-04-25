@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using VisualVibes.App.Conversations.Commands;
 using VisualVibes.App.DTOs;
+using VisualVibes.App.Exceptions;
 using VisualVibes.App.Interfaces;
 using VisualVibes.Domain.Models.BaseEntity;
 
@@ -19,7 +20,7 @@ namespace VisualVibes.App.Conversations.CommandsHandler
 
             if(conversationToRemove == null)
             {
-                throw new Exception($"Conversation with ID {request.Id} not found.");
+                throw new ConversationNotFoundException($"The conversation with ID {request.Id} doesn't exist and it could not be removed!");
             }
 
             await _unitOfWork.ConversationRepository.RemoveAsync(conversationToRemove);

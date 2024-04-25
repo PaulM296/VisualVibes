@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using VisualVibes.App.Exceptions;
 using VisualVibes.App.Interfaces;
 using VisualVibes.App.Posts.Commands;
 using VisualVibes.Domain.Models.BaseEntity;
@@ -20,7 +21,7 @@ namespace VisualVibes.App.Posts.CommandsHandler
 
             if (postToRemove == null)
             {
-                throw new Exception($"Post with ID {request.Id} not found.");
+                throw new PostNotFoundException($"The post with ID {request.Id} doesn't exist and it could not be removed!");
             }
 
             await _unitOfWork.PostRepository.RemoveAsync(postToRemove);

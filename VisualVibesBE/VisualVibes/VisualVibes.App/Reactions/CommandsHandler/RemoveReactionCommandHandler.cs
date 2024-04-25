@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using VisualVibes.App.DTOs;
+using VisualVibes.App.Exceptions;
 using VisualVibes.App.Interfaces;
 using VisualVibes.App.Reactions.Commands;
 using VisualVibes.Domain.Models.BaseEntity;
@@ -19,7 +20,7 @@ namespace VisualVibes.App.Reactions.CommandsHandler
 
             if(reactionToRemove == null)
             {
-                throw new Exception($"Reaction with ID {request.Id} not found.");
+                throw new ReactionNotFoundException($"The reaction with ID {request.Id} doesn't exist and it could not be removed!");
             };
 
             await _unitOfWork.ReactionRepository.RemoveAsync(reactionToRemove);

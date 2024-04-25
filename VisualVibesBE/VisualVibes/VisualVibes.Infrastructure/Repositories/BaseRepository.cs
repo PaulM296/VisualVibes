@@ -2,6 +2,7 @@
 using VisualVibes.App;
 using VisualVibes.App.Interfaces;
 using VisualVibes.Domain.Models.BaseEntity;
+using VisualVibes.Infrastructure.Exceptions;
 
 namespace VisualVibes.Infrastructure.Repositories
 {
@@ -20,9 +21,8 @@ namespace VisualVibes.Infrastructure.Repositories
         {
             if (_context.Set<T>().Contains(entity))
             {
-                Console.WriteLine($"Could not add the {nameof(T)}, because it already exists.");
                 await _logger.LogAsync(nameof(AddAsync), isSuccess: false);
-                return null;
+                throw new EntityAlreadyExistsException($"Could not add the {nameof(T)}, because it already exists.");
             }
 
             _context.Set<T>().Add(entity);
@@ -71,9 +71,8 @@ namespace VisualVibes.Infrastructure.Repositories
 
             if (entityToRemove ==  null)
             {
-                Console.WriteLine("The entity does not exist, therefore it could not be removed.");
                 await _logger.LogAsync(nameof(RemoveAsync), isSuccess: false);
-                return null;
+                throw new EntityNotFoundException($"The {nameof(T)} does not exist, therefore it could not be removed.");
             }
 
             _context.Set<T>().Remove(entityToRemove);
@@ -91,7 +90,7 @@ namespace VisualVibes.Infrastructure.Repositories
             if (entity == null)
             {
                 await _logger.LogAsync(nameof(UpdateAsync), isSuccess: false);
-                return null;
+                throw new EntityNotFoundException($"The {nameof(T)} has not been found, therefore it could not be removed.");
             }
 
             _context.Set<T>().Update(updatedEntity);

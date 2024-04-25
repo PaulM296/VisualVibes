@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using VisualVibes.App.DTOs;
+using VisualVibes.App.Exceptions;
 using VisualVibes.App.Interfaces;
 using VisualVibes.App.Messages.Queries;
 using VisualVibes.Domain.Models.BaseEntity;
@@ -19,7 +20,7 @@ namespace VisualVibes.App.Messages.QueriesHandler
 
             if (messages.Count == 0)
             {
-                throw new ApplicationException("Messages not found");
+                throw new MessageNotFoundException($"Could not get the messages from ConversationId {request.ConversationId}, because it doesn't have any yet!");
             }
 
             var messagesDtos = new List<MessageDto>();

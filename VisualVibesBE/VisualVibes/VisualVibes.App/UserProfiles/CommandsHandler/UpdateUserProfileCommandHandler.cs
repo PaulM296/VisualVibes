@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using VisualVibes.App.DTOs;
+using VisualVibes.App.Exceptions;
 using VisualVibes.App.Interfaces;
 using VisualVibes.App.UserProfiles.Commands;
 using VisualVibes.Domain.Models.BaseEntity;
@@ -21,7 +22,7 @@ namespace VisualVibes.App.UserProfiles.CommandsHandler
 
             if (getUserProfile == null)
             {
-                throw new Exception("UserProfile not found");
+                throw new UserProfileNotFound($"The userProfile with Id {request.UserProfileDto.Id} doesn't exist and it could not be updated!");
             }
 
             getUserProfile.ProfilePicture = request.UserProfileDto.ProfilePicture;

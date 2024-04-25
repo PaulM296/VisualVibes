@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using VisualVibes.App.Comments.Commands;
 using VisualVibes.App.DTOs;
+using VisualVibes.App.Exceptions;
 using VisualVibes.App.Interfaces;
 using VisualVibes.Domain.Models.BaseEntity;
 
@@ -20,12 +21,7 @@ namespace VisualVibes.App.Comments.CommandsHandler
 
             if (commentToRemove == null)
             {
-                Console.WriteLine($"Failed to find comment with ID {request.Id} for removal.");
-                throw new Exception($"Comment with ID {request.Id} not found.");
-            }
-            else
-            {
-                Console.WriteLine($"Removing comment with ID {request.Id}.");
+                throw new CommentsNotFoundException($"The comment with ID {request.Id} doesn't exist and it could not be removed!");
             }
 
             await _unitOfWork.CommentRepository.RemoveAsync(commentToRemove);
