@@ -10,6 +10,7 @@
         public IReactionRepository ReactionRepository { get; }
         public IUserRepository UserRepository { get; }
         public IUserProfileRepository UserProfileRepository { get; }
+        public IUserFollowerRepository UserFollowerRepository { get; }
 
         Task SaveAsync();
         Task BeginTransactionAsync();

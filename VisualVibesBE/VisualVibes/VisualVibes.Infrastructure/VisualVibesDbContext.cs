@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using VisualVibes.Domain.Models;
 using VisualVibes.Domain.Models.BaseEntity;
 using VisualVibes.Infrastructure.Configurations;
 
@@ -14,6 +15,7 @@ namespace VisualVibes.Infrastructure
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Feed> Feeds { get; set; }
         public DbSet<Reaction> Reactions { get; set; }
+        public DbSet<UserFollower> UserFollower { get; set; }
 
         public VisualVibesDbContext(DbContextOptions options) : base(options)
         {

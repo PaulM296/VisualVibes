@@ -16,6 +16,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="UserFollowers\QueriesHandler\" />
+    <Folder Include="UserFollowers\Queries\" />
     <Folder Include="UserProfiles\QueriesHandler\" />
     <Folder Include="UserProfiles\Queries\" />
   </ItemGroup>

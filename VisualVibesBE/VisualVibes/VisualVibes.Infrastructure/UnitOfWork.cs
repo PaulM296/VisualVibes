@@ -14,11 +14,12 @@ namespace VisualVibes.Infrastructure
         public IReactionRepository ReactionRepository { get; private set; }
         public IUserProfileRepository UserProfileRepository { get; private set; }
         public IUserRepository UserRepository { get; private set; }
+        public IUserFollowerRepository UserFollowerRepository { get; private set; }
 
         public UnitOfWork(VisualVibesDbContext context, ICommentRepository commentRepository,
             IConversationRepository conversationRepository, IFeedRepository feedRepository, IMessageRepository messageRepository,
             IPostRepository postRepository, IReactionRepository reactionRepository, IUserRepository userRepository, 
-            IUserProfileRepository userProfileRepository)
+            IUserProfileRepository userProfileRepository, IUserFollowerRepository userFollowerRepository)
         {
             _context = context;
             CommentRepository = commentRepository;
@@ -29,6 +30,7 @@ namespace VisualVibes.Infrastructure
             ReactionRepository = reactionRepository;
             UserRepository = userRepository;
             UserProfileRepository = userProfileRepository;
+            UserFollowerRepository = userFollowerRepository;
         }
 
         public async Task BeginTransactionAsync()
