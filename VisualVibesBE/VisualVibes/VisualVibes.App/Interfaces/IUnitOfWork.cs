@@ -11,6 +11,7 @@
         public IUserRepository UserRepository { get; }
         public IUserProfileRepository UserProfileRepository { get; }
         public IUserFollowerRepository UserFollowerRepository { get; }
+        public IFeedPostRepository FeedPostRepository { get; }
 
         Task SaveAsync();
         Task BeginTransactionAsync();

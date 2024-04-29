@@ -24,6 +24,9 @@ namespace VisualVibes.App.Users.CommandsHandler
             };
 
             var createdUser = await _unitOfWork.UserRepository.AddAsync(user);
+            // Ensure a feed is created for the new user
+            var feed = new Feed { UserID = createdUser.Id };
+            await _unitOfWork.FeedRepository.AddAsync(feed);
             await _unitOfWork.SaveAsync();
 
             return UserDto.FromUser(createdUser);

@@ -4,7 +4,6 @@ namespace VisualVibes.Infrastructure
 {
     public class UnitOfWork : IUnitOfWork
     {
-
         private readonly VisualVibesDbContext _context;
         public ICommentRepository CommentRepository { get; private set; }
         public IConversationRepository ConversationRepository { get; private set; }
@@ -15,11 +14,12 @@ namespace VisualVibes.Infrastructure
         public IUserProfileRepository UserProfileRepository { get; private set; }
         public IUserRepository UserRepository { get; private set; }
         public IUserFollowerRepository UserFollowerRepository { get; private set; }
+        public IFeedPostRepository FeedPostRepository { get; private set; }
 
         public UnitOfWork(VisualVibesDbContext context, ICommentRepository commentRepository,
             IConversationRepository conversationRepository, IFeedRepository feedRepository, IMessageRepository messageRepository,
             IPostRepository postRepository, IReactionRepository reactionRepository, IUserRepository userRepository, 
-            IUserProfileRepository userProfileRepository, IUserFollowerRepository userFollowerRepository)
+            IUserProfileRepository userProfileRepository, IUserFollowerRepository userFollowerRepository, IFeedPostRepository feedPostRepository)
         {
             _context = context;
             CommentRepository = commentRepository;
@@ -31,6 +31,7 @@ namespace VisualVibes.Infrastructure
             UserRepository = userRepository;
             UserProfileRepository = userProfileRepository;
             UserFollowerRepository = userFollowerRepository;
+            FeedPostRepository = feedPostRepository;
         }
 
         public async Task BeginTransactionAsync()

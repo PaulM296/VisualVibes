@@ -12,8 +12,8 @@ using VisualVibes.Infrastructure;
 namespace VisualVibes.Infrastructure.Migrations
 {
     [DbContext(typeof(VisualVibesDbContext))]
-    [Migration("20240426132802_AddedUserFollowers")]
-    partial class AddedUserFollowers
+    [Migration("20240429121131_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -1,6 +1,9 @@
-﻿using VisualVibes.App;
+﻿using Microsoft.EntityFrameworkCore;
+using VisualVibes.App;
 using VisualVibes.App.Interfaces;
+using VisualVibes.Domain.Models;
 using VisualVibes.Domain.Models.BaseEntity;
+using VisualVibes.Infrastructure.Exceptions;
 
 namespace VisualVibes.Infrastructure.Repositories
 {
@@ -19,5 +22,24 @@ namespace VisualVibes.Infrastructure.Repositories
         {
             throw new NotImplementedException();
         }
+
+        public async Task<User> GetUserByIdAsync(Guid id)
+        {
+            var entity = await _context.Users
+                .Include(u => u.Followers)
+                    .ThenInclude(f => f.Follower)
+                .Include(u => u.Following)
+                    .ThenInclude(f => f.Following)
+                .FirstOrDefaultAsync(u => u.Id == id);
+
+            if (entity == null)
+            {
+                await _logger.LogAsync(nameof(GetByIdAsync), isSuccess: false);
+                throw new EntityNotFoundException($"User with ID {id} not found.");
+            }
+            await _logger.LogAsync(nameof(GetByIdAsync), isSuccess: true);
+            return entity;
+        }
+
     }
 }

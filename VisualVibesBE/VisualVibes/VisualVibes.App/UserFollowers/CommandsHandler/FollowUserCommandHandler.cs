@@ -16,6 +16,9 @@ namespace VisualVibes.App.UserFollowers.CommandsHandler
         public async Task<Unit> Handle(FollowUserCommand request, CancellationToken cancellationToken)
         {
             await _unitOfWork.UserFollowerRepository.AddFollowerAsync(request.FollowerId, request.FollowingId);
+
+            await _unitOfWork.SaveAsync();
+
             return Unit.Value;
         }
     }

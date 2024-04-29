@@ -16,6 +16,7 @@ namespace VisualVibes.Infrastructure
         public DbSet<Feed> Feeds { get; set; }
         public DbSet<Reaction> Reactions { get; set; }
         public DbSet<UserFollower> UserFollower { get; set; }
+        public DbSet<FeedPost> FeedPost { get; set; }
 
         public VisualVibesDbContext(DbContextOptions options) : base(options)
         {
