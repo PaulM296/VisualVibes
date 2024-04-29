@@ -52,7 +52,7 @@ namespace VisualVibes.Infrastructure.Repositories
         {
             return await _context.UserFollower
                 .Include(uf => uf.Following)
-                .Where(uf => uf.FollowingId == userId)
+                .Where(uf => uf.FollowerId == userId)
                 .ToListAsync();
         }
     }

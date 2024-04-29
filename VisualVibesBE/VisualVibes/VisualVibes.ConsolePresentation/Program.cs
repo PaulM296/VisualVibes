@@ -14,6 +14,7 @@ using VisualVibes.App.Posts.Queries;
 using VisualVibes.App.Reactions.Commands;
 using VisualVibes.App.Reactions.Queries;
 using VisualVibes.App.UserFollowers.Commands;
+using VisualVibes.App.UserFollowers.Queries;
 using VisualVibes.App.UserProfiles.Commands;
 using VisualVibes.App.Users.Commands;
 using VisualVibes.App.Users.Queries;
@@ -288,18 +289,18 @@ await mediator.Send(new FollowUserCommand(createdUser.Id, createdUser2.Id));
 Console.WriteLine("Follow operation completed.");
 
 
-//// Get followers
-//var followers = await mediator.Send(new GetFollowersQuery(followingId));
-//Console.WriteLine($"Number of followers for user {followingId}: {followers.Count}");
+// Get followers
+var followers = await mediator.Send(new GetUserFollowersByIdQuery(createdUser2.Id));
+Console.WriteLine($"Number of followers for user {createdUser2.Id}: {followers.Count()}");
 
-//// Get followings
-//var followings = await mediator.Send(new GetFollowingQuery(followerId));
-//Console.WriteLine($"Number following by user {followerId}: {followings.Count}");
+// Get followings
+var followings = await mediator.Send(new GetUserFollowingByIdQuery(createdUser.Id));
+Console.WriteLine($"Number following by user {createdUser.Id}: {followings.Count()}");
 
 // Unfollow user
-Console.WriteLine("Attempting to unfollow a user...");
-await mediator.Send(new UnfollowUserCommand(createdUser.Id, createdUser2.Id));
-Console.WriteLine("Unfollow operation completed.");
+//Console.WriteLine("Attempting to unfollow a user...");
+//await mediator.Send(new UnfollowUserCommand(createdUser.Id, createdUser2.Id));
+//Console.WriteLine("Unfollow operation completed.");
 
 //Console.WriteLine("\n\nTesting RemoveUserDto.\n");
 
