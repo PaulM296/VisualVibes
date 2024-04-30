@@ -7,8 +7,6 @@ namespace VisualVibes.App.DTOs
         public Guid Id { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
-        public List<UserDto> Followers { get; set; }
-        public List<UserDto> Following { get; set; }
 
         public static UserDto FromUser(User User)
         {

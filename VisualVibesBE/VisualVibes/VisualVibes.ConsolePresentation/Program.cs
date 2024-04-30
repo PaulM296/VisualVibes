@@ -87,6 +87,7 @@ var userDto2 = new UserDto
     Username = "Waganaha",
     Password = "456123"
 };
+
 var createdUser2 = await mediator.Send(new CreateUserCommand(userDto2));
 
 var userDto3 = new UserDto
