@@ -89,6 +89,16 @@ var userDto2 = new UserDto
 };
 var createdUser2 = await mediator.Send(new CreateUserCommand(userDto2));
 
+var userDto3 = new UserDto
+{
+    Id = Guid.NewGuid(),
+    Username = "LukeX19",
+    Password = "123456",
+};
+
+var createdUser3 = await mediator.Send(new CreateUserCommand(userDto3));
+
+
 Console.WriteLine("\n\nTesting UserProfileDto.\n");
 
 var userProfileDto = new UserProfileDto
@@ -137,6 +147,17 @@ Console.WriteLine($"Created post: ID: {createdPost.Id}, From UserId: {postDto.Us
 
 var retrievedPost = await mediator.Send(new GetPostByIdQuery(createdPost.Id));
 Console.WriteLine($"Retrieved post successfully! ID: {retrievedPost.Id}");
+
+var postDto2 = new PostDto
+{
+    Id = Guid.NewGuid(),
+    UserId = createdUser.Id,
+    Caption = "This is a new new post",
+    Pictures = "picture1, picture2",
+    CreatedAt = DateTime.UtcNow
+};
+
+var createdPost2 = await mediator.Send(new CreatePostCommand(postDto2));
 
 var updatedPostDto = new PostDto
 {
@@ -310,6 +331,9 @@ Console.WriteLine("Attempting to follow a user...");
 await mediator.Send(new FollowUserCommand(createdUser2.Id, createdUser.Id));
 Console.WriteLine("Follow operation completed.");
 
+await mediator.Send(new FollowUserCommand(createdUser3.Id, createdUser.Id));
+await mediator.Send(new FollowUserCommand(createdUser3.Id, createdUser2.Id));
+
 // Get followers
 var followers = await mediator.Send(new GetUserFollowersByIdQuery(createdUser2.Id));
 Console.WriteLine($"Number of followers for user {createdUser2.Id}: {followers.Count()}");
@@ -396,3 +420,4 @@ Console.WriteLine($"Number following by user {createdUser.Id}: {followings.Count
 //}
 
 await mediator.Send(new AddPostToFeedCommand(createdPost.Id));
+await mediator.Send(new AddPostToFeedCommand(createdPost2.Id));

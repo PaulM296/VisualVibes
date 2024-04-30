@@ -1,4 +1,5 @@
-﻿using VisualVibes.App;
+﻿using Microsoft.EntityFrameworkCore;
+using VisualVibes.App;
 using VisualVibes.App.Interfaces;
 using VisualVibes.Domain.Models.BaseEntity;
 
