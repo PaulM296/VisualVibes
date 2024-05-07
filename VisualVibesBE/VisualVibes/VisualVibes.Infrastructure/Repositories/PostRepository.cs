@@ -11,5 +11,13 @@ namespace VisualVibes.Infrastructure.Repositories
         {
 
         }
+
+        public async Task<List<Post>> GetTopReactedPostsAsync(int count)
+        {
+            return await _context.Posts
+                .OrderByDescending(p => p.Reactions.Count)
+                .Take(count)
+                .ToListAsync();
+        }
     }
 }

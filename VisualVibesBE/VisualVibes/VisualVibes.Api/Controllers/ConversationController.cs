@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using VisualVibes.App.DTOs;
-using VisualVibes.Domain.Models.BaseEntity;
 
 namespace VisualVibes.Api.Controllers
 {

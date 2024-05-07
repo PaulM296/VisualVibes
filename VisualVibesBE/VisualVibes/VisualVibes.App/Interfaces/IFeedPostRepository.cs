@@ -6,5 +6,6 @@ namespace VisualVibes.App.Interfaces
     {
         Task AddPostToFeedAsync(Guid postId);
         Task<IEnumerable<Post>> GetFeedPostsAsync(Guid feedId);
+        Task EnsureFeedForUserAsync(Guid userId);
     }
 }

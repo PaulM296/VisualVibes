@@ -36,16 +36,49 @@ namespace VisualVibes.Infrastructure.Repositories
                     Console.WriteLine($"Feed created for follower {follower.FollowerId}");
                 }
 
-                _context.FeedPost.Add(new FeedPost
+                // Check if the FeedPost already exists
+                var feedPostExists = await _context.FeedPost.AnyAsync(fp => fp.FeedId == feed.Id && fp.PostId == postId);
+                if (!feedPostExists)
                 {
-                    FeedId = feed.Id,
-                    PostId = postId,
-                });
-                Console.WriteLine($"Adding post {postId} to feed {feed.Id} of follower {follower.FollowerId}.");
+                    _context.FeedPost.Add(new FeedPost
+                    {
+                        FeedId = feed.Id,
+                        PostId = postId,
+                    });
+                    Console.WriteLine($"Adding post {postId} to feed {feed.Id} of follower {follower.FollowerId}.");
+                }
             }
 
             await _context.SaveChangesAsync();
             Console.WriteLine("Changes to FeedPost saved successfully.");
+        }
+
+        public async Task EnsureFeedForUserAsync(Guid userId)
+        {
+            var feed = await _context.Feeds.FirstOrDefaultAsync(f => f.UserID == userId);
+            if (feed == null)
+            {
+                feed = new Feed { UserID = userId };
+                _context.Feeds.Add(feed);
+                await _context.SaveChangesAsync();
+            }
+
+            
+            if (!await _context.FeedPost.AnyAsync(fp => fp.FeedId == feed.Id))
+            {
+                
+                var topPosts = await _context.Posts
+                    .OrderByDescending(p => p.Reactions.Count)
+                    .Take(20)
+                    .ToListAsync();
+
+                foreach (var post in topPosts)
+                {
+                    _context.FeedPost.Add(new FeedPost { FeedId = feed.Id, PostId = post.Id });
+                }
+
+                await _context.SaveChangesAsync();
+            }
         }
 
         public async Task<IEnumerable<Post>> GetFeedPostsAsync(Guid feedId)

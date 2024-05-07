@@ -21,6 +21,7 @@ using VisualVibes.App.UserProfiles.Commands;
 using VisualVibes.App.Users.Commands;
 using VisualVibes.App.Users.Queries;
 using VisualVibes.Domain.Enum;
+using VisualVibes.Domain.Models.BaseEntity;
 using VisualVibes.Infrastructure;
 using VisualVibes.Infrastructure.Repositories;
 
@@ -152,7 +153,7 @@ Console.WriteLine($"Retrieved post successfully! ID: {retrievedPost.Id}");
 var postDto2 = new PostDto
 {
     Id = Guid.NewGuid(),
-    UserId = createdUser.Id,
+    UserId = createdUser2.Id,
     Caption = "This is a new new post",
     Pictures = "picture1, picture2",
     CreatedAt = DateTime.UtcNow
@@ -422,3 +423,6 @@ Console.WriteLine($"Number following by user {createdUser.Id}: {followings.Count
 
 await mediator.Send(new AddPostToFeedCommand(createdPost.Id));
 await mediator.Send(new AddPostToFeedCommand(createdPost2.Id));
+
+await mediator.Send(new EnsureFeedForUserCommand(createdUser3.Id));
+
