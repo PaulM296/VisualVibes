@@ -1,8 +1,8 @@
 ﻿using VisualVibes.Domain.Models.BaseEntity;
 
-namespace VisualVibes.App.DTOs
+namespace VisualVibes.App.DTOs.PostDtos
 {
-    public class PostDto
+    public class ResponsePostDto
     {
         public Guid Id { get; set; }
         public Guid UserId { get; set; }
@@ -10,9 +10,9 @@ namespace VisualVibes.App.DTOs
         public string Pictures { get; set; }
         public DateTime CreatedAt { get; set; }
 
-        public static PostDto FromPost(Post post)
+        public static ResponsePostDto FromPost(Post post)
         {
-            return new PostDto
+            return new ResponsePostDto
             {
                 Id = post.Id,
                 UserId = post.UserId,

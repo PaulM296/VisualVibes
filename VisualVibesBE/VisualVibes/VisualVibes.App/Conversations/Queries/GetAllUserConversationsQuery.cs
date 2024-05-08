@@ -1,7 +1,7 @@
 ﻿using MediatR;
-using VisualVibes.App.DTOs;
+using VisualVibes.App.DTOs.ConversationDtos;
 
 namespace VisualVibes.App.Conversations.Queries
 {
-    public record GetAllUserConversationsQuery(Guid UserId) : IRequest<ICollection<ConversationDto>>;
+    public record GetAllUserConversationsQuery(Guid UserId) : IRequest<ICollection<ResponseConversationDto>>;
 }

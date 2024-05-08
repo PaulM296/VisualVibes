@@ -1,5 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using VisualVibes.App.DTOs;
+﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using VisualVibes.App.Conversations.Commands;
+using VisualVibes.App.Conversations.Queries;
+using VisualVibes.App.DTOs.ConversationDtos;
+using VisualVibes.App.DTOs.UserDtos;
 
 namespace VisualVibes.Api.Controllers
 {
@@ -7,69 +11,34 @@ namespace VisualVibes.Api.Controllers
     [Route("api/[controller]")]
     public class ConversationController : ControllerBase
     {
-        [HttpPost]
-        public IActionResult CreateConversation(ConversationDto conversationDto)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+        private readonly IMediator _mediator;
 
-            return Ok(conversationDto);
+        public ConversationController(IMediator mediator)
+        {
+            _mediator = mediator;
         }
 
-        [HttpGet]
-        public IActionResult GetAllUserConversations()
+        [HttpPost]
+        public async Task<IActionResult> CreateConversation(RequestConversationDto requestConversationDto)
         {
-            var user1 = new UserDto
-            {
-                Id = Guid.NewGuid(),
-                Username = "Waganaha",
-                Password = "456123"
-            };
+            var response = await _mediator.Send(new CreateConversationCommand(requestConversationDto));
 
-            var user2 = new UserDto
-            {
-                Id = Guid.NewGuid(),
-                Username = "Paulinho",
-                Password = "123456789",
-            };
+            return Ok(response);
+        }
 
-            var user3 = new UserDto
-            {
-                Id = Guid.NewGuid(),
-                Username = "LukeX19",
-                Password = "123456789",
-            };
-
-            var conversations = new List<ConversationDto>
-            {
-                new ConversationDto
-                {
-                    Id = Guid.NewGuid(),
-                    FirstParticipantId = user1.Id,
-                    SecondParticipantId = user2.Id
-                },
-                new ConversationDto
-                {
-                    Id = Guid.NewGuid(),
-                    FirstParticipantId = user1.Id,
-                    SecondParticipantId = user3.Id
-                },
-                new ConversationDto
-                {
-                    Id = Guid.NewGuid(),
-                    FirstParticipantId = user2.Id,
-                    SecondParticipantId = user3.Id
-                },
-            };
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetAllUserConversations(Guid id)
+        {
+            var conversations = await _mediator.Send(new GetAllUserConversationsQuery(id));
 
             return Ok(conversations);
         }
 
         [HttpDelete("{id}")]
-        public IActionResult RemoveUser(Guid Id)
+        public async Task<IActionResult> RemoveUser(Guid id)
         {
+            var response = await _mediator.Send(new RemoveConversationCommand(id));
+
             return Ok();
         }
     }

@@ -19,9 +19,23 @@ namespace VisualVibes.App.Users.CommandsHandler
         {
             var userToRemove = await _unitOfWork.UserRepository.GetByIdAsync(request.Id);
 
+
             if (userToRemove == null)
             {
                 throw new UserNotFoundException($"The user with ID {request.Id} doesn't exist and it could not be removed!");
+            }
+
+            var feed = await _unitOfWork.FeedRepository.GetByUserIdAsync(request.Id);
+            if (feed != null)
+            {
+                var feedPosts = await _unitOfWork.FeedPostRepository.GetByFeedIdAsync(feed.Id);
+                foreach (var feedPost in feedPosts)
+                {
+                    await _unitOfWork.FeedPostRepository.RemoveAsync(feedPost);
+                }
+
+                // Now remove the feed
+                await _unitOfWork.FeedRepository.RemoveAsync(feed);
             }
 
             await _unitOfWork.UserRepository.RemoveAsync(userToRemove);

@@ -1,5 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using VisualVibes.App.DTOs;
+﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using VisualVibes.App.DTOs.PostDtos;
+using VisualVibes.App.DTOs.UserDtos;
+using VisualVibes.App.Posts.Commands;
+using VisualVibes.App.Posts.Queries;
 
 namespace VisualVibes.Api.Controllers
 {
@@ -7,72 +11,44 @@ namespace VisualVibes.Api.Controllers
     [Route("api/[controller]")]
     public class PostController : ControllerBase
     {
-        [HttpPost]
-        public IActionResult CreatePost(PostDto postDto)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+        private readonly IMediator _mediator;
 
-            return Ok(postDto);
+        public PostController(IMediator mediator)
+        {
+            _mediator = mediator;
         }
 
-        [HttpGet]
-        public IActionResult GetAllPosts()
+        [HttpPost]
+        public async Task<IActionResult> CreatePost(RequestPostDto requestPostDto)
         {
-            var user1 = new UserDto
-            {
-                Id = Guid.NewGuid(),
-                Username = "Waganaha",
-                Password = "456123"
-            };
+            var response = await _mediator.Send(new CreatePostCommand(requestPostDto));
 
-            var user2 = new UserDto
-            {
-                Id = Guid.NewGuid(),
-                Username = "Paulinho",
-                Password = "123456789",
-            };
+            return Ok(response);
+        }
 
-            var posts = new List<PostDto>
-            {
-                new PostDto
-                {
-                    Id = Guid.NewGuid(),
-                    UserId = user1.Id,
-                    Caption = "This is a new post",
-                    Pictures = "picture1",
-                    CreatedAt = DateTime.UtcNow
-                },
-                new PostDto
-                {
-                    Id = Guid.NewGuid(),
-                    UserId = user2.Id,
-                    Caption = "This is a new new post",
-                    Pictures = "picture1, picture2",
-                    CreatedAt = DateTime.UtcNow
-                }
-            };
-            return Ok(posts);
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetPostById(Guid id)
+        {
+            var response = await _mediator.Send(new GetPostByIdQuery(id));
+
+            return Ok(response);
         }
 
 
         [HttpPut("{id}")]
-        public IActionResult UpdatePost(PostDto postDto)
+        public async Task<IActionResult> UpdatePost(Guid id, RequestPostDto requestPostDto)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            var updatedPost = await _mediator.Send(new UpdatePostCommand(id, requestPostDto));
 
-            return Ok(postDto);
+            return Ok(updatedPost);
         }
 
         [HttpDelete("{id}")]
-        public IActionResult RemovePost(Guid Id)
+        public async Task<IActionResult> RemovePost(Guid id)
         {
-            return Ok();
+            var response = await _mediator.Send(new RemovePostCommand(id));
+
+            return Ok(response);
         }
     }
 }

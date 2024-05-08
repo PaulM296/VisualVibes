@@ -91,5 +91,24 @@ namespace VisualVibes.Infrastructure.Repositories
 
             return posts;
         }
+
+        public async Task<IEnumerable<FeedPost>> GetByFeedIdAsync(Guid feedId)
+        {
+            return await _context.FeedPost
+                                 .Where(fp => fp.FeedId == feedId)
+                                 .Include(fp => fp.Post)
+                                 .ToListAsync();
+        }
+
+        public async Task RemoveAsync(FeedPost feedPost)
+        {
+            if (feedPost == null)
+            {
+                throw new ArgumentNullException(nameof(feedPost), "Provided feed post is null");
+            }
+
+            _context.FeedPost.Remove(feedPost);
+            await _context.SaveChangesAsync();
+        }
     }
 }

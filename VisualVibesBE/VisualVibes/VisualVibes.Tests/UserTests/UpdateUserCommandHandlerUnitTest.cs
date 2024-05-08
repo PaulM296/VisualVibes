@@ -1,5 +1,6 @@
 ﻿using Moq;
 using VisualVibes.App.DTOs;
+using VisualVibes.App.DTOs.UserDtos;
 using VisualVibes.App.Interfaces;
 using VisualVibes.App.Users.Commands;
 using VisualVibes.App.Users.CommandsHandler;
@@ -25,28 +26,25 @@ namespace VisualVibes.Tests.UserTests
         public async void Should_UpdateUser_Correctly()
         {
             //Arrange
-            var userDto = new UserDto
+            var userDto = new ResponseUserDto
             {
-                Id = Guid.NewGuid(),
                 Username = "UserTest",
                 Password = "password123",
             };
 
-            var updatedUserDto = new UserDto
+            var updatedUserDto = new RequestUserDto
             {
-                Id = userDto.Id,
                 Username = "UpdatedUserTest",
                 Password = userDto.Password
             };
 
             var user = new User
             {
-                Id = updatedUserDto.Id,
                 Username = updatedUserDto.Username,
                 Password = updatedUserDto.Password,
             };
 
-            var updateUserCommand = new UpdateUserCommand(updatedUserDto);
+            var updateUserCommand = new UpdateUserCommand(Guid.NewGuid(), updatedUserDto);
 
             _userRepositoryMock
             .Setup(x => x.GetByIdAsync(userDto.Id)).ReturnsAsync(user);

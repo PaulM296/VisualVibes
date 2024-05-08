@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\VisualVibes.App\VisualVibes.App.csproj" />
+    <ProjectReference Include="..\VisualVibes.Infrastructure\VisualVibes.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,5 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using VisualVibes.App.DTOs;
+﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using VisualVibes.App.DTOs.UserDtos;
+using VisualVibes.App.Users.Commands;
+using VisualVibes.App.Users.Queries;
 
 namespace VisualVibes.Api.Controllers
 {
@@ -7,62 +11,44 @@ namespace VisualVibes.Api.Controllers
     [Route("api/[controller]")]
     public class UserController : ControllerBase
     {
-        [HttpPost]
-        public IActionResult CreateUser(UserDto userDto)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+        private readonly IMediator _mediator;
 
-            return Ok(userDto);
+        public UserController(IMediator mediator)
+        {
+            _mediator = mediator;
         }
 
-        [HttpGet]
-        public IActionResult GetAllUsers()
+        [HttpPost]
+        public async Task<IActionResult> CreateUser(RequestUserDto requestUserDto)
         {
-            var users = new List<UserDto>
-            {
-                new UserDto
-                {
-                    Id = Guid.NewGuid(),
-                    Username = "Waganaha",
-                    Password = "456123"
-                },
+            var respone = await _mediator.Send(new CreateUserCommand(requestUserDto));
 
-                new UserDto
-                {
-                    Id = Guid.NewGuid(),
-                    Username = "Paulinho",
-                    Password = "123456789",
-                },
+            return Ok(respone);
+        }
 
-                new UserDto
-                {
-                    Id = Guid.NewGuid(),
-                    Username = "LukeX19",
-                    Password = "123456",
-                }
-            };
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetUserById(Guid id)
+        {
+            var users = await _mediator.Send(new GetUserByIdQuery(id));
+
             return Ok(users);
         }
 
 
         [HttpPut("{id}")]
-        public IActionResult UpdateUser(UserDto userDto)
+        public async Task<IActionResult> UpdateUser(Guid id, RequestUserDto requestUserDto)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            var updatedUser = await _mediator.Send(new UpdateUserCommand(id, requestUserDto));
 
-            return Ok(userDto);
+            return Ok(updatedUser);
         }
 
         [HttpDelete("{id}")]
-        public IActionResult RemoveUser(Guid Id)
+        public async Task<IActionResult> RemoveUser(Guid id)
         {
-            return Ok();
+            var response = await _mediator.Send(new RemoveUserCommand(id));
+
+            return Ok(response);
         }
     }
 }

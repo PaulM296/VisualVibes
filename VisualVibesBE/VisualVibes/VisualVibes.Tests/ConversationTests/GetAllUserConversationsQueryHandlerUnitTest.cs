@@ -1,7 +1,7 @@
 ﻿using Moq;
 using VisualVibes.App.Conversations.Queries;
 using VisualVibes.App.Conversations.QueriesHandlers;
-using VisualVibes.App.DTOs;
+using VisualVibes.App.DTOs.ConversationDtos;
 using VisualVibes.App.Interfaces;
 using VisualVibes.App.Users.Queries;
 using VisualVibes.Domain.Models.BaseEntity;
@@ -29,15 +29,15 @@ namespace VisualVibes.Tests.ConversationTests
             //Arrange
             var userId = Guid.NewGuid();
 
-            var conversationDtos = new List<ConversationDto>
+            var conversationDtos = new List<ResponseConversationDto>
             {
-                new ConversationDto
+                new ResponseConversationDto
                 {
                     Id = Guid.NewGuid(),
                     FirstParticipantId = userId,
                     SecondParticipantId = Guid.NewGuid(),
                 },
-                new ConversationDto
+                new ResponseConversationDto
                 {
                     Id = Guid.NewGuid(),
                     FirstParticipantId = Guid.NewGuid(),

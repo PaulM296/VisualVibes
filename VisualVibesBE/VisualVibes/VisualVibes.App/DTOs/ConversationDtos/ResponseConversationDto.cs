@@ -1,16 +1,16 @@
 ﻿using VisualVibes.Domain.Models.BaseEntity;
 
-namespace VisualVibes.App.DTOs
+namespace VisualVibes.App.DTOs.ConversationDtos
 {
-    public class ConversationDto
+    public class ResponseConversationDto
     {
         public Guid Id { get; set; }
         public Guid FirstParticipantId { get; set; }
         public Guid SecondParticipantId { get; set; }
 
-        public static ConversationDto FromConversation(Conversation conversation)
+        public static ResponseConversationDto FromConversation(Conversation conversation)
         {
-            return new ConversationDto
+            return new ResponseConversationDto
             {
                 Id = conversation.Id,
                 FirstParticipantId = conversation.FirstParticipantId,

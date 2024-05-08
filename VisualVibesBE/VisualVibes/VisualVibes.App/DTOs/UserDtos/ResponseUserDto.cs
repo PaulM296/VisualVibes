@@ -1,16 +1,16 @@
 ﻿using VisualVibes.Domain.Models.BaseEntity;
 
-namespace VisualVibes.App.DTOs
+namespace VisualVibes.App.DTOs.UserDtos
 {
-    public class UserDto
+    public class ResponseUserDto
     {
         public Guid Id { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
 
-        public static UserDto FromUser(User User)
+        public static ResponseUserDto FromUser(User User)
         {
-            return new UserDto
+            return new ResponseUserDto
             {
                 Id = User.Id,
                 Username = User.Username,

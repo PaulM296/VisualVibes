@@ -11,5 +11,14 @@ namespace VisualVibes.Infrastructure.Repositories
         {
 
         }
+
+        public async Task<Feed> GetByUserIdAsync(Guid userId)
+        {
+            var feed = await _context.Feeds
+                .Include(f => f.FeedPosts)
+                .FirstOrDefaultAsync(f => f.UserID == userId);
+
+            return feed;
+        }
     }
 }
