@@ -25,8 +25,8 @@ namespace VisualVibes.App.Users.CommandsHandler
                 throw new UserNotFoundException($"The user with ID {request.userId} doesn't exist and it could not be updated!");
             }
 
-            user.Username = request.requestUserDto.Username;
-            user.Password = request.requestUserDto.Password;
+            user.Username = request.updateUserDto.Username;
+            user.Password = request.updateUserDto.Password;
 
             var updatedUser = await _unitOfWork.UserRepository.UpdateAsync(user);
 

@@ -4,6 +4,6 @@ using VisualVibes.Domain.Models.BaseEntity;
 
 namespace VisualVibes.App.Users.Commands
 {
-    public record UpdateUserCommand(Guid userId, RequestUserDto requestUserDto) : IRequest<ResponseUserDto>;
+    public record UpdateUserCommand(Guid userId, UpdateUserDto updateUserDto) : IRequest<ResponseUserDto>;
 }
 

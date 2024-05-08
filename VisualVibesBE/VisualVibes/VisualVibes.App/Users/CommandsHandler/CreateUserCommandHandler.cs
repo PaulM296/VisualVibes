@@ -19,8 +19,8 @@ namespace VisualVibes.App.Users.CommandsHandler
             var user = new User()
             {
                 Id = Guid.NewGuid(),
-                Username = request.UserDto.Username,
-                Password = request.UserDto.Password,
+                Username = request.createUserDto.Username,
+                Password = request.createUserDto.Password,
             };
 
             var createdUser = await _unitOfWork.UserRepository.AddAsync(user);

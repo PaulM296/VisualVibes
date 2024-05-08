@@ -19,9 +19,9 @@ namespace VisualVibes.App.Posts.CommandsHandler
             var post = new Post()
             {
                 Id = Guid.NewGuid(),
-                UserId = request.requestPostDto.UserId,
-                Caption = request.requestPostDto.Caption,
-                Pictures = request.requestPostDto.Pictures,
+                UserId = request.createPostDto.UserId,
+                Caption = request.createPostDto.Caption,
+                Pictures = request.createPostDto.Pictures,
                 CreatedAt = DateTime.UtcNow,
             };
 

@@ -19,7 +19,7 @@ namespace VisualVibes.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateConversation(RequestConversationDto requestConversationDto)
+        public async Task<IActionResult> CreateConversation(CreateConversationDto requestConversationDto)
         {
             var response = await _mediator.Send(new CreateConversationCommand(requestConversationDto));
 

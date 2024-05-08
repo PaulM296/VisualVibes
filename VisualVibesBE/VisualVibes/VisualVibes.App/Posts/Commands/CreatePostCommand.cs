@@ -4,5 +4,5 @@ using VisualVibes.Domain.Models.BaseEntity;
 
 namespace VisualVibes.App.Posts.Commands
 {
-    public record CreatePostCommand(RequestPostDto requestPostDto) : IRequest<ResponsePostDto>;
+    public record CreatePostCommand(CreatePostDto createPostDto) : IRequest<ResponsePostDto>;
 }

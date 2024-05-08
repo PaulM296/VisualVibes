@@ -1,6 +1,6 @@
 ﻿namespace VisualVibes.App.DTOs.PostDtos
 {
-    public class RequestPostDto
+    public class UpdatePostDto
     {
         public Guid UserId { get; set; }
         public string Caption { get; set; }

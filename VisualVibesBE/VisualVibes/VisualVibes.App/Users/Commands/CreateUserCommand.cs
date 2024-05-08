@@ -4,5 +4,5 @@ using VisualVibes.Domain.Models.BaseEntity;
 
 namespace VisualVibes.App.Users.Commands
 {
-    public record CreateUserCommand(RequestUserDto UserDto) : IRequest<ResponseUserDto>;
+    public record CreateUserCommand(CreateUserDto createUserDto) : IRequest<ResponseUserDto>;
 }

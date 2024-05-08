@@ -19,7 +19,7 @@ namespace VisualVibes.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreatePost(RequestPostDto requestPostDto)
+        public async Task<IActionResult> CreatePost(CreatePostDto requestPostDto)
         {
             var response = await _mediator.Send(new CreatePostCommand(requestPostDto));
 
@@ -36,9 +36,9 @@ namespace VisualVibes.Api.Controllers
 
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdatePost(Guid id, RequestPostDto requestPostDto)
+        public async Task<IActionResult> UpdatePost(Guid id, UpdatePostDto updatePostDto)
         {
-            var updatedPost = await _mediator.Send(new UpdatePostCommand(id, requestPostDto));
+            var updatedPost = await _mediator.Send(new UpdatePostCommand(id, updatePostDto));
 
             return Ok(updatedPost);
         }

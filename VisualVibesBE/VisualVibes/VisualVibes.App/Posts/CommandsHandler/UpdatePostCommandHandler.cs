@@ -25,8 +25,8 @@ namespace VisualVibes.App.Posts.CommandsHandler
                 throw new PostNotFoundException($"The post with ID {request.postId} doesn't exist and it could not be updated!");
             }
 
-            getPost.Caption = request.requestPostDto.Caption;
-            getPost.Pictures = request.requestPostDto.Pictures;
+            getPost.Caption = request.updatePostDto.Caption;
+            getPost.Pictures = request.updatePostDto.Pictures;
             
 
             var updatedPost = await _unitOfWork.PostRepository.UpdateAsync(getPost);

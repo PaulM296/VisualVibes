@@ -19,9 +19,9 @@ namespace VisualVibes.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateUser(RequestUserDto requestUserDto)
+        public async Task<IActionResult> CreateUser(CreateUserDto createUserDto)
         {
-            var respone = await _mediator.Send(new CreateUserCommand(requestUserDto));
+            var respone = await _mediator.Send(new CreateUserCommand(createUserDto));
 
             return Ok(respone);
         }
@@ -36,9 +36,9 @@ namespace VisualVibes.Api.Controllers
 
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(Guid id, RequestUserDto requestUserDto)
+        public async Task<IActionResult> UpdateUser(Guid id, UpdateUserDto updateUserDto)
         {
-            var updatedUser = await _mediator.Send(new UpdateUserCommand(id, requestUserDto));
+            var updatedUser = await _mediator.Send(new UpdateUserCommand(id, updateUserDto));
 
             return Ok(updatedUser);
         }

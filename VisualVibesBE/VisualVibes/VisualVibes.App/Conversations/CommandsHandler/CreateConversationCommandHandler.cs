@@ -18,8 +18,8 @@ namespace VisualVibes.App.Conversations.CommandsHandler
             var conversation = new Conversation()
             {
                 Id = Guid.NewGuid(),
-                FirstParticipantId = request.requestConversationDto.FirstParticipantId,
-                SecondParticipantId = request.requestConversationDto.SecondParticipantId,
+                FirstParticipantId = request.createConversationDto.FirstParticipantId,
+                SecondParticipantId = request.createConversationDto.SecondParticipantId,
             };
 
             var createdConversation = await _unitOfWork.ConversationRepository.AddAsync(conversation);
