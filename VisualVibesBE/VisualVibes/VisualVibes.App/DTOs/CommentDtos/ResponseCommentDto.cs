@@ -1,8 +1,8 @@
 ﻿using VisualVibes.Domain.Models.BaseEntity;
 
-namespace VisualVibes.App.DTOs
+namespace VisualVibes.App.DTOs.CommentDtos
 {
-    public class CommentDto
+    public class ResponseCommentDto
     {
         public Guid Id { get; set; }
         public Guid UserId { get; set; }
@@ -10,9 +10,9 @@ namespace VisualVibes.App.DTOs
         public string Text { get; set; }
         public DateTime CreatedAt { get; set; }
 
-        public static CommentDto FromComment(Comment comment)
+        public static ResponseCommentDto FromComment(Comment comment)
         {
-            return new CommentDto
+            return new ResponseCommentDto
             {
                 Id = comment.Id,
                 UserId = comment.UserId,

@@ -1,13 +1,12 @@
 ﻿using MediatR;
 using VisualVibes.App.Comments.Commands;
-using VisualVibes.App.DTOs;
+using VisualVibes.App.DTOs.CommentDtos;
 using VisualVibes.App.Exceptions;
 using VisualVibes.App.Interfaces;
-using VisualVibes.Domain.Models.BaseEntity;
 
 namespace VisualVibes.App.Comments.CommandsHandler
 {
-    public class UpdateCommentCommandHandler : IRequestHandler<UpdateCommentCommand, CommentDto>
+    public class UpdateCommentCommandHandler : IRequestHandler<UpdateCommentCommand, ResponseCommentDto>
     {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -15,22 +14,21 @@ namespace VisualVibes.App.Comments.CommandsHandler
         {
             _unitOfWork = unitOfWork;
         }
-        public async Task<CommentDto> Handle(UpdateCommentCommand request, CancellationToken cancellationToken)
+        public async Task<ResponseCommentDto> Handle(UpdateCommentCommand request, CancellationToken cancellationToken)
         {
-            var getComment = await _unitOfWork.CommentRepository.GetByIdAsync(request.CommentDto.Id);
+            var getComment = await _unitOfWork.CommentRepository.GetByIdAsync(request.id);
 
             if (getComment == null)
             {
-                throw new CommentsNotFoundException($"The comment with ID {request.CommentDto.Id} doesn't exist and it could not be updated!");
+                throw new CommentsNotFoundException($"The comment with ID {request.id} doesn't exist and it could not be updated!");
             }
 
-            getComment.Text = request.CommentDto.Text;
-            getComment.CreatedAt = request.CommentDto.CreatedAt;
+            getComment.Text = request.updateCommentDto.Text;
 
             var updatedComment = await _unitOfWork.CommentRepository.UpdateAsync(getComment);
             await _unitOfWork.SaveAsync(); 
 
-            return CommentDto.FromComment(updatedComment);
+            return ResponseCommentDto.FromComment(updatedComment);
         }
     }
 }

@@ -26,7 +26,7 @@ namespace VisualVibes.Api.Controllers
             return Ok(response);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("user/{id}")]
         public async Task<IActionResult> GetAllUserConversations(Guid id)
         {
             var conversations = await _mediator.Send(new GetAllUserConversationsQuery(id));

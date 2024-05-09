@@ -1,7 +1,7 @@
 ﻿using MediatR;
-using VisualVibes.App.DTOs;
+using VisualVibes.App.DTOs.MessageDtos;
 
 namespace VisualVibes.App.Messages.Commands
 {
-    public record CreateMessageCommand(MessageDto MessageDto) : IRequest<MessageDto>;
+    public record CreateMessageCommand(CreateMessageDto createMessageDto) : IRequest<ResponseMessageDto>;
 }

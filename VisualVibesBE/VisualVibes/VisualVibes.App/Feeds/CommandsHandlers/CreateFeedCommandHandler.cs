@@ -17,7 +17,6 @@ namespace VisualVibes.App.Feeds.CommandsHandlers
         {
             var feed = new Feed()
             {
-                Id = request.FeedDto.Id,
                 UserID = request.FeedDto.UserID
             };
 

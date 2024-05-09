@@ -1,9 +1,9 @@
 ﻿using VisualVibes.Domain.Enum;
 using VisualVibes.Domain.Models.BaseEntity;
 
-namespace VisualVibes.App.DTOs
+namespace VisualVibes.App.DTOs.ReactionDtos
 {
-    public class ReactionDto
+    public class ResponseReactionDto
     {
         public Guid Id { get; set; }
         public Guid UserId { get; set; }
@@ -11,9 +11,9 @@ namespace VisualVibes.App.DTOs
         public ReactionType ReactionType { get; set; }
         public DateTime Timestamp { get; set; }
 
-        public static ReactionDto FromReaction(Reaction reaction)
+        public static ResponseReactionDto FromReaction(Reaction reaction)
         {
-            return new ReactionDto
+            return new ResponseReactionDto
             {
                 Id = reaction.Id,
                 UserId = reaction.UserId,

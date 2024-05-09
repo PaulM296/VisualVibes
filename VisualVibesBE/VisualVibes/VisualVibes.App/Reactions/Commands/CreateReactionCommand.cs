@@ -1,7 +1,7 @@
 ﻿using MediatR;
-using VisualVibes.App.DTOs;
+using VisualVibes.App.DTOs.ReactionDtos;
 
 namespace VisualVibes.App.Reactions.Commands
 {
-    public record CreateReactionCommand(ReactionDto ReactionDto) : IRequest<ReactionDto>;
+    public record CreateReactionCommand(CreateReactionDto createReactionDto) : IRequest<ResponseReactionDto>;
 }

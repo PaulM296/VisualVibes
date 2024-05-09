@@ -1,8 +1,8 @@
 ﻿using VisualVibes.Domain.Models.BaseEntity;
 
-namespace VisualVibes.App.DTOs
+namespace VisualVibes.App.DTOs.MessageDtos
 {
-    public class MessageDto
+    public class ResponseMessageDto
     {
         public Guid Id { get; set; }
         public Guid UserId { get; set; }
@@ -10,9 +10,9 @@ namespace VisualVibes.App.DTOs
         public string Content { get; set; }
         public DateTime Timestamp { get; set; }
 
-        public static MessageDto FromMessage(Message message)
+        public static ResponseMessageDto FromMessage(Message message)
         {
-            return new MessageDto
+            return new ResponseMessageDto
             {
                 Id = message.Id,
                 UserId = message.UserId,

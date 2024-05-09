@@ -1,7 +1,7 @@
 ﻿using Moq;
 using VisualVibes.App.Comments.Queries;
 using VisualVibes.App.Comments.QueriesHandler;
-using VisualVibes.App.DTOs;
+using VisualVibes.App.DTOs.CommentDtos;
 using VisualVibes.App.Interfaces;
 using VisualVibes.Domain.Models.BaseEntity;
 
@@ -27,9 +27,9 @@ namespace VisualVibes.Tests.Comments
         {
             var postId = Guid.NewGuid();
 
-            var commentsDtos = new List<CommentDto>
+            var commentsDtos = new List<ResponseCommentDto>
             {
-                new CommentDto
+                new ResponseCommentDto
                 {
                     Id = Guid.NewGuid(),
                     UserId = Guid.NewGuid(),
@@ -38,7 +38,7 @@ namespace VisualVibes.Tests.Comments
                     CreatedAt = DateTime.Now,
                 },
 
-                new CommentDto
+                new ResponseCommentDto
                 {
                     Id = Guid.NewGuid(),
                     UserId = Guid.NewGuid(),

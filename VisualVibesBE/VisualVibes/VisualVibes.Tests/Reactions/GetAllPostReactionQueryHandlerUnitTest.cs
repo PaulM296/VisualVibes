@@ -1,6 +1,6 @@
 ﻿using Moq;
 using VisualVibes.App.Conversations.Queries;
-using VisualVibes.App.DTOs;
+using VisualVibes.App.DTOs.ReactionDtos;
 using VisualVibes.App.Interfaces;
 using VisualVibes.App.Reactions.Queries;
 using VisualVibes.App.Reactions.QueriesHandler;
@@ -28,9 +28,9 @@ namespace VisualVibes.Tests.Reactions
         {
             var postId = Guid.NewGuid();
 
-            var reactionDtos = new List<ReactionDto>
+            var reactionDtos = new List<ResponseReactionDto>
             {
-                new ReactionDto
+                new ResponseReactionDto
                 {
                     Id = Guid.NewGuid(),
                     UserId = Guid.NewGuid(),
@@ -38,7 +38,7 @@ namespace VisualVibes.Tests.Reactions
                     ReactionType = Domain.Enum.ReactionType.Love,
                     Timestamp = DateTime.Now,
                 },
-                new ReactionDto
+                new ResponseReactionDto
                 {
                     Id = Guid.NewGuid(),
                     UserId = Guid.NewGuid(),

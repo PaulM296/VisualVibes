@@ -1,12 +1,12 @@
 ﻿using MediatR;
-using VisualVibes.App.DTOs;
+using VisualVibes.App.DTOs.ReactionDtos;
 using VisualVibes.App.Exceptions;
 using VisualVibes.App.Interfaces;
 using VisualVibes.App.Reactions.Queries;
 
 namespace VisualVibes.App.Reactions.QueriesHandler
 {
-    public class GetAllPostReactionsQueryHandler : IRequestHandler<GetAllPostReactionsQuery, ICollection<ReactionDto>>
+    public class GetAllPostReactionsQueryHandler : IRequestHandler<GetAllPostReactionsQuery, ICollection<ResponseReactionDto>>
     {
         public readonly IUnitOfWork _unitOfWork;
 
@@ -15,7 +15,7 @@ namespace VisualVibes.App.Reactions.QueriesHandler
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<ICollection<ReactionDto>> Handle(GetAllPostReactionsQuery request, CancellationToken cancellationToken)
+        public async Task<ICollection<ResponseReactionDto>> Handle(GetAllPostReactionsQuery request, CancellationToken cancellationToken)
         {
             var reactions = await _unitOfWork.ReactionRepository.GetAllAsync(request.PostId);
 
@@ -24,7 +24,7 @@ namespace VisualVibes.App.Reactions.QueriesHandler
                 throw new ReactionNotFoundException($"Could not get the reactions from PostId {request.PostId}, because it doesn't have any yet!");
             }
 
-            var reactionDtos = reactions.Select(ReactionDto.FromReaction).ToList();
+            var reactionDtos = reactions.Select(ResponseReactionDto.FromReaction).ToList();
 
             return reactionDtos;
         }

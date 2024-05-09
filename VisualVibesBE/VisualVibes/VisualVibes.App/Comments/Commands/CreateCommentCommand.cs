@@ -1,7 +1,7 @@
 ﻿using MediatR;
-using VisualVibes.App.DTOs;
+using VisualVibes.App.DTOs.CommentDtos;
 
 namespace VisualVibes.App.Comments.Commands
 {
-    public record CreateCommentCommand(CommentDto CommentDto) : IRequest<CommentDto>;
+    public record CreateCommentCommand(CreateCommentDto createCommentDto) : IRequest<ResponseCommentDto>;
 }

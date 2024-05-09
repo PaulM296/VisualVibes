@@ -1,12 +1,12 @@
 ﻿using MediatR;
 using VisualVibes.App.Comments.Queries;
-using VisualVibes.App.DTOs;
+using VisualVibes.App.DTOs.CommentDtos;
 using VisualVibes.App.Exceptions;
 using VisualVibes.App.Interfaces;
 
 namespace VisualVibes.App.Comments.QueriesHandler
 {
-    public class GetAllPostCommentsQueryHandler : IRequestHandler<GetAllPostCommentsQuery, ICollection<CommentDto>>
+    public class GetAllPostCommentsQueryHandler : IRequestHandler<GetAllPostCommentsQuery, ICollection<ResponseCommentDto>>
     {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -15,7 +15,7 @@ namespace VisualVibes.App.Comments.QueriesHandler
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<ICollection<CommentDto>> Handle(GetAllPostCommentsQuery request, CancellationToken cancellationToken)
+        public async Task<ICollection<ResponseCommentDto>> Handle(GetAllPostCommentsQuery request, CancellationToken cancellationToken)
         {
             var comments = await _unitOfWork.CommentRepository.GetAllAsync(request.PostId);
 
@@ -24,7 +24,7 @@ namespace VisualVibes.App.Comments.QueriesHandler
                 throw new CommentsNotFoundException($"Could not get the comments from PostId {request.PostId}, because it doesn't have any yet!");
             }
 
-            var commentDtos = comments.Select(CommentDto.FromComment).ToList();
+            var commentDtos = comments.Select(ResponseCommentDto.FromComment).ToList();
 
             return commentDtos;
         }
