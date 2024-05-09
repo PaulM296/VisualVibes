@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using VisualVibes.App.DTOs;
+using VisualVibes.App.DTOs.UserFollowerDtos;
 using VisualVibes.App.Interfaces;
 using VisualVibes.App.UserFollowers.Queries;
 

@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using VisualVibes.App.DTOs.PostDtos;
-using VisualVibes.App.DTOs.UserDtos;
 using VisualVibes.App.Posts.Commands;
 using VisualVibes.App.Posts.Queries;
 
@@ -19,9 +18,9 @@ namespace VisualVibes.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreatePost(CreatePostDto requestPostDto)
+        public async Task<IActionResult> CreatePost(CreatePostDto createPostDto)
         {
-            var response = await _mediator.Send(new CreatePostCommand(requestPostDto));
+            var response = await _mediator.Send(new CreatePostCommand(createPostDto));
 
             return Ok(response);
         }

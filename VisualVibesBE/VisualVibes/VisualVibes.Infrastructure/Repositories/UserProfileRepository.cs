@@ -11,5 +11,12 @@ namespace VisualVibes.Infrastructure.Repositories
         {
 
         }
+
+        public async Task<User> GetUserWithProfileByIdAsync(Guid userId)
+        {
+            return await _context.Users
+                .Include(u => u.UserProfile)
+                .FirstOrDefaultAsync(u => u.Id == userId);
+        }
     }
 }

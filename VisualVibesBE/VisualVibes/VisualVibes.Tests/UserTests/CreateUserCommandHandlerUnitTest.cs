@@ -1,5 +1,6 @@
 ﻿using Moq;
 using VisualVibes.App.DTOs;
+using VisualVibes.App.DTOs.UserDtos;
 using VisualVibes.App.Interfaces;
 using VisualVibes.App.Users.Commands;
 using VisualVibes.App.Users.CommandsHandler;
@@ -27,16 +28,14 @@ namespace VisualVibes.Tests.UserTests
         public async void Should_CreateUser_Correctly()
         {
             //Arrange
-            var userDto = new UserDto
+            var userDto = new CreateUserDto
             {
-                Id = Guid.NewGuid(),
                 Username = "UserTest",
                 Password = "password123",
             };
 
             var user = new User
             {
-                Id = userDto.Id,
                 Username = userDto.Username,
                 Password = userDto.Password,
             };

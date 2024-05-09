@@ -18,14 +18,16 @@ namespace VisualVibes.App.Users.CommandsHandler
         {
             var user = new User()
             {
-                Id = Guid.NewGuid(),
                 Username = request.createUserDto.Username,
                 Password = request.createUserDto.Password,
             };
 
             var createdUser = await _unitOfWork.UserRepository.AddAsync(user);
             // Ensure a feed is created for the new user
-            var feed = new Feed { UserID = createdUser.Id };
+            var feed = new Feed 
+            { 
+                UserID = createdUser.Id 
+            };
             await _unitOfWork.FeedRepository.AddAsync(feed);
             await _unitOfWork.FeedPostRepository.EnsureFeedForUserAsync(user.Id);
             await _unitOfWork.SaveAsync();

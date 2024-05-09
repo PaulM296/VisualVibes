@@ -1,9 +1,9 @@
 ﻿using MediatR;
 using VisualVibes.Domain.Models.BaseEntity;
 
-namespace VisualVibes.App.DTOs
+namespace VisualVibes.App.DTOs.UserProfileDtos
 {
-    public class UserProfileDto
+    public class ResponseUserProfileDto
     {
         public Guid Id { get; set; }
         public Guid UserId { get; set; }
@@ -14,9 +14,9 @@ namespace VisualVibes.App.DTOs
         public string Bio { get; set; }
         public DateTime DateOfBirth { get; set; }
 
-        public static UserProfileDto FromUserProfile(UserProfile UserProfile)
+        public static ResponseUserProfileDto FromUserProfile(UserProfile UserProfile)
         {
-            return new UserProfileDto
+            return new ResponseUserProfileDto
             {
                 Id = UserProfile.Id,
                 UserId = UserProfile.UserId,

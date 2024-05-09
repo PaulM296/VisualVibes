@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using VisualVibes.App.DTOs;
+using VisualVibes.App.DTOs.UserProfileDtos;
 using VisualVibes.App.Exceptions;
 using VisualVibes.App.Interfaces;
 using VisualVibes.App.UserProfiles.Commands;
@@ -7,7 +7,7 @@ using VisualVibes.Domain.Models.BaseEntity;
 
 namespace VisualVibes.App.UserProfiles.CommandsHandler
 {
-    public class CreateUserProfileCommandHandler : IRequestHandler<CreateUserProfileCommand, UserProfileDto>
+    public class CreateUserProfileCommandHandler : IRequestHandler<CreateUserProfileCommand, ResponseUserProfileDto>
     {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -16,30 +16,29 @@ namespace VisualVibes.App.UserProfiles.CommandsHandler
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<UserProfileDto> Handle(CreateUserProfileCommand request, CancellationToken cancellationToken)
+        public async Task<ResponseUserProfileDto> Handle(CreateUserProfileCommand request, CancellationToken cancellationToken)
         {
-            var userExists = await _unitOfWork.UserRepository.GetByIdAsync(request.UserProfileDto.UserId);
+            var userExists = await _unitOfWork.UserRepository.GetByIdAsync(request.createUserProfileDto.UserId);
             if (userExists == null)
             {
-                throw new UserNotFoundException($"The user with ID {request.UserProfileDto.UserId} doesn't exist!");    
+                throw new UserNotFoundException($"The user with ID {request.createUserProfileDto.UserId} doesn't exist!");    
             }
 
             var userProfile = new UserProfile
             {
-                Id = request.UserProfileDto.Id,
-                UserId = request.UserProfileDto.UserId,
-                ProfilePicture = request.UserProfileDto.ProfilePicture,
-                DateOfBirth = request.UserProfileDto.DateOfBirth,
-                FirstName = request.UserProfileDto.FirstName,
-                LastName = request.UserProfileDto.LastName,
-                Email = request.UserProfileDto.Email,
-                Bio = request.UserProfileDto.Bio,
+                UserId = request.createUserProfileDto.UserId,
+                ProfilePicture = request.createUserProfileDto.ProfilePicture,
+                DateOfBirth = request.createUserProfileDto.DateOfBirth,
+                FirstName = request.createUserProfileDto.FirstName,
+                LastName = request.createUserProfileDto.LastName,
+                Email = request.createUserProfileDto.Email,
+                Bio = request.createUserProfileDto.Bio,
             };
 
             await _unitOfWork.UserProfileRepository.AddAsync(userProfile);
             await _unitOfWork.SaveAsync();
 
-            return UserProfileDto.FromUserProfile(userProfile);
+            return ResponseUserProfileDto.FromUserProfile(userProfile);
         }
     }
 }

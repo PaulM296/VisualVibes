@@ -20,8 +20,6 @@
     <Folder Include="FeedPosts\Queries\" />
     <Folder Include="Feeds\QueriesHandlers\" />
     <Folder Include="Feeds\Queries\" />
-    <Folder Include="UserProfiles\QueriesHandler\" />
-    <Folder Include="UserProfiles\Queries\" />
   </ItemGroup>
 
 </Project>

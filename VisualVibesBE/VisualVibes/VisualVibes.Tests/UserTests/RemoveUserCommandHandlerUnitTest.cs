@@ -1,5 +1,6 @@
 ﻿using Moq;
 using VisualVibes.App.DTOs;
+using VisualVibes.App.DTOs.UserDtos;
 using VisualVibes.App.Interfaces;
 using VisualVibes.App.Users.Commands;
 using VisualVibes.App.Users.CommandsHandler;
@@ -26,7 +27,7 @@ namespace VisualVibes.Tests.UserTests
         public async void Should_RemoveUser_Correctly()
         {
             //Arrange
-            var userDto = new UserDto
+            var userDto = new ResponseUserDto
             {
                 Id = Guid.NewGuid(),
                 Username = "UserTest",
