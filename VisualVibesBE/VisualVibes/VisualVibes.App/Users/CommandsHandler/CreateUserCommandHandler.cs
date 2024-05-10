@@ -1,4 +1,6 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using MediatR;
+using Microsoft.Extensions.Logging;
 using VisualVibes.App.DTOs.UserDtos;
 using VisualVibes.App.Interfaces;
 using VisualVibes.App.Users.Commands;
@@ -9,10 +11,14 @@ namespace VisualVibes.App.Users.CommandsHandler
     public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, ResponseUserDto>
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ILogger<CreateUserCommandHandler> _logger;
+        private readonly IMapper _mapper;
 
-        public CreateUserCommandHandler(IUnitOfWork unitOfWork)
+        public CreateUserCommandHandler(IUnitOfWork unitOfWork, ILogger<CreateUserCommandHandler> logger, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
+            _logger = logger;
+            _mapper = mapper;
         }
         public async Task<ResponseUserDto> Handle(CreateUserCommand request, CancellationToken cancellationToken)
         {
@@ -32,7 +38,9 @@ namespace VisualVibes.App.Users.CommandsHandler
             await _unitOfWork.FeedPostRepository.EnsureFeedForUserAsync(user.Id);
             await _unitOfWork.SaveAsync();
 
-            return ResponseUserDto.FromUser(createdUser);
+            _logger.LogInformation("New user successfully added!");
+
+            return _mapper.Map<ResponseUserDto>(createdUser);
         }
     }
 }

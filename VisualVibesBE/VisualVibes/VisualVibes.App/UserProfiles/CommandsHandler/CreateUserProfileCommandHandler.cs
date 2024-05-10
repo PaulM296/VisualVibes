@@ -1,4 +1,6 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using MediatR;
+using Microsoft.Extensions.Logging;
 using VisualVibes.App.DTOs.UserProfileDtos;
 using VisualVibes.App.Exceptions;
 using VisualVibes.App.Interfaces;
@@ -10,10 +12,14 @@ namespace VisualVibes.App.UserProfiles.CommandsHandler
     public class CreateUserProfileCommandHandler : IRequestHandler<CreateUserProfileCommand, ResponseUserProfileDto>
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ILogger<CreateUserProfileCommandHandler> _logger;
+        private readonly IMapper _mapper;
 
-        public CreateUserProfileCommandHandler(IUnitOfWork unitOfWork)
+        public CreateUserProfileCommandHandler(IUnitOfWork unitOfWork, ILogger<CreateUserProfileCommandHandler> logger, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
+            _logger = logger;
+            _mapper = mapper;
         }
 
         public async Task<ResponseUserProfileDto> Handle(CreateUserProfileCommand request, CancellationToken cancellationToken)
@@ -38,7 +44,9 @@ namespace VisualVibes.App.UserProfiles.CommandsHandler
             await _unitOfWork.UserProfileRepository.AddAsync(userProfile);
             await _unitOfWork.SaveAsync();
 
-            return ResponseUserProfileDto.FromUserProfile(userProfile);
+            _logger.LogInformation("New UserProfile has been successfully created!");
+
+            return _mapper.Map<ResponseUserProfileDto>(userProfile);
         }
     }
 }

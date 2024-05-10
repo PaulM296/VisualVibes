@@ -1,5 +1,5 @@
-using VisualVibes.Api;
 using VisualVibes.Api.Extensions;
+using VisualVibes.Api.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,8 +14,11 @@ builder.Services.AddMediatR();
 builder.Services.AddRepositories();
 builder.Services.AddDbContext();
 builder.Services.AddFileSystemLogger();
+builder.Services.AddAutoMapper();
 
 var app = builder.Build();
+
+app.UseMiddleware<ExceptionMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

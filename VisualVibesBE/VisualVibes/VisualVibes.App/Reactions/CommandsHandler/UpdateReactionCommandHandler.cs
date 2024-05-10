@@ -1,19 +1,24 @@
-﻿using MediatR;
-using VisualVibes.App.Comments.Commands;
+﻿using AutoMapper;
+using MediatR;
+using Microsoft.Extensions.Logging;
 using VisualVibes.App.DTOs.ReactionDtos;
 using VisualVibes.App.Exceptions;
 using VisualVibes.App.Interfaces;
 using VisualVibes.App.Reactions.Commands;
-using VisualVibes.Domain.Models.BaseEntity;
 
 namespace VisualVibes.App.Reactions.CommandsHandler
 {
     public class UpdateReactionCommandHandler : IRequestHandler<UpdateReactionCommand, ResponseReactionDto>
     {
         private readonly IUnitOfWork _unitOfWork;
-        public UpdateReactionCommandHandler(IUnitOfWork unitOfWork) 
+        private readonly ILogger<UpdateReactionCommandHandler> _logger;
+        private readonly IMapper _mapper;
+
+        public UpdateReactionCommandHandler(IUnitOfWork unitOfWork, ILogger<UpdateReactionCommandHandler> logger, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
+            _logger = logger;
+            _mapper = mapper;
         }
         public async Task<ResponseReactionDto> Handle(UpdateReactionCommand request, CancellationToken cancellationToken)
         {
@@ -26,10 +31,12 @@ namespace VisualVibes.App.Reactions.CommandsHandler
 
             getReaction.ReactionType = request.updateReactionDto.ReactionType;
 
-            var createdReaction = await _unitOfWork.ReactionRepository.UpdateAsync(getReaction);
+            var updatedReaction = await _unitOfWork.ReactionRepository.UpdateAsync(getReaction);
             await _unitOfWork.SaveAsync();
 
-            return ResponseReactionDto.FromReaction(createdReaction);
+            _logger.LogInformation("Reaction successfully updated!");
+
+            return _mapper.Map<ResponseReactionDto>(updatedReaction);
         }
     }
 }

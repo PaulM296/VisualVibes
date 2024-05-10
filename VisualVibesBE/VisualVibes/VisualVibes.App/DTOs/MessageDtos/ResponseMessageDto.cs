@@ -10,16 +10,16 @@ namespace VisualVibes.App.DTOs.MessageDtos
         public string Content { get; set; }
         public DateTime Timestamp { get; set; }
 
-        public static ResponseMessageDto FromMessage(Message message)
-        {
-            return new ResponseMessageDto
-            {
-                Id = message.Id,
-                UserId = message.UserId,
-                ConversationId = message.ConversationId,
-                Content = message.Content,
-                Timestamp = message.Timestamp
-            };
-        }
+        //public static ResponseMessageDto FromMessage(Message message)
+        //{
+        //    return new ResponseMessageDto
+        //    {
+        //        Id = message.Id,
+        //        UserId = message.UserId,
+        //        ConversationId = message.ConversationId,
+        //        Content = message.Content,
+        //        Timestamp = message.Timestamp
+        //    };
+        //}
     }
 }

@@ -1,4 +1,6 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using MediatR;
+using Microsoft.Extensions.Logging;
 using VisualVibes.App.DTOs.UserProfileDtos;
 using VisualVibes.App.Exceptions;
 using VisualVibes.App.Interfaces;
@@ -9,10 +11,14 @@ namespace VisualVibes.App.UserProfiles.QueriesHandler
     public class GetUserProfileByUserIdQueryHandler : IRequestHandler<GetUserProfileByUserIdQuery, ResponseUserProfileDto>
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ILogger<GetUserProfileByUserIdQueryHandler> _logger;
+        private readonly IMapper _mapper;
 
-        public GetUserProfileByUserIdQueryHandler(IUnitOfWork unitOfWork)
+        public GetUserProfileByUserIdQueryHandler(IUnitOfWork unitOfWork, ILogger<GetUserProfileByUserIdQueryHandler> logger, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
+            _logger = logger;
+            _mapper = mapper;
         }
 
         public async Task<ResponseUserProfileDto> Handle(GetUserProfileByUserIdQuery request, CancellationToken cancellationToken)
@@ -24,7 +30,9 @@ namespace VisualVibes.App.UserProfiles.QueriesHandler
                 throw new UserProfileNotFoundException($"The user profile with userId: {request.userId} has not been found!");
             }
 
-            return ResponseUserProfileDto.FromUserProfile(user.UserProfile);
+            _logger.LogInformation("UserProfile successfully retrieved!");
+
+            return _mapper.Map<ResponseUserProfileDto>(user);
         }
     }
 }

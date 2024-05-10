@@ -36,5 +36,10 @@ namespace VisualVibes.Api.Extensions
         {
             services.AddTransient(provider => new FileSystemLogger("logs"));
         }
+
+        public static void AddAutoMapper(this IServiceCollection services)
+        {
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+        }
     }
 }

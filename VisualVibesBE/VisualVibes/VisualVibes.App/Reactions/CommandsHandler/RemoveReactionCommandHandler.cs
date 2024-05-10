@@ -1,18 +1,20 @@
 ﻿using MediatR;
-using VisualVibes.App.DTOs;
+using Microsoft.Extensions.Logging;
 using VisualVibes.App.Exceptions;
 using VisualVibes.App.Interfaces;
 using VisualVibes.App.Reactions.Commands;
-using VisualVibes.Domain.Models.BaseEntity;
 
 namespace VisualVibes.App.Reactions.CommandsHandler
 {
     public class RemoveReactionCommandHandler : IRequestHandler<RemoveReactionCommand, Unit>
     {
         private readonly IUnitOfWork _unitOfWork;
-        public RemoveReactionCommandHandler(IUnitOfWork unitOfWork) 
+        private readonly ILogger<RemoveReactionCommandHandler> _logger;
+
+        public RemoveReactionCommandHandler(IUnitOfWork unitOfWork, ILogger<RemoveReactionCommandHandler> logger)
         {
             _unitOfWork = unitOfWork;
+            _logger = logger;
         }
         public async Task<Unit> Handle(RemoveReactionCommand request, CancellationToken cancellationToken)
         {
@@ -25,6 +27,8 @@ namespace VisualVibes.App.Reactions.CommandsHandler
 
             await _unitOfWork.ReactionRepository.RemoveAsync(reactionToRemove);
             await _unitOfWork.SaveAsync();
+
+            _logger.LogInformation("Reaction successfully removed!");
 
             return Unit.Value;
         }

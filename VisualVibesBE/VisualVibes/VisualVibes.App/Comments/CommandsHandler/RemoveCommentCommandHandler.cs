@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.Extensions.Logging;
 using VisualVibes.App.Comments.Commands;
 using VisualVibes.App.DTOs;
 using VisualVibes.App.Exceptions;
@@ -10,10 +11,12 @@ namespace VisualVibes.App.Comments.CommandsHandler
     public class RemoveCommentCommandHandler : IRequestHandler<RemoveCommentCommand, Unit>
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ILogger<CreateCommentCommandHandler> _logger;
 
-        public RemoveCommentCommandHandler(IUnitOfWork unitOfWork)
+        public RemoveCommentCommandHandler(IUnitOfWork unitOfWork, ILogger<CreateCommentCommandHandler> logger)
         {
             _unitOfWork = unitOfWork;
+            _logger = logger;
         }
         public async Task<Unit> Handle(RemoveCommentCommand request, CancellationToken cancellationToken)
         {
@@ -26,6 +29,8 @@ namespace VisualVibes.App.Comments.CommandsHandler
 
             await _unitOfWork.CommentRepository.RemoveAsync(commentToRemove);
             await _unitOfWork.SaveAsync();
+
+            _logger.LogInformation("Comment successfully removed!");
 
             return Unit.Value;
         }

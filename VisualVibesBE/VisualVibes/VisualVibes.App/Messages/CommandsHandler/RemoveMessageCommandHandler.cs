@@ -1,18 +1,20 @@
 ﻿using MediatR;
+using Microsoft.Extensions.Logging;
 using VisualVibes.App.Exceptions;
 using VisualVibes.App.Interfaces;
 using VisualVibes.App.Messages.Commands;
-using VisualVibes.Domain.Models.BaseEntity;
 
 namespace VisualVibes.App.Messages.CommandsHandler
 {
     public class RemoveMessageCommandHandler : IRequestHandler<RemoveMessageCommand, Unit>
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ILogger<RemoveMessageCommandHandler> _logger;
 
-        public RemoveMessageCommandHandler(IUnitOfWork unitOfWork) 
+        public RemoveMessageCommandHandler(IUnitOfWork unitOfWork, ILogger<RemoveMessageCommandHandler> logger)
         {
             _unitOfWork = unitOfWork;
+            _logger = logger;
         }
         public async Task<Unit> Handle(RemoveMessageCommand request, CancellationToken cancellationToken)
         {
@@ -25,6 +27,8 @@ namespace VisualVibes.App.Messages.CommandsHandler
 
             await _unitOfWork.MessageRepository.RemoveAsync(messageToRemove);
             await _unitOfWork.SaveAsync();
+
+            _logger.LogInformation("Message successfully removed!");
 
             return Unit.Value;
 

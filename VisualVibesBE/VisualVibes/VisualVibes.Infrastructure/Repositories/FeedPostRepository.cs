@@ -110,5 +110,12 @@ namespace VisualVibes.Infrastructure.Repositories
             _context.FeedPost.Remove(feedPost);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<IEnumerable<FeedPost>> GetByPostIdAsync(Guid postId)
+        {
+            return await _context.FeedPost
+                                 .Where(fp => fp.PostId == postId)
+                                 .ToListAsync();
+        }
     }
 }

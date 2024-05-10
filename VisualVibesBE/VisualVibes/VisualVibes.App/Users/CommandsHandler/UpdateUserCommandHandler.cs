@@ -1,19 +1,24 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using MediatR;
+using Microsoft.Extensions.Logging;
 using VisualVibes.App.DTOs.UserDtos;
 using VisualVibes.App.Exceptions;
 using VisualVibes.App.Interfaces;
 using VisualVibes.App.Users.Commands;
-using VisualVibes.Domain.Models.BaseEntity;
 
 namespace VisualVibes.App.Users.CommandsHandler
 {
     public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, ResponseUserDto>
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ILogger<UpdateUserCommandHandler> _logger;
+        private readonly IMapper _mapper;
 
-        public UpdateUserCommandHandler(IUnitOfWork unitOfWork)
+        public UpdateUserCommandHandler(IUnitOfWork unitOfWork, ILogger<UpdateUserCommandHandler> logger, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
+            _logger = logger;
+            _mapper = mapper;
         }
 
         public async Task<ResponseUserDto> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
@@ -32,7 +37,9 @@ namespace VisualVibes.App.Users.CommandsHandler
 
             await _unitOfWork.SaveAsync();
 
-            return ResponseUserDto.FromUser(updatedUser);
+            _logger.LogInformation("User has been successfully updated!");
+
+            return _mapper.Map<ResponseUserDto>(updatedUser);
         }
     }
 }

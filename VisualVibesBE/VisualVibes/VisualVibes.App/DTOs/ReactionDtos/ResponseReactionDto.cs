@@ -11,16 +11,16 @@ namespace VisualVibes.App.DTOs.ReactionDtos
         public ReactionType ReactionType { get; set; }
         public DateTime Timestamp { get; set; }
 
-        public static ResponseReactionDto FromReaction(Reaction reaction)
-        {
-            return new ResponseReactionDto
-            {
-                Id = reaction.Id,
-                UserId = reaction.UserId,
-                PostId = reaction.PostId,
-                ReactionType = reaction.ReactionType,
-                Timestamp = reaction.Timestamp
-            };
-        }
+        //public static ResponseReactionDto FromReaction(Reaction reaction)
+        //{
+        //    return new ResponseReactionDto
+        //    {
+        //        Id = reaction.Id,
+        //        UserId = reaction.UserId,
+        //        PostId = reaction.PostId,
+        //        ReactionType = reaction.ReactionType,
+        //        Timestamp = reaction.Timestamp
+        //    };
+        //}
     }
 }

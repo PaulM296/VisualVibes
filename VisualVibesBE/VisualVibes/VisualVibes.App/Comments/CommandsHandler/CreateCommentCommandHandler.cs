@@ -1,8 +1,9 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using MediatR;
+using Microsoft.Extensions.Logging;
 using VisualVibes.App.Comments.Commands;
 using VisualVibes.App.DTOs.CommentDtos;
 using VisualVibes.App.Interfaces;
-using VisualVibes.App.Users.Queries;
 using VisualVibes.Domain.Models.BaseEntity;
 
 namespace VisualVibes.App.Comments.CommandsHandler
@@ -10,12 +11,16 @@ namespace VisualVibes.App.Comments.CommandsHandler
     public class CreateCommentCommandHandler : IRequestHandler<CreateCommentCommand, ResponseCommentDto>
     {
         private readonly IUnitOfWork _unitOfWork;
-        
-        public CreateCommentCommandHandler(IUnitOfWork unitOfWork)
+        private readonly ILogger<CreateCommentCommandHandler> _logger;
+        private readonly IMapper _mapper;
+
+        public CreateCommentCommandHandler(IUnitOfWork unitOfWork, ILogger<CreateCommentCommandHandler> logger, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
+            _logger = logger;
+            _mapper = mapper;
         }
-            
+
         public async Task<ResponseCommentDto> Handle(CreateCommentCommand request, CancellationToken cancellationToken)
         {
             var comment = new Comment()
@@ -29,7 +34,9 @@ namespace VisualVibes.App.Comments.CommandsHandler
             var createdComment = await _unitOfWork.CommentRepository.AddAsync(comment);
             await _unitOfWork.SaveAsync();
 
-            return ResponseCommentDto.FromComment(createdComment);
+            _logger.LogInformation("Comment successfully created!");
+
+            return _mapper.Map<ResponseCommentDto>(createdComment);
         }
     }
 }

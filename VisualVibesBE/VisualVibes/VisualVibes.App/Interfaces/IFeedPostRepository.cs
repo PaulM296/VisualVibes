@@ -10,5 +10,6 @@ namespace VisualVibes.App.Interfaces
         Task EnsureFeedForUserAsync(Guid userId);
         Task<IEnumerable<FeedPost>> GetByFeedIdAsync(Guid feedId);
         Task RemoveAsync(FeedPost feedPost);
+        Task<IEnumerable<FeedPost>> GetByPostIdAsync(Guid postId);
     }
 }

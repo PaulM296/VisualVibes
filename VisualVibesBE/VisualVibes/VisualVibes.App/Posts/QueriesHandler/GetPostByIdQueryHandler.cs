@@ -1,4 +1,6 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using MediatR;
+using Microsoft.Extensions.Logging;
 using VisualVibes.App.DTOs.PostDtos;
 using VisualVibes.App.Exceptions;
 using VisualVibes.App.Interfaces;
@@ -8,11 +10,15 @@ namespace VisualVibes.App.Posts.QueriesHandler
 {
     public class GetPostByIdQueryHandler : IRequestHandler<GetPostByIdQuery, ResponsePostDto>
     {
-        public readonly IUnitOfWork _unitOfWork;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly ILogger<GetPostByIdQueryHandler> _logger;
+        private readonly IMapper _mapper;
 
-        public GetPostByIdQueryHandler(IUnitOfWork unitOfWork)
+        public GetPostByIdQueryHandler(IUnitOfWork unitOfWork, ILogger<GetPostByIdQueryHandler> logger, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
+            _logger = logger;
+            _mapper = mapper;
         }
 
         public async Task<ResponsePostDto> Handle(GetPostByIdQuery request, CancellationToken cancellationToken)
@@ -24,7 +30,9 @@ namespace VisualVibes.App.Posts.QueriesHandler
                 throw new PostNotFoundException($"Could not get the post with Id {request.PostId}, because it doesn't exist!");
             }
 
-            return ResponsePostDto.FromPost(post);
+            _logger.LogInformation("Post successfully retrieved!");
+
+            return _mapper.Map<ResponsePostDto>(post);
         }
     }
 }

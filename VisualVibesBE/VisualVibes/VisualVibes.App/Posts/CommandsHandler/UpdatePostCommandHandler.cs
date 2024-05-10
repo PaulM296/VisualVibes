@@ -1,19 +1,24 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using MediatR;
+using Microsoft.Extensions.Logging;
 using VisualVibes.App.DTOs.PostDtos;
 using VisualVibes.App.Exceptions;
 using VisualVibes.App.Interfaces;
 using VisualVibes.App.Posts.Commands;
-using VisualVibes.App.Users.Queries;
-using VisualVibes.Domain.Models.BaseEntity;
 
 namespace VisualVibes.App.Posts.CommandsHandler
 {
     public class UpdatePostCommandHandler : IRequestHandler<UpdatePostCommand, ResponsePostDto>
     {
         private readonly IUnitOfWork _unitOfWork;
-        public UpdatePostCommandHandler(IUnitOfWork unitOfWork) 
+        private readonly ILogger<UpdatePostCommandHandler> _logger;
+        private readonly IMapper _mapper;
+
+        public UpdatePostCommandHandler(IUnitOfWork unitOfWork, ILogger<UpdatePostCommandHandler> logger, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
+            _logger = logger;
+            _mapper = mapper;
         }
 
         public async Task<ResponsePostDto> Handle(UpdatePostCommand request, CancellationToken cancellationToken)
@@ -32,7 +37,9 @@ namespace VisualVibes.App.Posts.CommandsHandler
             var updatedPost = await _unitOfWork.PostRepository.UpdateAsync(getPost);
             await _unitOfWork.SaveAsync();
 
-            return ResponsePostDto.FromPost(updatedPost);
+            _logger.LogInformation("Post successfully updated!");
+
+            return _mapper.Map<ResponsePostDto>(updatedPost);
         }
     }
 }

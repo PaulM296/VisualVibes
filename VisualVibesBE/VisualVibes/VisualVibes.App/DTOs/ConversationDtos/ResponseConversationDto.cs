@@ -8,14 +8,14 @@ namespace VisualVibes.App.DTOs.ConversationDtos
         public Guid FirstParticipantId { get; set; }
         public Guid SecondParticipantId { get; set; }
 
-        public static ResponseConversationDto FromConversation(Conversation conversation)
-        {
-            return new ResponseConversationDto
-            {
-                Id = conversation.Id,
-                FirstParticipantId = conversation.FirstParticipantId,
-                SecondParticipantId = conversation.SecondParticipantId,
-            };
-        }
+        //public static ResponseConversationDto FromConversation(Conversation conversation)
+        //{
+        //    return new ResponseConversationDto
+        //    {
+        //        Id = conversation.Id,
+        //        FirstParticipantId = conversation.FirstParticipantId,
+        //        SecondParticipantId = conversation.SecondParticipantId,
+        //    };
+        //}
     }
 }

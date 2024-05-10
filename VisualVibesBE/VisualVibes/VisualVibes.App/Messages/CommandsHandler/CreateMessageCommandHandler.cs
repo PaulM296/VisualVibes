@@ -1,4 +1,6 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using MediatR;
+using Microsoft.Extensions.Logging;
 using VisualVibes.App.DTOs.MessageDtos;
 using VisualVibes.App.Interfaces;
 using VisualVibes.App.Messages.Commands;
@@ -9,9 +11,13 @@ namespace VisualVibes.App.Messages.CommandsHandler
     public class CreateMessageCommandHandler : IRequestHandler<CreateMessageCommand, ResponseMessageDto>
     {
         private readonly IUnitOfWork _unitOfWork;
-        public CreateMessageCommandHandler(IUnitOfWork unitOfWork)
+        private readonly ILogger<CreateMessageCommandHandler> _logger;
+        private readonly IMapper _mapper;
+        public CreateMessageCommandHandler(IUnitOfWork unitOfWork, ILogger<CreateMessageCommandHandler> logger, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
+            _logger = logger;
+            _mapper = mapper;
         }
 
         public async Task<ResponseMessageDto> Handle(CreateMessageCommand request, CancellationToken cancellationToken)
@@ -27,7 +33,9 @@ namespace VisualVibes.App.Messages.CommandsHandler
             var createdMessage = await _unitOfWork.MessageRepository.AddAsync(message);
             await _unitOfWork.SaveAsync();
 
-            return ResponseMessageDto.FromMessage(createdMessage);
+            _logger.LogInformation("Message successfully created!");
+
+            return _mapper.Map<ResponseMessageDto>(createdMessage);
         }
     }
 }

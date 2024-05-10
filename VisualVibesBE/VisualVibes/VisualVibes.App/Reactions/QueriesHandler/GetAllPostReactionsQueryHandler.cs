@@ -1,4 +1,6 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using MediatR;
+using Microsoft.Extensions.Logging;
 using VisualVibes.App.DTOs.ReactionDtos;
 using VisualVibes.App.Exceptions;
 using VisualVibes.App.Interfaces;
@@ -8,11 +10,15 @@ namespace VisualVibes.App.Reactions.QueriesHandler
 {
     public class GetAllPostReactionsQueryHandler : IRequestHandler<GetAllPostReactionsQuery, ICollection<ResponseReactionDto>>
     {
-        public readonly IUnitOfWork _unitOfWork;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly ILogger<GetAllPostReactionsQueryHandler> _logger;
+        private readonly IMapper _mapper;
 
-        public GetAllPostReactionsQueryHandler(IUnitOfWork unitOfWork)
+        public GetAllPostReactionsQueryHandler(IUnitOfWork unitOfWork, ILogger<GetAllPostReactionsQueryHandler> logger, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
+            _logger = logger;
+            _mapper = mapper;
         }
 
         public async Task<ICollection<ResponseReactionDto>> Handle(GetAllPostReactionsQuery request, CancellationToken cancellationToken)
@@ -24,7 +30,9 @@ namespace VisualVibes.App.Reactions.QueriesHandler
                 throw new ReactionNotFoundException($"Could not get the reactions from PostId {request.PostId}, because it doesn't have any yet!");
             }
 
-            var reactionDtos = reactions.Select(ResponseReactionDto.FromReaction).ToList();
+            var reactionDtos = _mapper.Map<ICollection<ResponseReactionDto>>(reactions);
+
+            _logger.LogInformation("All post reactions successfully retrieved!");
 
             return reactionDtos;
         }

@@ -1,15 +1,19 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using MediatR;
+using Microsoft.Extensions.Logging;
 using VisualVibes.App.DTOs.MessageDtos;
 using VisualVibes.App.Exceptions;
 using VisualVibes.App.Interfaces;
 using VisualVibes.App.Messages.Queries;
-using VisualVibes.Domain.Models.BaseEntity;
 
 namespace VisualVibes.App.Messages.QueriesHandler
 {
     public class GetAllConversationMessagesQueryHandler : IRequestHandler<GetAllConversationMessagesQuery, ICollection<ResponseMessageDto>>
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ILogger<GetAllConversationMessagesQueryHandler> _logger;
+        private readonly IMapper _mapper;
+
         public GetAllConversationMessagesQueryHandler(IUnitOfWork unitOfWork) 
         {
             _unitOfWork = unitOfWork;
@@ -23,13 +27,9 @@ namespace VisualVibes.App.Messages.QueriesHandler
                 throw new MessageNotFoundException($"Could not get the messages from ConversationId {request.ConversationId}, because it doesn't have any yet!");
             }
 
-            var messagesDtos = new List<ResponseMessageDto>();
-            foreach (var message in messages)
-            {
-                messagesDtos.Add(ResponseMessageDto.FromMessage(message));
-            }
+            var messagesDtos = _mapper.Map<ICollection<ResponseMessageDto>>(messages);
 
-            var messagesDto = messages.Select(ResponseMessageDto.FromMessage).ToList();
+            _logger.LogInformation("Conversation messages successfully retrieved!");
 
             return messagesDtos;
         }

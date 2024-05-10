@@ -2,7 +2,7 @@
 using System.Security.Cryptography.X509Certificates;
 using static System.Net.Mime.MediaTypeNames;
 
-namespace VisualVibes.Api
+namespace VisualVibes.Api.Middleware
 {
     public class TimingMiddleware
     {

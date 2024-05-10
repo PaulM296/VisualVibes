@@ -1,4 +1,6 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using MediatR;
+using Microsoft.Extensions.Logging;
 using VisualVibes.App.Conversations.Commands;
 using VisualVibes.App.DTOs.ConversationDtos;
 using VisualVibes.App.Interfaces;
@@ -9,9 +11,14 @@ namespace VisualVibes.App.Conversations.CommandsHandler
     public class CreateConversationCommandHandler : IRequestHandler<CreateConversationCommand, ResponseConversationDto>
     {
         private readonly IUnitOfWork _unitOfWork;
-        public CreateConversationCommandHandler(IUnitOfWork unitOfWork) 
+        private readonly ILogger<CreateConversationCommandHandler> _logger;
+        private readonly IMapper _mapper;
+
+        public CreateConversationCommandHandler(IUnitOfWork unitOfWork, ILogger<CreateConversationCommandHandler> logger, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
+            _logger = logger;
+            _mapper = mapper;
         }
         public async Task<ResponseConversationDto> Handle(CreateConversationCommand request, CancellationToken cancellationToken)
         {
@@ -25,7 +32,9 @@ namespace VisualVibes.App.Conversations.CommandsHandler
             var createdConversation = await _unitOfWork.ConversationRepository.AddAsync(conversation);
             await _unitOfWork.SaveAsync();
 
-            return ResponseConversationDto.FromConversation(conversation);
+            _logger.LogInformation("Conversation successfully created!");
+
+            return _mapper.Map<ResponseConversationDto>(createdConversation);
         }
     }
 }
