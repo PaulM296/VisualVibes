@@ -12,10 +12,10 @@ namespace VisualVibes.App.Comments.QueriesHandler
     public class GetAllPostCommentsQueryHandler : IRequestHandler<GetAllPostCommentsQuery, ICollection<ResponseCommentDto>>
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly ILogger<CreateCommentCommandHandler> _logger;
+        private readonly ILogger<GetAllPostCommentsQueryHandler> _logger;
         private readonly IMapper _mapper;
 
-        public GetAllPostCommentsQueryHandler(IUnitOfWork unitOfWork, ILogger<CreateCommentCommandHandler> logger, IMapper mapper)
+        public GetAllPostCommentsQueryHandler(IUnitOfWork unitOfWork, ILogger<GetAllPostCommentsQueryHandler> logger, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _logger = logger;

@@ -14,9 +14,11 @@ namespace VisualVibes.App.Messages.QueriesHandler
         private readonly ILogger<GetAllConversationMessagesQueryHandler> _logger;
         private readonly IMapper _mapper;
 
-        public GetAllConversationMessagesQueryHandler(IUnitOfWork unitOfWork) 
+        public GetAllConversationMessagesQueryHandler(IUnitOfWork unitOfWork, ILogger<GetAllConversationMessagesQueryHandler> logger, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
+            _logger = logger;
+            _mapper = mapper;
         }
         public async Task<ICollection<ResponseMessageDto>> Handle(GetAllConversationMessagesQuery request, CancellationToken cancellationToken)
         {

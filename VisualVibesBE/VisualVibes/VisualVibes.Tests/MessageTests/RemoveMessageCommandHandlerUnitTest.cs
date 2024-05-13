@@ -1,61 +1,59 @@
-﻿//using Moq;
-//using VisualVibes.App.DTOs;
-//using VisualVibes.App.Interfaces;
-//using VisualVibes.App.Messages.Commands;
-//using VisualVibes.App.Messages.CommandsHandler;
-//using VisualVibes.Domain.Models.BaseEntity;
+﻿using Microsoft.Extensions.Logging;
+using Moq;
+using VisualVibes.App.Interfaces;
+using VisualVibes.App.Messages.Commands;
+using VisualVibes.App.Messages.CommandsHandler;
+using VisualVibes.Domain.Models.BaseEntity;
 
-//namespace VisualVibes.Tests.MessageTests
-//{
-//    public class RemoveMessageCommandHandlerUnitTest
-//    {
-//        private readonly Mock<IMessageRepository> _messageRepositoryMock;
-//        private readonly Mock<IUnitOfWork> _unitOfWorkMock;
-//        private RemoveMessageCommandHandler _removeMessageCommandHandler;
+namespace VisualVibes.Tests.MessageTests
+{
+    public class RemoveMessageCommandHandlerUnitTest
+    {
+        private readonly Mock<IMessageRepository> _messageRepositoryMock;
+        private readonly Mock<IUnitOfWork> _unitOfWorkMock;
+        private readonly Mock<ILogger<RemoveMessageCommandHandler>> _loggerMock;
 
-//        public RemoveMessageCommandHandlerUnitTest()
-//        {
-//            _messageRepositoryMock = new Mock<IMessageRepository>();
-//            _unitOfWorkMock = new Mock<IUnitOfWork>();
+        private RemoveMessageCommandHandler _removeMessageCommandHandler;
 
-//            _unitOfWorkMock.Setup(uow => uow.MessageRepository).Returns(_messageRepositoryMock.Object);
-//            _removeMessageCommandHandler = new RemoveMessageCommandHandler(_unitOfWorkMock.Object);
-//        }
+        public RemoveMessageCommandHandlerUnitTest()
+        {
+            _messageRepositoryMock = new Mock<IMessageRepository>();
+            _unitOfWorkMock = new Mock<IUnitOfWork>();
+            _loggerMock = new Mock<ILogger<RemoveMessageCommandHandler>>();
 
-//        [Fact]
-//        public async void Should_RemoveMessage_Correctly()
-//        {
-//            // Arrange
-//            var messageDto = new MessageDto
-//            {
-//                Id = Guid.NewGuid(),
-//                UserId = Guid.NewGuid(),
-//                ConversationId = Guid.NewGuid(),
-//                Content = "This is a message test",
-//                Timestamp = DateTime.UtcNow,
-//            };
+            _unitOfWorkMock.Setup(uow => uow.MessageRepository).Returns(_messageRepositoryMock.Object);
+            
+            _removeMessageCommandHandler = new RemoveMessageCommandHandler(_unitOfWorkMock.Object, _loggerMock.Object);
+        }
 
-//            var message = new Message
-//            {
-//                Id = messageDto.Id,
-//                UserId = messageDto.UserId,
-//                ConversationId = messageDto.ConversationId,
-//                Content = messageDto.Content,
-//                Timestamp = messageDto.Timestamp
-//            };
+        [Fact]
+        public async void Should_RemoveMessage_Correctly()
+        {
+            // Arrange
+            var messageId = Guid.NewGuid();
 
-//            var removeMessageCommand = new RemoveMessageCommand(messageDto.Id);
+            var message = new Message
+            {
+                Id = messageId,
+                UserId = Guid.NewGuid(),
+                ConversationId = Guid.NewGuid(),
+                Content = "This is a message test",
+                Timestamp = DateTime.UtcNow,
+            };
 
-//            _messageRepositoryMock
-//                .Setup(x => x.GetByIdAsync(messageDto.Id)).ReturnsAsync(message);
+            var removeMessageCommand = new RemoveMessageCommand(messageId);
 
-//            //Act
-//            var result = await _removeMessageCommandHandler.Handle(removeMessageCommand, new CancellationToken());
+            _messageRepositoryMock
+                .Setup(x => x.GetByIdAsync(messageId))
+                .ReturnsAsync(message);
 
-//            //Assert
-//            _messageRepositoryMock.Verify(x => x.GetByIdAsync(messageDto.Id), Times.Once);
-//            _messageRepositoryMock.Verify(x => x.RemoveAsync(message), Times.Once);
-//            _unitOfWorkMock.Verify(uow => uow.SaveAsync(), Times.Once);
-//        }
-//    }
-//}
+            //Act
+            var result = await _removeMessageCommandHandler.Handle(removeMessageCommand, new CancellationToken());
+
+            //Assert
+            _messageRepositoryMock.Verify(x => x.GetByIdAsync(messageId), Times.Once);
+            _messageRepositoryMock.Verify(x => x.RemoveAsync(message), Times.Once);
+            _unitOfWorkMock.Verify(uow => uow.SaveAsync(), Times.Once);
+        }
+    }
+}

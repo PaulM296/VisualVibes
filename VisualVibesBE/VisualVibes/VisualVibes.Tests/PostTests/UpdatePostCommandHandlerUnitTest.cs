@@ -1,76 +1,100 @@
-﻿//using Moq;
-//using VisualVibes.App.DTOs;
-//using VisualVibes.App.Interfaces;
-//using VisualVibes.App.Posts.Commands;
-//using VisualVibes.App.Posts.CommandsHandler;
-//using VisualVibes.Domain.Models.BaseEntity;
+﻿using AutoMapper;
+using Castle.Core.Logging;
+using Microsoft.Extensions.Logging;
+using Moq;
+using VisualVibes.App.DTOs;
+using VisualVibes.App.DTOs.PostDtos;
+using VisualVibes.App.Interfaces;
+using VisualVibes.App.Posts.Commands;
+using VisualVibes.App.Posts.CommandsHandler;
+using VisualVibes.Domain.Models.BaseEntity;
 
-//namespace VisualVibes.Tests.PostTests
-//{
-//    public class UpdatePostCommandHandlerUnitTest
-//    {
-//        private UpdatePostCommandHandler _updatePostCommandHandler;
-//        private readonly Mock<IPostRepository> _postRepositoryMock;
-//        private readonly Mock<IUnitOfWork> _unitOfWorkMock;
-//        public UpdatePostCommandHandlerUnitTest()
-//        {
-//            _postRepositoryMock = new Mock<IPostRepository>();
-//            _unitOfWorkMock = new Mock<IUnitOfWork>();
+namespace VisualVibes.Tests.PostTests
+{
+    public class UpdatePostCommandHandlerUnitTest
+    {
+        private readonly UpdatePostCommandHandler _updatePostCommandHandler;
+        private readonly Mock<IPostRepository> _postRepositoryMock;
+        private readonly Mock<IUnitOfWork> _unitOfWorkMock;
+        private readonly Mock<ILogger<UpdatePostCommandHandler>> _loggerMock;
+        private readonly Mock<IMapper> _mapperMock;
 
-//            _unitOfWorkMock.Setup(uow => uow.PostRepository).Returns(_postRepositoryMock.Object);
-//            _updatePostCommandHandler = new UpdatePostCommandHandler(_unitOfWorkMock.Object);
-//        }
+        public UpdatePostCommandHandlerUnitTest()
+        {
+            _postRepositoryMock = new Mock<IPostRepository>();
+            _unitOfWorkMock = new Mock<IUnitOfWork>();
+            _loggerMock = new Mock<ILogger<UpdatePostCommandHandler>>();
+            _mapperMock = new Mock<IMapper>();
 
-//        [Fact]
-//        public async void Should_UpdatePost_Correctly()
-//        {
-//            //Arrange
-//            var postDto = new PostDto
-//            {
-//                Id = Guid.NewGuid(),
-//                UserId = Guid.NewGuid(),
-//                Pictures = "Picture1.png",
-//                Caption = "This is a test caption",
-//                CreatedAt = DateTime.UtcNow
-//            };
+            _unitOfWorkMock.Setup(uow => uow.PostRepository).Returns(_postRepositoryMock.Object);
+            _updatePostCommandHandler = new UpdatePostCommandHandler(_unitOfWorkMock.Object, _loggerMock.Object, _mapperMock.Object);
+        }
 
-//            var updatedPostDto = new PostDto
-//            {
-//                Id = postDto.Id,
-//                UserId = postDto.UserId,
-//                Pictures = "Picture2.png",
-//                Caption = "Updated test caption",
-//                CreatedAt = postDto.CreatedAt,
-//            };
+        [Fact]
+        public async void Should_UpdatePost_Correctly()
+        {
+            //Arrange
+            var postId = Guid.NewGuid();
+            var updatePostDto = new UpdatePostDto
+            {
+                UserId = Guid.NewGuid(),
+                Pictures = "Picture2.png",
+                Caption = "Updated test caption"
+            };
 
-//            var post = new Post
-//            {
-//                Id = updatedPostDto.Id,
-//                UserId = updatedPostDto.UserId,
-//                Pictures = updatedPostDto.Pictures,
-//                Caption = updatedPostDto.Caption,
-//                CreatedAt = updatedPostDto.CreatedAt
-//            };
+            var post = new Post
+            {
+                Id = postId,
+                UserId = updatePostDto.UserId,
+                Pictures = "Picture1.png",
+                Caption = "This is a test caption",
+                CreatedAt = DateTime.UtcNow
+            };
 
-//            var updatePostCommand = new UpdatePostCommand(updatedPostDto);
+            var updatedPost = new Post
+            {
+                Id = postId,
+                UserId = updatePostDto.UserId,
+                Pictures = updatePostDto.Pictures,
+                Caption = updatePostDto.Caption,
+                CreatedAt = post.CreatedAt
+            };
 
-//            _postRepositoryMock
-//            .Setup(x => x.GetByIdAsync(postDto.Id)).ReturnsAsync(post);
-//            _postRepositoryMock
-//                .Setup(x => x.UpdateAsync(It.Is<Post>(y => y.UserId == updatedPostDto.UserId
-//                && y.Pictures == updatedPostDto.Pictures && y.Caption == updatedPostDto.Caption
-//                && y.CreatedAt == updatedPostDto.CreatedAt))).ReturnsAsync(post);
+            var responsePostDto = new ResponsePostDto
+            {
+                Id = updatedPost.Id,
+                UserId = updatedPost.UserId,
+                Pictures = updatedPost.Pictures,
+                Caption = updatedPost.Caption,
+                CreatedAt = updatedPost.CreatedAt
+            };
 
-//            //Act
-//            var result = await _updatePostCommandHandler.Handle(updatePostCommand, new CancellationToken());
+            var updatePostCommand = new UpdatePostCommand(postId, updatePostDto);
 
-//            //Assert
-//            Assert.NotNull(result);
-//            Assert.Equal(post.UserId, result.UserId);
-//            Assert.Equal(post.Pictures, result.Pictures);
-//            Assert.Equal(post.Caption, result.Caption);
-//            Assert.Equal(post.CreatedAt, result.CreatedAt);
-//            _unitOfWorkMock.Verify(uow => uow.SaveAsync(), Times.Once);
-//        }
-//    }
-//}
+            _postRepositoryMock
+                .Setup(x => x.GetByIdAsync(postId))
+                .ReturnsAsync(post);
+
+            _postRepositoryMock
+                .Setup(x => x.UpdateAsync(It.IsAny<Post>()))
+                .ReturnsAsync(updatedPost);
+
+            _mapperMock
+                .Setup(m => m.Map<ResponsePostDto>(It.IsAny<Post>()))
+                .Returns(responsePostDto);
+
+            //Act
+            var result = await _updatePostCommandHandler.Handle(updatePostCommand, new CancellationToken());
+
+            //Assert
+            Assert.NotNull(result);
+            Assert.Equal(updatedPost.UserId, result.UserId);
+            Assert.Equal(updatedPost.Pictures, result.Pictures);
+            Assert.Equal(updatedPost.Caption, result.Caption);
+            _postRepositoryMock.Verify(x => x.GetByIdAsync(postId), Times.Once);
+            _postRepositoryMock.Verify(x => x.UpdateAsync(It.IsAny<Post>()), Times.Once);
+            _unitOfWorkMock.Verify(uow => uow.SaveAsync(), Times.Once);
+            _mapperMock.Verify(m => m.Map<ResponsePostDto>(updatedPost), Times.Once);
+        }
+    }
+}

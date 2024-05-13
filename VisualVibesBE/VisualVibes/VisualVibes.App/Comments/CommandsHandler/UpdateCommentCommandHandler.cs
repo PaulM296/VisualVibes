@@ -11,10 +11,10 @@ namespace VisualVibes.App.Comments.CommandsHandler
     public class UpdateCommentCommandHandler : IRequestHandler<UpdateCommentCommand, ResponseCommentDto>
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly ILogger<CreateCommentCommandHandler> _logger;
+        private readonly ILogger<UpdateCommentCommandHandler> _logger;
         private readonly IMapper _mapper;
 
-        public UpdateCommentCommandHandler(IUnitOfWork unitOfWork, ILogger<CreateCommentCommandHandler> logger, IMapper mapper)
+        public UpdateCommentCommandHandler(IUnitOfWork unitOfWork, ILogger<UpdateCommentCommandHandler> logger, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _logger = logger;

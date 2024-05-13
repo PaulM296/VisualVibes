@@ -1,87 +1,102 @@
-﻿//using Moq;
-//using VisualVibes.App.DTOs;
-//using VisualVibes.App.Interfaces;
-//using VisualVibes.App.UserProfiles.Commands;
-//using VisualVibes.App.UserProfiles.CommandsHandler;
-//using VisualVibes.Domain.Models.BaseEntity;
+﻿using AutoMapper;
+using Microsoft.Extensions.Logging;
+using Moq;
+using VisualVibes.App.DTOs;
+using VisualVibes.App.DTOs.UserProfileDtos;
+using VisualVibes.App.Interfaces;
+using VisualVibes.App.UserProfiles.Commands;
+using VisualVibes.App.UserProfiles.CommandsHandler;
+using VisualVibes.Domain.Models.BaseEntity;
 
-//namespace VisualVibes.Tests.UserProfileTests
-//{
-//    public class UpdateUserProfileCommandHandlerUnitTest
-//    {
-//        private UpdateUserProfileCommandHandler _updateUserProfileCommandHandler;
-//        private readonly Mock<IUserProfileRepository> _userProfileRepositoryMock;
-//        private readonly Mock<IUnitOfWork> _unitOfWorkMock;
-//        public UpdateUserProfileCommandHandlerUnitTest()
-//        {
-//            _userProfileRepositoryMock = new Mock<IUserProfileRepository>();
-//            _unitOfWorkMock = new Mock<IUnitOfWork>();
+namespace VisualVibes.Tests.UserProfileTests
+{
+    public class UpdateUserProfileCommandHandlerUnitTest
+    {
+        private readonly UpdateUserProfileCommandHandler _updateUserProfileCommandHandler;
+        private readonly Mock<IUserProfileRepository> _userProfileRepositoryMock;
+        private readonly Mock<IUnitOfWork> _unitOfWorkMock;
+        private readonly Mock<ILogger<UpdateUserProfileCommandHandler>> _loggerMock;
+        private readonly Mock<IMapper> _mapperMock;
 
-//            _unitOfWorkMock.Setup(uow => uow.UserProfileRepository).Returns(_userProfileRepositoryMock.Object);
-//            _updateUserProfileCommandHandler = new UpdateUserProfileCommandHandler(_unitOfWorkMock.Object);
-//        }
+        public UpdateUserProfileCommandHandlerUnitTest()
+        {
+            _userProfileRepositoryMock = new Mock<IUserProfileRepository>();
+            _unitOfWorkMock = new Mock<IUnitOfWork>();
+            _loggerMock = new Mock<ILogger<UpdateUserProfileCommandHandler>>();
+            _mapperMock = new Mock<IMapper>();
 
-//        [Fact]
-//        public async void Should_UpdateUserProfile_Correctly()
-//        {
-//            //Arrange
-//            var userProfileDto = new UserProfileDto
-//            {
-//                Id = Guid.NewGuid(),
-//                ProfilePicture = "ProfilePicture1.jpg",
-//                DateOfBirth = new DateTime(1998, 08, 21),
-//                FirstName = "TestFirstName",
-//                LastName = "TestLastName",
-//                Email = "test.test@gmail.com",
-//                Bio = "TestBio"
-//            };
+            _unitOfWorkMock.Setup(uow => uow.UserProfileRepository).Returns(_userProfileRepositoryMock.Object);
 
-//            var updatedUserProfileDto = new UserProfileDto
-//            {
-//                Id = userProfileDto.Id,
-//                ProfilePicture = userProfileDto.ProfilePicture,
-//                DateOfBirth = userProfileDto.DateOfBirth,
-//                FirstName = userProfileDto.FirstName,
-//                LastName = userProfileDto.LastName,
-//                Email = "updatedTest@gmail.com",
-//                Bio = "This is an updated Test bio"
-//            };
+            _updateUserProfileCommandHandler = new UpdateUserProfileCommandHandler(_unitOfWorkMock.Object, _loggerMock.Object, _mapperMock.Object);
+        }
 
-//            var userProfile = new UserProfile
-//            {
-//                Id = updatedUserProfileDto.Id,
-//                ProfilePicture = updatedUserProfileDto.ProfilePicture,
-//                DateOfBirth = updatedUserProfileDto.DateOfBirth,
-//                FirstName = updatedUserProfileDto.FirstName,
-//                LastName = updatedUserProfileDto.LastName,
-//                Email = updatedUserProfileDto.Email,
-//                Bio = updatedUserProfileDto.Bio
-//            };
+        [Fact]
+        public async void Should_UpdateUserProfile_Correctly()
+        {
+            //Arrange
+            var userId = Guid.NewGuid();
 
-//            var updateUserProfileCommand = new UpdateUserProfileCommand(updatedUserProfileDto);
+            var userProfile = new UserProfile
+            {
+                UserId = userId,
+                ProfilePicture = "ProfilePicture1.jpg",
+                DateOfBirth = new DateTime(1998, 08, 21),
+                FirstName = "TestFirstName",
+                LastName = "TestLastName",
+                Email = "test.test@gmail.com",
+                Bio = "TestBio"
+            };
 
-//            _userProfileRepositoryMock
-//                .Setup(x => x.GetByIdAsync(userProfileDto.Id))
-//                .ReturnsAsync(userProfile);
+            var updateUserProfileDto = new UpdateUserProfileDto
+            {
+                ProfilePicture = "UpdatedProfilePicture.jpg",
+                DateOfBirth = userProfile.DateOfBirth.AddDays(1),
+                FirstName = "UpdatedFirstName",
+                LastName = "UpdatedLastName",
+                Email = "updated.email@gmail.com",
+                Bio = "Updated Bio",
+            };
 
-//            _userProfileRepositoryMock
-//                .Setup(x => x.UpdateAsync(It.Is<UserProfile>(y => y.Id == updatedUserProfileDto.Id &&
-//                y.ProfilePicture == updatedUserProfileDto.ProfilePicture && y.DateOfBirth == updatedUserProfileDto.DateOfBirth &&
-//                y.FirstName == updatedUserProfileDto.FirstName && y.LastName == updatedUserProfileDto.LastName &&
-//                y.Email == updatedUserProfileDto.Email && y.Bio == updatedUserProfileDto.Bio))).ReturnsAsync(userProfile);
+            var responseUserProfileDto = new ResponseUserProfileDto
+            {
+                Id = userProfile.Id,
+                UserId = userProfile.UserId,
+                FirstName = updateUserProfileDto.FirstName,
+                LastName = updateUserProfileDto.LastName,
+                Email = updateUserProfileDto.Email,
+                ProfilePicture = updateUserProfileDto.ProfilePicture,
+                Bio = updateUserProfileDto.Bio,
+                DateOfBirth = updateUserProfileDto.DateOfBirth
+            };
 
-//            //Act
-//            var result = await _updateUserProfileCommandHandler.Handle(updateUserProfileCommand, new CancellationToken());
+            var updateUserProfileCommand = new UpdateUserProfileCommand(userId, updateUserProfileDto);
 
-//            //Assert
-//            Assert.NotNull(result);
-//            Assert.Equal(userProfile.ProfilePicture, result.ProfilePicture);
-//            Assert.Equal(userProfile.DateOfBirth, result.DateOfBirth);
-//            Assert.Equal(userProfile.FirstName, result.FirstName);
-//            Assert.Equal(userProfile.LastName, result.LastName);
-//            Assert.Equal(userProfile.Email, result.Email);
-//            Assert.Equal(userProfile.Bio, result.Bio);
-//            _unitOfWorkMock.Verify(uow => uow.SaveAsync(), Times.Once);
-//        }
-//    }
-//}
+            _userProfileRepositoryMock
+                .Setup(x => x.GetByIdAsync(userId)).ReturnsAsync(userProfile);
+
+            _userProfileRepositoryMock
+                .Setup(x => x.UpdateAsync(It.IsAny<UserProfile>()))
+                .ReturnsAsync(userProfile);
+
+            _mapperMock
+                .Setup(m => m.Map<ResponseUserProfileDto>(It.IsAny<UserProfile>()))
+                .Returns(responseUserProfileDto);
+
+            //Act
+            var result = await _updateUserProfileCommandHandler.Handle(updateUserProfileCommand, new CancellationToken());
+
+            //Assert
+            Assert.NotNull(result);
+            Assert.Equal(updateUserProfileDto.FirstName, result.FirstName);
+            Assert.Equal(updateUserProfileDto.LastName, result.LastName);
+            Assert.Equal(updateUserProfileDto.Email, result.Email);
+            Assert.Equal(updateUserProfileDto.ProfilePicture, result.ProfilePicture);
+            Assert.Equal(updateUserProfileDto.Bio, result.Bio);
+            Assert.Equal(updateUserProfileDto.DateOfBirth, result.DateOfBirth);
+
+            _unitOfWorkMock.Verify(uow => uow.SaveAsync(), Times.Once);
+            _userProfileRepositoryMock.Verify(repo => repo.UpdateAsync(It.Is<UserProfile>(up => up.FirstName == updateUserProfileDto.FirstName && up.LastName == updateUserProfileDto.LastName)), Times.Once);
+            _mapperMock.Verify(mapper => mapper.Map<ResponseUserProfileDto>(It.IsAny<UserProfile>()), Times.Once);
+        }
+    }
+}

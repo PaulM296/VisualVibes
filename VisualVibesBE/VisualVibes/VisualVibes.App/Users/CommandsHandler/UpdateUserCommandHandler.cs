@@ -31,7 +31,6 @@ namespace VisualVibes.App.Users.CommandsHandler
             }
 
             user.Username = request.updateUserDto.Username;
-            user.Password = request.updateUserDto.Password;
 
             var updatedUser = await _unitOfWork.UserRepository.UpdateAsync(user);
 

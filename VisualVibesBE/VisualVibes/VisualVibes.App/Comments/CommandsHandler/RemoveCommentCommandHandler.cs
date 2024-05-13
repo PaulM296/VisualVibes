@@ -11,9 +11,9 @@ namespace VisualVibes.App.Comments.CommandsHandler
     public class RemoveCommentCommandHandler : IRequestHandler<RemoveCommentCommand, Unit>
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly ILogger<CreateCommentCommandHandler> _logger;
+        private readonly ILogger<RemoveCommentCommandHandler> _logger;
 
-        public RemoveCommentCommandHandler(IUnitOfWork unitOfWork, ILogger<CreateCommentCommandHandler> logger)
+        public RemoveCommentCommandHandler(IUnitOfWork unitOfWork, ILogger<RemoveCommentCommandHandler> logger)
         {
             _unitOfWork = unitOfWork;
             _logger = logger;

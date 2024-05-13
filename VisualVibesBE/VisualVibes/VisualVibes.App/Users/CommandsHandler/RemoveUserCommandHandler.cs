@@ -27,6 +27,12 @@ namespace VisualVibes.App.Users.CommandsHandler
                 throw new UserNotFoundException($"The user with ID {request.Id} doesn't exist and it could not be removed!");
             }
 
+            var posts = await _unitOfWork.PostRepository.GetPostsByUserIdAsync(request.Id);
+            foreach (var post in posts)
+            {
+                await _unitOfWork.PostRepository.RemoveAsync(post);
+            }
+
             var followers = await _unitOfWork.UserFollowerRepository.GetFollowersByUserIdAsync(request.Id);
             var followings = await _unitOfWork.UserFollowerRepository.GetFollowingByUserIdAsync(request.Id);
 

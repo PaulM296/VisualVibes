@@ -9,17 +9,5 @@ namespace VisualVibes.App.DTOs.PostDtos
         public string Caption { get; set; }
         public string Pictures { get; set; }
         public DateTime CreatedAt { get; set; }
-
-        //public static ResponsePostDto FromPost(Post post)
-        //{
-        //    return new ResponsePostDto
-        //    {
-        //        Id = post.Id,
-        //        UserId = post.UserId,
-        //        Caption = post.Caption,
-        //        Pictures = post.Pictures,
-        //        CreatedAt = post.CreatedAt
-        //    };
-        //}
     }
 }

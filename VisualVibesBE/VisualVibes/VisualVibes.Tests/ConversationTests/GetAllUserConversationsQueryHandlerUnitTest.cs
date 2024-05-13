@@ -1,77 +1,98 @@
-﻿//using Moq;
-//using VisualVibes.App.Conversations.Queries;
-//using VisualVibes.App.Conversations.QueriesHandlers;
-//using VisualVibes.App.DTOs.ConversationDtos;
-//using VisualVibes.App.Interfaces;
-//using VisualVibes.App.Users.Queries;
-//using VisualVibes.Domain.Models.BaseEntity;
+﻿using AutoMapper;
+using Microsoft.Extensions.Logging;
+using Moq;
+using VisualVibes.App.Conversations.Queries;
+using VisualVibes.App.Conversations.QueriesHandlers;
+using VisualVibes.App.DTOs.ConversationDtos;
+using VisualVibes.App.Exceptions;
+using VisualVibes.App.Interfaces;
+using VisualVibes.App.Messages.CommandsHandler;
+using VisualVibes.App.Users.Queries;
+using VisualVibes.Domain.Models.BaseEntity;
 
-//namespace VisualVibes.Tests.ConversationTests
-//{
-//    public class GetAllUserConversationsQueryHandlerUnitTest
-//    {
-//        private readonly Mock<IConversationRepository> _conversationRepositoryMock;
-//        private readonly Mock<IUnitOfWork> _unitOfWorkMock;
-//        private GetAllUserConversationsQueryHandler _getAllUserConversationsQueryHandler;
+namespace VisualVibes.Tests.ConversationTests
+{
+    public class GetAllUserConversationsQueryHandlerUnitTest
+    {
+        private readonly Mock<IConversationRepository> _conversationRepositoryMock;
+        private readonly Mock<IUnitOfWork> _unitOfWorkMock;
+        private readonly Mock<ILogger<GetAllUserConversationsQueryHandler>> _loggerMock;
+        private readonly Mock<IMapper> _mapperMock;
+        private readonly GetAllUserConversationsQueryHandler _getAllUserConversationsQueryHandler;
 
-//        public GetAllUserConversationsQueryHandlerUnitTest()
-//        {
-//            _conversationRepositoryMock = new Mock<IConversationRepository>();
-//            _unitOfWorkMock = new Mock<IUnitOfWork>();
+        public GetAllUserConversationsQueryHandlerUnitTest()
+        {
+            _conversationRepositoryMock = new Mock<IConversationRepository>();
+            _unitOfWorkMock = new Mock<IUnitOfWork>();
+            _loggerMock = new Mock<ILogger<GetAllUserConversationsQueryHandler>>();
+            _mapperMock = new Mock<IMapper>();
 
-//            _unitOfWorkMock.Setup(uow => uow.ConversationRepository).Returns(_conversationRepositoryMock.Object);
-//            _getAllUserConversationsQueryHandler = new GetAllUserConversationsQueryHandler(_unitOfWorkMock.Object);
-//        }
+            _unitOfWorkMock.Setup(uow => uow.ConversationRepository).Returns(_conversationRepositoryMock.Object);
+            
+            _getAllUserConversationsQueryHandler = new GetAllUserConversationsQueryHandler(_unitOfWorkMock.Object, _loggerMock.Object, _mapperMock.Object);
+        }
 
-//        [Fact]
-//        public async void Should_GetUserById_Correctly()
-//        {
-//            //Arrange
-//            var userId = Guid.NewGuid();
+        [Fact]
+        public async void Should_GetUserById_Correctly()
+        {
+            //Arrange
+            var userId = Guid.NewGuid();
 
-//            var conversationDtos = new List<ResponseConversationDto>
-//            {
-//                new ResponseConversationDto
-//                {
-//                    Id = Guid.NewGuid(),
-//                    FirstParticipantId = userId,
-//                    SecondParticipantId = Guid.NewGuid(),
-//                },
-//                new ResponseConversationDto
-//                {
-//                    Id = Guid.NewGuid(),
-//                    FirstParticipantId = Guid.NewGuid(),
-//                    SecondParticipantId = userId,
-//                }
-//            };
+            var conversations = new List<Conversation>
+            {
+                new Conversation 
+                { 
+                    Id = Guid.NewGuid(), 
+                    FirstParticipantId = userId, 
+                    SecondParticipantId = Guid.NewGuid() 
+                },
 
-//            var conversations = new List<Conversation>();
-//            foreach(var conversationDto in conversationDtos)
-//            {
-//                conversations.Add( new Conversation
-//                {
-//                    Id = conversationDto.Id,
-//                    FirstParticipantId = conversationDto.FirstParticipantId,
-//                    SecondParticipantId = conversationDto.SecondParticipantId
-//                });
-//            }
+                new Conversation 
+                { 
+                    Id = Guid.NewGuid(), 
+                    FirstParticipantId = Guid.NewGuid(), 
+                    SecondParticipantId = userId 
+                }
+            };
 
-//            var getAllUserConversationsQuery = new GetAllUserConversationsQuery(userId);
+            var conversationDtos = conversations.Select(c => new ResponseConversationDto
+            {
+                Id = c.Id,
+                FirstParticipantId = c.FirstParticipantId,
+                SecondParticipantId = c.SecondParticipantId
+            }).ToList();
 
-//            _conversationRepositoryMock
-//                .Setup(x => x.GetAllByUserIdAsync(userId))
-//                .ReturnsAsync(conversations);
+            var getAllUserConversationsQuery = new GetAllUserConversationsQuery(userId);
 
-//            //Act
-//            var result = await _getAllUserConversationsQueryHandler.Handle(getAllUserConversationsQuery, new CancellationToken());
+            _conversationRepositoryMock
+                .Setup(x => x.GetAllByUserIdAsync(userId))
+                .ReturnsAsync(conversations);
 
-//            //Assert
-//            Assert.NotNull(result);
-//            Assert.Equal(conversationDtos.Count, result.Count);
-//            foreach (var conversation in result)
-//            {
-//                Assert.Contains(conversation.Id, conversations.Select(c => c.Id));
-//            }
-//        }
-//    }
-//}
+            _mapperMock
+                .Setup(m => m.Map<ICollection<ResponseConversationDto>>(conversations))
+                .Returns(conversationDtos);
+
+
+            //Act
+            var result = await _getAllUserConversationsQueryHandler.Handle(getAllUserConversationsQuery, new CancellationToken());
+
+            //Assert
+            Assert.NotNull(result);
+            Assert.Equal(conversationDtos.Count, result.Count);
+            _mapperMock.Verify(m => m.Map<ICollection<ResponseConversationDto>>(conversations), Times.Once);
+        }
+
+        [Fact]
+        public async Task Should_ThrowWhenNoConversations_Found()
+        {
+            // Arrange
+            var userId = Guid.NewGuid();
+            var query = new GetAllUserConversationsQuery(userId);
+
+            _conversationRepositoryMock.Setup(x => x.GetAllByUserIdAsync(userId)).ReturnsAsync(new List<Conversation>());
+
+            // Act & Assert
+            await Assert.ThrowsAsync<ConversationNotFoundException>(() => _getAllUserConversationsQueryHandler.Handle(query, new CancellationToken()));
+        }
+    }
+}

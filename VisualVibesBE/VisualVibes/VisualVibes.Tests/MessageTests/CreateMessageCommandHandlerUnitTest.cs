@@ -1,66 +1,84 @@
-﻿//using Moq;
-//using VisualVibes.App.DTOs;
-//using VisualVibes.App.Interfaces;
-//using VisualVibes.App.Messages.Commands;
-//using VisualVibes.App.Messages.CommandsHandler;
-//using VisualVibes.Domain.Models.BaseEntity;
+﻿using AutoMapper;
+using Microsoft.Extensions.Logging;
+using Moq;
+using VisualVibes.App.DTOs.MessageDtos;
+using VisualVibes.App.Interfaces;
+using VisualVibes.App.Messages.Commands;
+using VisualVibes.App.Messages.CommandsHandler;
+using VisualVibes.Domain.Models.BaseEntity;
 
-//namespace VisualVibes.Tests.MessageTests
-//{
-//    public class CreateMessageCommandHandlerUnitTest
-//    {
-//        private readonly Mock<IMessageRepository> _messageRepositoryMock;
-//        private readonly Mock<IUnitOfWork> _unitOfWorkMock;
-//        private CreateMessageCommandHandler _createMessageCommandHandler;
+namespace VisualVibes.Tests.MessageTests
+{
+    public class CreateMessageCommandHandlerUnitTest
+    {
+        private readonly Mock<IMessageRepository> _messageRepositoryMock;
+        private readonly Mock<IUnitOfWork> _unitOfWorkMock;
+        private readonly Mock<ILogger<CreateMessageCommandHandler>> _loggerMock;
+        private readonly Mock<IMapper> _mapperMock;
+        private readonly CreateMessageCommandHandler _createMessageCommandHandler;
 
-//        public CreateMessageCommandHandlerUnitTest()
-//        {
-//            _messageRepositoryMock = new Mock<IMessageRepository>();
-//            _unitOfWorkMock = new Mock<IUnitOfWork>();
+        public CreateMessageCommandHandlerUnitTest()
+        {
+            _messageRepositoryMock = new Mock<IMessageRepository>();
+            _unitOfWorkMock = new Mock<IUnitOfWork>();
+            _loggerMock = new Mock<ILogger<CreateMessageCommandHandler>>();
+            _mapperMock = new Mock<IMapper>();
 
-//            _unitOfWorkMock.Setup(uow => uow.MessageRepository).Returns(_messageRepositoryMock.Object);
-//            _createMessageCommandHandler = new CreateMessageCommandHandler(_unitOfWorkMock.Object);
-//        }
+            _unitOfWorkMock.Setup(uow => uow.MessageRepository).Returns(_messageRepositoryMock.Object);
+            
+            _createMessageCommandHandler = new CreateMessageCommandHandler(_unitOfWorkMock.Object, _loggerMock.Object, _mapperMock.Object);
+        }
 
-//        [Fact]
-//        public async void Should_CreateMessage_Correctly()
-//        {
-//            //Arrange
-//            var messageDto = new MessageDto
-//            {
-//                Id = Guid.NewGuid(),
-//                UserId = Guid.NewGuid(),
-//                ConversationId = Guid.NewGuid(),
-//                Content = "This is a message test",
-//                Timestamp = DateTime.UtcNow,
-//            };
+        [Fact]
+        public async void Should_CreateMessage_Correctly()
+        {
+            //Arrange
+            var messageDto = new CreateMessageDto
+            {
+                UserId = Guid.NewGuid(),
+                ConversationId = Guid.NewGuid(),
+                Content = "This is a message test",
+                Timestamp = DateTime.UtcNow,
+            };
 
-//            var message = new Message
-//            {
-//                Id = messageDto.Id,
-//                UserId = messageDto.UserId,
-//                ConversationId = messageDto.ConversationId,
-//                Content = messageDto.Content,
-//                Timestamp = messageDto.Timestamp
-//            };
+            var message = new Message
+            {
+                UserId = messageDto.UserId,
+                ConversationId = messageDto.ConversationId,
+                Content = messageDto.Content,
+                Timestamp = messageDto.Timestamp
+            };
 
-//            var createMessageCommand = new CreateMessageCommand(messageDto);
+            var responseMessageDto = new ResponseMessageDto
+            {
+                Id = message.Id,
+                UserId = message.UserId,
+                ConversationId = message.ConversationId,
+                Content = message.Content,
+                Timestamp = message.Timestamp
+            };
 
-//            _messageRepositoryMock
-//                .Setup(x => x.AddAsync(It.Is<Message>(y => y.UserId == messageDto.UserId &&
-//                y.ConversationId == messageDto.ConversationId && 
-//                y.Content == messageDto.Content && y.Timestamp == messageDto.Timestamp))).ReturnsAsync(message);
+            var createMessageCommand = new CreateMessageCommand(messageDto);
 
-//            //Act
-//            var result = await _createMessageCommandHandler.Handle(createMessageCommand, new CancellationToken());
+            _messageRepositoryMock
+                .Setup(x => x.AddAsync(It.IsAny<Message>()))
+                .ReturnsAsync(message);
 
-//            //Assert
-//            Assert.NotNull(result);
-//            Assert.Equal(message.UserId, result.UserId);
-//            Assert.Equal(message.ConversationId, result.ConversationId);
-//            Assert.Equal(message.Content, result.Content);
-//            Assert.Equal(message.Timestamp, result.Timestamp);
-//            _unitOfWorkMock.Verify(uow => uow.SaveAsync(), Times.Once);
-//        }
-//    }
-//}
+            _mapperMock
+                .Setup(m => m.Map<ResponseMessageDto>(It.IsAny<Message>()))
+                .Returns(responseMessageDto);
+
+            //Act
+            var result = await _createMessageCommandHandler.Handle(createMessageCommand, new CancellationToken());
+
+            //Assert
+            Assert.NotNull(result);
+            Assert.Equal(responseMessageDto.UserId, result.UserId);
+            Assert.Equal(responseMessageDto.ConversationId, result.ConversationId);
+            Assert.Equal(responseMessageDto.Content, result.Content);
+            Assert.Equal(responseMessageDto.Timestamp, result.Timestamp);
+            _unitOfWorkMock.Verify(uow => uow.SaveAsync(), Times.Once);
+            _mapperMock.Verify(m => m.Map<ResponseMessageDto>(It.IsAny<Message>()), Times.Once);
+        }
+    }
+}
