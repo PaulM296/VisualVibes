@@ -9,26 +9,22 @@ namespace VisualVibes.Infrastructure.Repositories
     public abstract class BaseRepository<T> : IBaseRepository<T> where T : BaseEntity
     {
         protected readonly VisualVibesDbContext _context;
-        protected readonly FileSystemLogger _logger;
 
-        public BaseRepository(VisualVibesDbContext context, FileSystemLogger logger)
+        public BaseRepository(VisualVibesDbContext context)
         {
             _context = context;
-            _logger = logger;
         }
        
         public async Task<T> AddAsync(T entity)
         {
             if (_context.Set<T>().Contains(entity))
             {
-                await _logger.LogAsync(nameof(AddAsync), isSuccess: false);
                 throw new EntityAlreadyExistsException($"Could not add the {nameof(T)}, because it already exists.");
             }
 
             _context.Set<T>().Add(entity);
             await _context.SaveChangesAsync();
 
-            await _logger.LogAsync(nameof(AddAsync), isSuccess: true);
 
             return entity;
         }
@@ -39,11 +35,7 @@ namespace VisualVibes.Infrastructure.Repositories
 
             if (entities.Count == 0)
             {
-                await _logger.LogAsync(nameof(GetAllAsync), isSuccess: false);
-            }
-            else
-            {
-                await _logger.LogAsync(nameof(GetAllAsync), isSuccess: true);
+                throw new EntityNotFoundException($"Could not find the {nameof(T)}");
             }
 
             return entities;
@@ -55,11 +47,7 @@ namespace VisualVibes.Infrastructure.Repositories
 
             if (entity == null)
             {
-                await _logger.LogAsync(nameof(GetByIdAsync), isSuccess: false);
-            }
-            else
-            {
-                await _logger.LogAsync(nameof(GetByIdAsync), isSuccess: true);
+                throw new EntityNotFoundException($"Could not find the {nameof(T)}");
             }
 
             return entity;
@@ -71,14 +59,11 @@ namespace VisualVibes.Infrastructure.Repositories
 
             if (entityToRemove ==  null)
             {
-                await _logger.LogAsync(nameof(RemoveAsync), isSuccess: false);
                 throw new EntityNotFoundException($"The {nameof(T)} does not exist, therefore it could not be removed.");
             }
 
             _context.Set<T>().Remove(entityToRemove);
             await _context.SaveChangesAsync();
-
-            await _logger.LogAsync(nameof(RemoveAsync), isSuccess: true);
 
             return entityToRemove;
         }
@@ -89,14 +74,12 @@ namespace VisualVibes.Infrastructure.Repositories
 
             if (entity == null)
             {
-                await _logger.LogAsync(nameof(UpdateAsync), isSuccess: false);
                 throw new EntityNotFoundException($"The {nameof(T)} has not been found, therefore it could not be removed.");
             }
 
             _context.Set<T>().Update(updatedEntity);
             await _context.SaveChangesAsync();
 
-            await _logger.LogAsync(nameof(UpdateAsync), isSuccess: true);
             return entity;
         }
     }

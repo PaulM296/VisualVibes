@@ -1,47 +1,47 @@
-﻿//using MediatR;
-//using Microsoft.Extensions.DependencyInjection;
-//using VisualVibes.App;
-//using VisualVibes.App.Comments.Commands;
-//using VisualVibes.App.Comments.Queries;
-//using VisualVibes.App.Conversations.Commands;
-//using VisualVibes.App.Conversations.Queries;
-//using VisualVibes.App.DTOs;
-//using VisualVibes.App.DTOs.UserDtos;
-//using VisualVibes.App.FeedPosts.Commands;
-//using VisualVibes.App.Feeds.Commands;
-//using VisualVibes.App.Interfaces;
-//using VisualVibes.App.Messages.Commands;
-//using VisualVibes.App.Messages.Queries;
-//using VisualVibes.App.Posts.Commands;
-//using VisualVibes.App.Posts.Queries;
-//using VisualVibes.App.Reactions.Commands;
-//using VisualVibes.App.Reactions.Queries;
-//using VisualVibes.App.UserFollowers.Commands;
-//using VisualVibes.App.UserFollowers.Queries;
-//using VisualVibes.App.UserProfiles.Commands;
-//using VisualVibes.App.Users.Commands;
-//using VisualVibes.App.Users.Queries;
-//using VisualVibes.Domain.Enum;
-//using VisualVibes.Domain.Models.BaseEntity;
-//using VisualVibes.Infrastructure;
-//using VisualVibes.Infrastructure.Repositories;
+﻿using MediatR;
+using Microsoft.Extensions.DependencyInjection;
+using VisualVibes.App;
+using VisualVibes.App.Comments.Commands;
+using VisualVibes.App.Comments.Queries;
+using VisualVibes.App.Conversations.Commands;
+using VisualVibes.App.Conversations.Queries;
+using VisualVibes.App.DTOs;
+using VisualVibes.App.DTOs.UserDtos;
+using VisualVibes.App.FeedPosts.Commands;
+using VisualVibes.App.Feeds.Commands;
+using VisualVibes.App.Interfaces;
+using VisualVibes.App.Messages.Commands;
+using VisualVibes.App.Messages.Queries;
+using VisualVibes.App.Posts.Commands;
+using VisualVibes.App.Posts.Queries;
+using VisualVibes.App.Reactions.Commands;
+using VisualVibes.App.Reactions.Queries;
+using VisualVibes.App.UserFollowers.Commands;
+using VisualVibes.App.UserFollowers.Queries;
+using VisualVibes.App.UserProfiles.Commands;
+using VisualVibes.App.Users.Commands;
+using VisualVibes.App.Users.Queries;
+using VisualVibes.Domain.Enum;
+using VisualVibes.Domain.Models.BaseEntity;
+using VisualVibes.Infrastructure;
+using VisualVibes.Infrastructure.Repositories;
 
-//var diContainer = new ServiceCollection()
-//                 .AddScoped<IUserRepository, UserRepository>()
-//                 .AddScoped<IPostRepository, PostRepository>()
-//                 .AddScoped<ICommentRepository, CommentRepository>()
-//                 .AddScoped<IReactionRepository, ReactionRepository>()
-//                 .AddScoped<IUserProfileRepository, UserProfileRepository>()
-//                 .AddScoped<IFeedRepository, FeedRepository>()
-//                 .AddScoped<IFeedPostRepository, FeedPostRepository>()
-//                 .AddScoped<IMessageRepository, MessageRepository>()
-//                 .AddScoped<IConversationRepository, ConversationRepository>()
-//                 .AddScoped<IUserFollowerRepository, UserFollowerRepository>()
-//                 .AddScoped<IUnitOfWork, UnitOfWork>()
-//                 .AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(IUserRepository).Assembly))
-//                 .AddTransient(provider => new FileSystemLogger("logs"))
-//                 .AddDbContext<VisualVibesDbContext>()
-//                 .BuildServiceProvider();
+var diContainer = new ServiceCollection()
+                 .AddScoped<IUserRepository, UserRepository>()
+                 .AddScoped<IPostRepository, PostRepository>()
+                 .AddScoped<ICommentRepository, CommentRepository>()
+                 .AddScoped<IReactionRepository, ReactionRepository>()
+                 .AddScoped<IUserProfileRepository, UserProfileRepository>()
+                 .AddScoped<IFeedRepository, FeedRepository>()
+                 .AddScoped<IFeedPostRepository, FeedPostRepository>()
+                 .AddScoped<IMessageRepository, MessageRepository>()
+                 .AddScoped<IConversationRepository, ConversationRepository>()
+                 .AddScoped<IUserFollowerRepository, UserFollowerRepository>()
+                 .AddScoped<IUnitOfWork, UnitOfWork>()
+                 .AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(IUserRepository).Assembly))
+                 .AddTransient(provider => new FileSystemLogger("logs"))
+                 .AddDbContext<VisualVibesDbContext>()
+                 .BuildServiceProvider();
 
 //var logger = diContainer.GetRequiredService<FileSystemLogger>();
 
@@ -345,82 +345,82 @@
 //var followings = await mediator.Send(new GetUserFollowingByIdQuery(createdUser.Id));
 //Console.WriteLine($"Number following by user {createdUser.Id}: {followings.Count()}");
 
-//// Unfollow user
-////Console.WriteLine("Attempting to unfollow a user...");
-////await mediator.Send(new UnfollowUserCommand(createdUser.Id, createdUser2.Id));
-////Console.WriteLine("Unfollow operation completed.");
+// Unfollow user
+//Console.WriteLine("Attempting to unfollow a user...");
+//await mediator.Send(new UnfollowUserCommand(createdUser.Id, createdUser2.Id));
+//Console.WriteLine("Unfollow operation completed.");
 
-////Console.WriteLine("\n\nTesting RemoveUserDto.\n");
+//Console.WriteLine("\n\nTesting RemoveUserDto.\n");
 
-////try
-////{
-////    await mediator.Send(new RemoveUserCommand(createdUser.Id));
-////    Console.WriteLine($"User deleted successfully");
-////}
-////catch (Exception ex)
-////{
-////    Console.WriteLine($"Error removing user: {ex.Message}");
-////}
+//try
+//{
+//    await mediator.Send(new RemoveUserCommand(createdUser.Id));
+//    Console.WriteLine($"User deleted successfully");
+//}
+//catch (Exception ex)
+//{
+//    Console.WriteLine($"Error removing user: {ex.Message}");
+//}
 
-////Console.WriteLine("\n\nTesting RemovePostDto.\n");
+//Console.WriteLine("\n\nTesting RemovePostDto.\n");
 
-////try
-////{
-////    await mediator.Send(new RemovePostCommand(createdPost.Id));
-////    Console.WriteLine($"Post deleted successfully");
-////}
-////catch (Exception ex)
-////{
-////    Console.WriteLine($"Error removing post: {ex.Message}");
-////}
+//try
+//{
+//    await mediator.Send(new RemovePostCommand(createdPost.Id));
+//    Console.WriteLine($"Post deleted successfully");
+//}
+//catch (Exception ex)
+//{
+//    Console.WriteLine($"Error removing post: {ex.Message}");
+//}
 
-////Console.WriteLine("\n\nTesting RemoveConversationDto.\n");
+//Console.WriteLine("\n\nTesting RemoveConversationDto.\n");
 
-////try
-////{
-////    await mediator.Send(new RemoveConversationCommand(createdConversation.Id));
-////    Console.WriteLine($"Conversation deleted successfully");
-////}
-////catch (Exception ex)
-////{
-////    Console.WriteLine($"Error removing conversation: {ex.Message}");
-////}
+//try
+//{
+//    await mediator.Send(new RemoveConversationCommand(createdConversation.Id));
+//    Console.WriteLine($"Conversation deleted successfully");
+//}
+//catch (Exception ex)
+//{
+//    Console.WriteLine($"Error removing conversation: {ex.Message}");
+//}
 
-////Console.WriteLine("\n\nTesting RemoveMessage.\n");
+//Console.WriteLine("\n\nTesting RemoveMessage.\n");
 
-////try
-////{
-////    await mediator.Send(new RemoveMessageCommand(createdMessage1.Id));
-////    Console.WriteLine($"Message deleted successfully");
-////}
-////catch (Exception ex)
-////{
-////    Console.WriteLine($"Error removing message: {ex.Message}");
-////}
+//try
+//{
+//    await mediator.Send(new RemoveMessageCommand(createdMessage1.Id));
+//    Console.WriteLine($"Message deleted successfully");
+//}
+//catch (Exception ex)
+//{
+//    Console.WriteLine($"Error removing message: {ex.Message}");
+//}
 
-////Console.WriteLine("\n\nTesting RemoveComment.\n");
+//Console.WriteLine("\n\nTesting RemoveComment.\n");
 
-////try
-////{
-////    await mediator.Send(new RemoveCommentCommand(createdCommentDto2.Id));
-////    Console.WriteLine($"Comment deleted successfully");
-////}
-////catch (Exception ex)
-////{
-////    Console.WriteLine($"Error removing comment: {ex.Message}");
-////}
+//try
+//{
+//    await mediator.Send(new RemoveCommentCommand(createdCommentDto2.Id));
+//    Console.WriteLine($"Comment deleted successfully");
+//}
+//catch (Exception ex)
+//{
+//    Console.WriteLine($"Error removing comment: {ex.Message}");
+//}
 
-////Console.WriteLine("\n\nTesting RemoveReaction.\n");
+//Console.WriteLine("\n\nTesting RemoveReaction.\n");
 
-////try
-////{
-////    await mediator.Send(new RemoveReactionCommand(createdReactionCommand2.Id));
-////    Console.WriteLine($"Reaction deleted successfully");
-////}
-////catch (Exception ex)
-////{
-////    Console.WriteLine($"Error removing reaction: {ex.Message}");
-////}
+//try
+//{
+//    await mediator.Send(new RemoveReactionCommand(createdReactionCommand2.Id));
+//    Console.WriteLine($"Reaction deleted successfully");
+//}
+//catch (Exception ex)
+//{
+//    Console.WriteLine($"Error removing reaction: {ex.Message}");
+//}
 
 //await mediator.Send(new AddPostToFeedCommand(createdPost.Id));
 //await mediator.Send(new AddPostToFeedCommand(createdPost2.Id));

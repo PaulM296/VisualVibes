@@ -9,7 +9,7 @@ namespace VisualVibes.Infrastructure.Repositories
 {
     public class UserRepository : BaseRepository<User>, IUserRepository
     {
-        public UserRepository(VisualVibesDbContext context, FileSystemLogger logger) : base(context, logger)
+        public UserRepository(VisualVibesDbContext context) : base(context)
         {
 
         }
@@ -34,10 +34,8 @@ namespace VisualVibes.Infrastructure.Repositories
 
             if (entity == null)
             {
-                await _logger.LogAsync(nameof(GetByIdAsync), isSuccess: false);
                 throw new EntityNotFoundException($"User with ID {id} not found.");
             }
-            await _logger.LogAsync(nameof(GetByIdAsync), isSuccess: true);
             return entity;
         }
 

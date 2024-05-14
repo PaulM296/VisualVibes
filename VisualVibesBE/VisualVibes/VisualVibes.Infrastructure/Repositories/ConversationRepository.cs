@@ -8,7 +8,7 @@ namespace VisualVibes.Infrastructure.Repositories
 {
     public class ConversationRepository : BaseRepository<Conversation>, IConversationRepository
     {
-        public ConversationRepository(VisualVibesDbContext context, FileSystemLogger logger) : base(context,logger)
+        public ConversationRepository(VisualVibesDbContext context) : base(context)
         {
 
         }

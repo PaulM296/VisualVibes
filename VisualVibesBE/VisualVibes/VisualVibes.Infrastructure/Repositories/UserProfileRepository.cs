@@ -7,7 +7,7 @@ namespace VisualVibes.Infrastructure.Repositories
 {
     public class UserProfileRepository : BaseRepository<UserProfile>, IUserProfileRepository
     {
-        public UserProfileRepository(VisualVibesDbContext context, FileSystemLogger logger) : base(context, logger)
+        public UserProfileRepository(VisualVibesDbContext context) : base(context)
         {
 
         }

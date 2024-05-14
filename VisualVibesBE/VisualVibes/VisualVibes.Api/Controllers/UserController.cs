@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using Azure;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VisualVibes.App.DTOs.UserDtos;
@@ -23,9 +24,10 @@ namespace VisualVibes.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateUser(CreateUserDto createUserDto)
         {
-            var respone = await _mediator.Send(new CreateUserCommand(createUserDto));
+            var response = await _mediator.Send(new CreateUserCommand(createUserDto));
 
-            return Ok(respone);
+            return CreatedAtAction(nameof(GetUserById), new { id = response.Id }, response);
+            //return Created(string.Empty, response);
         }
 
         [HttpPost("follow")]
