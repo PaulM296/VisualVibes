@@ -12,7 +12,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddMediatR();
 builder.Services.AddRepositories();
-builder.Services.AddDbContext();
+builder.Services.AddDbContext(builder);
 builder.Services.AddFileSystemLogger();
 builder.Services.AddAutoMapper();
 

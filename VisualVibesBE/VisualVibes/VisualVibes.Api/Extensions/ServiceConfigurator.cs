@@ -2,6 +2,7 @@
 using VisualVibes.Infrastructure.Repositories;
 using VisualVibes.Infrastructure;
 using VisualVibes.App;
+using Microsoft.EntityFrameworkCore;
 
 namespace VisualVibes.Api.Extensions
 {
@@ -27,9 +28,9 @@ namespace VisualVibes.Api.Extensions
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(IUserRepository).Assembly));
         }
 
-        public static void AddDbContext(this IServiceCollection services)
+        public static void AddDbContext(this IServiceCollection services, WebApplicationBuilder builder)
         {
-            services.AddDbContext<VisualVibesDbContext>();
+            services.AddDbContext<VisualVibesDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
         }
 
         public static void AddFileSystemLogger(this IServiceCollection services)

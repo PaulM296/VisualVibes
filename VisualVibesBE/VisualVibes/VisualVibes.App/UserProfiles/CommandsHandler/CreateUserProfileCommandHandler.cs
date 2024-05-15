@@ -41,8 +41,16 @@ namespace VisualVibes.App.UserProfiles.CommandsHandler
                 Bio = request.createUserProfileDto.Bio,
             };
 
-            await _unitOfWork.UserProfileRepository.AddAsync(userProfile);
-            await _unitOfWork.SaveAsync();
+            try
+            {
+                await _unitOfWork.UserProfileRepository.AddAsync(userProfile);
+                await _unitOfWork.SaveAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while saving the UserProfile entity.");
+                throw;
+            }
 
             _logger.LogInformation("New UserProfile has been successfully created!");
 

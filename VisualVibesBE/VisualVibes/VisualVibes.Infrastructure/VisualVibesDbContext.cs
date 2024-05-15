@@ -23,15 +23,6 @@ namespace VisualVibes.Infrastructure
             
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-        
-            if(!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseSqlServer(@"Server=ROMOB41178;Database=VisualVibes-Web;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=True");
-            }
-        }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new UserFollowerConfiguration());
