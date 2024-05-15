@@ -36,27 +36,43 @@ namespace VisualVibes.Tests.UserProfileTests
             // Arrange
             var userId = Guid.NewGuid();
 
-            var user = new User 
-            { 
-                UserProfile = new UserProfile() 
+            var userProfile = new UserProfile
+            {
+                UserId = userId,
+                FirstName = "John",
+                LastName = "Doe",
+                Email = "johndoe@gmail.com",
+                ProfilePicture = "profile.jpg",
+                Bio = "Bio",
+                DateOfBirth = new DateTime(2000, 1, 1)
             };
 
-            var responseDto = new ResponseUserProfileDto();
+            var responseDto = new ResponseUserProfileDto
+            {
+                Id = userProfile.Id,
+                UserId = userProfile.UserId,
+                FirstName = userProfile.FirstName,
+                LastName = userProfile.LastName,
+                Email = userProfile.Email,
+                ProfilePicture = userProfile.ProfilePicture,
+                Bio = userProfile.Bio,
+                DateOfBirth = userProfile.DateOfBirth
+            };
 
             _userProfileRepositoryMock
-                .Setup(up => up.GetUserWithProfileByIdAsync(userId))
-                .ReturnsAsync(user);
+                .Setup(up => up.GetUserProfileByUserId(userId))
+                .ReturnsAsync(userProfile);
 
-            _mapperMock.Setup(mapper => mapper.Map<ResponseUserProfileDto>(user))
+            _mapperMock.Setup(mapper => mapper.Map<ResponseUserProfileDto>(userProfile))
                 .Returns(responseDto);
 
-            // Act
+            //Act
             var result = await _getUserProfileByUserIdQueryHandler.Handle(new GetUserProfileByUserIdQuery(userId), CancellationToken.None);
 
-            // Assert
+            //Assert
             Assert.NotNull(result);
             Assert.Equal(responseDto, result);
-            _mapperMock.Verify(m => m.Map<ResponseUserProfileDto>(user), Times.Once);
+            _mapperMock.Verify(m => m.Map<ResponseUserProfileDto>(userProfile), Times.Once);
         }
     }
 }

@@ -1,10 +1,7 @@
 ﻿using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using VisualVibes.App.DTOs.UserDtos;
 using VisualVibes.App.Interfaces;
-using VisualVibes.App.Users.Commands;
-using VisualVibes.App.Users.CommandsHandler;
 
 namespace VisualVibes.IntegrationTests.Helpers
 {

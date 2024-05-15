@@ -27,7 +27,6 @@ namespace VisualVibes.Api.Controllers
             var response = await _mediator.Send(new CreateUserCommand(createUserDto));
 
             return CreatedAtAction(nameof(GetUserById), new { id = response.Id }, response);
-            //return Created(string.Empty, response);
         }
 
         [HttpPost("follow")]

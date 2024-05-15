@@ -23,16 +23,16 @@ namespace VisualVibes.App.UserProfiles.QueriesHandler
 
         public async Task<ResponseUserProfileDto> Handle(GetUserProfileByUserIdQuery request, CancellationToken cancellationToken)
         {
-            var user = await _unitOfWork.UserProfileRepository.GetUserWithProfileByIdAsync(request.userId);
+            var userProfile = await _unitOfWork.UserProfileRepository.GetUserProfileByUserId(request.userId);
 
-            if (user == null || user.UserProfile == null)
+            if (userProfile == null)
             {
                 throw new UserProfileNotFoundException($"The user profile with userId: {request.userId} has not been found!");
             }
 
             _logger.LogInformation("UserProfile successfully retrieved!");
 
-            return _mapper.Map<ResponseUserProfileDto>(user);
+            return _mapper.Map<ResponseUserProfileDto>(userProfile);
         }
     }
 }

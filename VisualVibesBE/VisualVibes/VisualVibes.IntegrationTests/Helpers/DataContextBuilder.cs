@@ -62,6 +62,26 @@ namespace VisualVibes.IntegrationTests.Helpers
             return user;
         }
 
+        public UserProfile SeedUserProfile(Guid userId)
+        {
+            var userProfile = new UserProfile
+            {
+                Id = Guid.NewGuid(),
+                UserId = userId,
+                FirstName = "FirstName",
+                LastName = "LastName",
+                Email = "email@example.com",
+                ProfilePicture = "profile.jpg",
+                Bio = "Bio",
+                DateOfBirth = new DateTime(2000, 1, 1)
+            };
+
+            _dataContext.UserProfiles.Add(userProfile);
+            _dataContext.SaveChanges();
+
+            return userProfile;
+        }
+
         public void Dispose()
         {
             Dispose(true);
@@ -72,7 +92,7 @@ namespace VisualVibes.IntegrationTests.Helpers
         {
             if (disposing)
             {
-                _dataContext.Dispose();
+               _dataContext.Dispose();
             }
         }
     }

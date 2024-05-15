@@ -22,7 +22,7 @@ namespace VisualVibes.Api.Controllers
         {
             var userProfile = await _mediator.Send(new CreateUserProfileCommand(createUserProfileDto));
 
-            return Ok(userProfile);
+            return Created(string.Empty, userProfile);
         }
 
         [HttpPut("{id}")] 

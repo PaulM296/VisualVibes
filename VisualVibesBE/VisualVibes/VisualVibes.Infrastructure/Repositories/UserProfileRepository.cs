@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using VisualVibes.App;
 using VisualVibes.App.Interfaces;
 using VisualVibes.Domain.Models.BaseEntity;
 
@@ -12,11 +11,9 @@ namespace VisualVibes.Infrastructure.Repositories
 
         }
 
-        public async Task<User> GetUserWithProfileByIdAsync(Guid userId)
+        public async Task<UserProfile> GetUserProfileByUserId(Guid userId)
         {
-            return await _context.Users
-                .Include(u => u.UserProfile)
-                .FirstOrDefaultAsync(u => u.Id == userId);
+            return await _context.UserProfiles.FirstOrDefaultAsync(up => up.UserId == userId);
         }
     }
 }

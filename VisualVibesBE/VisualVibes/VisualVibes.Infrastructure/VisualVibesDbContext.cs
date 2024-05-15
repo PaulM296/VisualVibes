@@ -23,11 +23,6 @@ namespace VisualVibes.Infrastructure
             
         }
 
-        public VisualVibesDbContext()
-        {
-            
-        }
-
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
         

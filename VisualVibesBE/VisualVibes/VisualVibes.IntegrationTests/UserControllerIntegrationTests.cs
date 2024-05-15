@@ -2,12 +2,9 @@
 using Microsoft.EntityFrameworkCore;
 using System.Net;
 using VisualVibes.Api.Controllers;
-using VisualVibes.App.DTOs.PostDtos;
 using VisualVibes.App.DTOs.UserDtos;
 using VisualVibes.App.DTOs.UserFollowerDtos;
-using VisualVibes.App.Posts.Commands;
 using VisualVibes.App.UserFollowers.Commands;
-using VisualVibes.Domain.Models.BaseEntity;
 using VisualVibes.Infrastructure;
 using VisualVibes.Infrastructure.Repositories;
 using VisualVibes.IntegrationTests.Helpers;
@@ -20,8 +17,6 @@ namespace VisualVibes.IntegrationTests
         public async Task UserController_CreateUser_ShouldCreateUserInDbCorrectly()
         {
             //Arrange
-
-
             var createUserDto = new CreateUserDto
             {
                 Username = "TestUser",
