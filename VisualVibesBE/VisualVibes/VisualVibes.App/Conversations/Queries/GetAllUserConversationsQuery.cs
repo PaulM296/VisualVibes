@@ -3,5 +3,5 @@ using VisualVibes.App.DTOs.ConversationDtos;
 
 namespace VisualVibes.App.Conversations.Queries
 {
-    public record GetAllUserConversationsQuery(Guid UserId) : IRequest<ICollection<ResponseConversationDto>>;
+    public record GetAllUserConversationsQuery(string UserId) : IRequest<ICollection<ResponseConversationDto>>;
 }

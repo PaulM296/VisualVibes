@@ -70,7 +70,6 @@ namespace VisualVibes.IntegrationTests.Helpers
                 UserId = userId,
                 FirstName = "FirstName",
                 LastName = "LastName",
-                Email = "email@example.com",
                 ProfilePicture = "profile.jpg",
                 Bio = "Bio",
                 DateOfBirth = new DateTime(2000, 1, 1)

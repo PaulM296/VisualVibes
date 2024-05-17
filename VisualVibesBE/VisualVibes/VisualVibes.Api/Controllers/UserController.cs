@@ -1,7 +1,6 @@
-﻿using Azure;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using VisualVibes.Api.Models;
 using VisualVibes.App.DTOs.UserDtos;
 using VisualVibes.App.UserFollowers.Commands;
 using VisualVibes.App.UserFollowers.Queries;
@@ -22,11 +21,13 @@ namespace VisualVibes.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateUser(CreateUserDto createUserDto)
+        public async Task<IActionResult> RegisterUser(RegisterUser registerUserDto)
         {
-            var response = await _mediator.Send(new CreateUserCommand(createUserDto));
+            var response = await _mediator.Send(new RegisterUserCommand(registerUserDto));
 
-            return CreatedAtAction(nameof(GetUserById), new { id = response.Id }, response);
+            var authenticationResult = new AuthenticationResult(response);
+
+            return Ok(authenticationResult);
         }
 
         [HttpPost("follow")]
@@ -47,7 +48,7 @@ namespace VisualVibes.Api.Controllers
 
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(Guid id, UpdateUserDto updateUserDto)
+        public async Task<IActionResult> UpdateUser(string id, UpdateUserDto updateUserDto)
         {
             var updatedUser = await _mediator.Send(new UpdateUserCommand(id, updateUserDto));
 
@@ -55,7 +56,7 @@ namespace VisualVibes.Api.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> RemoveUser(Guid id)
+        public async Task<IActionResult> RemoveUser(string id)
         {
             var response = await _mediator.Send(new RemoveUserCommand(id));
 
@@ -63,7 +64,7 @@ namespace VisualVibes.Api.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetUserById(Guid id)
+        public async Task<IActionResult> GetUserById(string id)
         {
             var users = await _mediator.Send(new GetUserByIdQuery(id));
 
@@ -71,7 +72,7 @@ namespace VisualVibes.Api.Controllers
         }
 
         [HttpGet("{userId}/followers")]
-        public async Task<IActionResult> GetUserFollowers(Guid userId)
+        public async Task<IActionResult> GetUserFollowers(string userId)
         {
             var userFollowers = await _mediator.Send(new GetUserFollowersByIdQuery(userId));
 
@@ -79,7 +80,7 @@ namespace VisualVibes.Api.Controllers
         }
 
         [HttpGet("{userId}/following")]
-        public async Task<IActionResult> GetUserFollowing(Guid userId)
+        public async Task<IActionResult> GetUserFollowing(string userId)
         {
             var userFollowers = await _mediator.Send(new GetUserFollowingByIdQuery(userId));
 

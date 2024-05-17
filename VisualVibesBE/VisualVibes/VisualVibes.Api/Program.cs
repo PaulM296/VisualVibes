@@ -1,14 +1,18 @@
+using Microsoft.AspNetCore.Identity;
 using VisualVibes.Api.Extensions;
 using VisualVibes.Api.Middleware;
+using VisualVibes.Domain.Models;
+using VisualVibes.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+builder.RegisterAuthentication();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwagger();
 
 builder.Services.AddMediatR();
 builder.Services.AddRepositories();

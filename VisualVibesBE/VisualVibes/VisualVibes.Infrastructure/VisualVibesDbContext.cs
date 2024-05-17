@@ -1,13 +1,15 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using VisualVibes.Domain.Models;
 using VisualVibes.Domain.Models.BaseEntity;
 using VisualVibes.Infrastructure.Configurations;
 
 namespace VisualVibes.Infrastructure
 {
-    public class VisualVibesDbContext : DbContext
+    public class VisualVibesDbContext : IdentityDbContext<AppUser>
     {
-        public DbSet<User> Users { get; set; }
+        public DbSet<AppUser> Users { get; set; }
         public DbSet<UserProfile> UserProfiles { get; set; }
         public DbSet<Post> Posts { get; set; }
         public DbSet<Conversation> Conversations { get; set; }

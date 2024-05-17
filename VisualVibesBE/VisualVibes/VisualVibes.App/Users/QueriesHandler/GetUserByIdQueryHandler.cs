@@ -23,7 +23,7 @@ namespace VisualVibes.App.Users.QueriesHandler
 
         public async Task<ResponseUserDto> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
         {
-            var user = await _unitOfWork.UserRepository.GetByIdAsync(request.UserId);
+            var user = await _unitOfWork.UserRepository.GetUserByIdAsync(request.UserId);
 
             if (user == null)
             {

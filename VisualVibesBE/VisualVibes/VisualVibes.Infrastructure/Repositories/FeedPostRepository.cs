@@ -53,7 +53,7 @@ namespace VisualVibes.Infrastructure.Repositories
             Console.WriteLine("Changes to FeedPost saved successfully.");
         }
 
-        public async Task EnsureFeedForUserAsync(Guid userId)
+        public async Task EnsureFeedForUserAsync(string userId)
         {
             var feed = await _context.Feeds.FirstOrDefaultAsync(f => f.UserID == userId);
             if (feed == null)

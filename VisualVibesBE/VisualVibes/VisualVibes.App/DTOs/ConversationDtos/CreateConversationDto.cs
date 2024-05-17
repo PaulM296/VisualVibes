@@ -2,7 +2,7 @@
 {
     public class CreateConversationDto
     {
-        public Guid FirstParticipantId { get; set; }
-        public Guid SecondParticipantId { get; set; }
+        public string FirstParticipantId { get; set; }
+        public string SecondParticipantId { get; set; }
     }
 }

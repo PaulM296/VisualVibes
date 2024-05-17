@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using VisualVibes.App;
 using VisualVibes.App.Interfaces;
 using VisualVibes.Domain.Models;
 using VisualVibes.Domain.Models.BaseEntity;
@@ -7,11 +6,12 @@ using VisualVibes.Infrastructure.Exceptions;
 
 namespace VisualVibes.Infrastructure.Repositories
 {
-    public class UserRepository : BaseRepository<User>, IUserRepository
+    public class UserRepository : IUserRepository
     {
-        public UserRepository(VisualVibesDbContext context) : base(context)
+        private readonly VisualVibesDbContext _context;
+        public UserRepository(VisualVibesDbContext context)
         {
-
+            _context = context;
         }
         public void ChangePassword(int id, string newPassword)
         {
@@ -23,7 +23,7 @@ namespace VisualVibes.Infrastructure.Repositories
             throw new NotImplementedException();
         }
 
-        public async Task<User> GetUserByIdAsync(Guid id)
+        public async Task<AppUser> GetUserByIdAsync(string id)
         {
             var entity = await _context.Users
                 .Include(u => u.Followers)

@@ -34,7 +34,6 @@ namespace VisualVibes.App.UserProfiles.CommandsHandler
             getUserProfile.DateOfBirth = request.updateUserProfileDto.DateOfBirth;
             getUserProfile.FirstName = request.updateUserProfileDto.FirstName;
             getUserProfile.LastName = request.updateUserProfileDto.LastName;
-            getUserProfile.Email = request.updateUserProfileDto.Email;
             getUserProfile.Bio = request.updateUserProfileDto.Bio;
 
             var updatedUserProfile = await _unitOfWork.UserProfileRepository.UpdateAsync(getUserProfile);

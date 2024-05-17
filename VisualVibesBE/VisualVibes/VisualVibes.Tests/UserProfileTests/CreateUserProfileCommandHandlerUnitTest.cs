@@ -43,7 +43,6 @@ namespace VisualVibes.Tests.UserProfileTests
                 DateOfBirth = new DateTime(1998, 08, 21),
                 FirstName = "TestFirstName",
                 LastName = "TestLastName",
-                Email = "test.test@gmail.com",
                 Bio = "TestBio"
             };
 
@@ -61,7 +60,6 @@ namespace VisualVibes.Tests.UserProfileTests
                 DateOfBirth = userProfileDto.DateOfBirth,
                 FirstName = userProfileDto.FirstName,
                 LastName = userProfileDto.LastName,
-                Email = userProfileDto.Email,
                 Bio = userProfileDto.Bio
             };
 
@@ -83,7 +81,6 @@ namespace VisualVibes.Tests.UserProfileTests
                     UserId = userId,
                     FirstName = userProfile.FirstName,
                     LastName = userProfile.LastName,
-                    Email = userProfile.Email,
                     ProfilePicture = userProfile.ProfilePicture,
                     Bio = userProfile.Bio,
                     DateOfBirth = userProfile.DateOfBirth
@@ -98,7 +95,6 @@ namespace VisualVibes.Tests.UserProfileTests
             Assert.Equal(userProfileDto.DateOfBirth, result.DateOfBirth);
             Assert.Equal(userProfileDto.FirstName, result.FirstName);
             Assert.Equal(userProfileDto.LastName, result.LastName);
-            Assert.Equal(userProfileDto.Email, result.Email);
             Assert.Equal(userProfileDto.Bio, result.Bio);
             _unitOfWorkMock.Verify(uow => uow.SaveAsync(), Times.Once);
         }

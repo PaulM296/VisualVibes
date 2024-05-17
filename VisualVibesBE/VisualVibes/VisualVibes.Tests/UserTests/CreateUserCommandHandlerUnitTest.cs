@@ -12,10 +12,10 @@ namespace VisualVibes.Tests.UserTests
     public class CreateUserCommandHandlerUnitTest
     {
 
-        private readonly CreateUserCommandHandler _createUserCommandHandler;
+        private readonly RegisterUserCommandHandler _createUserCommandHandler;
         private readonly Mock<IUserRepository> _userRepositoryMock;
         private readonly Mock<IUnitOfWork> _unitOfWorkMock;
-        private readonly Mock<ILogger<CreateUserCommandHandler>> _loggerMock;
+        private readonly Mock<ILogger<RegisterUserCommandHandler>> _loggerMock;
         private readonly Mock<IMapper> _mapperMock;
         private readonly Mock<IFeedRepository> _feedRepositoryMock;
         private readonly Mock<IFeedPostRepository> _feedPostRepositoryMock;
@@ -24,7 +24,7 @@ namespace VisualVibes.Tests.UserTests
         {
             _userRepositoryMock = new Mock<IUserRepository>();
             _unitOfWorkMock = new Mock<IUnitOfWork>();
-            _loggerMock = new Mock<ILogger<CreateUserCommandHandler>>();
+            _loggerMock = new Mock<ILogger<RegisterUserCommandHandler>>();
             _mapperMock = new Mock<IMapper>();
             _feedRepositoryMock = new Mock<IFeedRepository>();
             _feedPostRepositoryMock = new Mock<IFeedPostRepository>();
@@ -40,7 +40,7 @@ namespace VisualVibes.Tests.UserTests
         public async void Should_CreateUser_Correctly()
         {
             //Arrange
-            var userDto = new CreateUserDto
+            var userDto = new RegisterUser
             {
                 Username = "UserTest",
                 Password = "password123"
@@ -53,7 +53,7 @@ namespace VisualVibes.Tests.UserTests
                 Password = userDto.Password
             };
 
-            var createUserCommand = new CreateUserCommand(userDto);
+            var createUserCommand = new RegisterUserCommand(userDto);
 
             _userRepositoryMock
                 .Setup(x => x.AddAsync(It.Is<User>(y => y.Username == userDto.Username &&

@@ -8,11 +8,9 @@ namespace VisualVibes.Domain.Models.BaseEntity
 
         public string LastName { get; set; }
 
-        public string Email { get; set; }
+        public string UserId { get; set; }
 
-        public Guid UserId { get; set; }
-
-        public User User { get; set; }
+        public AppUser User { get; set; }
 
         public string? ProfilePicture { get; set; }
 

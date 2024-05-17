@@ -14,7 +14,7 @@ namespace VisualVibes.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task AddFollowerAsync(Guid followerId, Guid followingId)
+        public async Task AddFollowerAsync(string followerId, string followingId)
         {
             var userFollower = new UserFollower
             {
@@ -26,7 +26,7 @@ namespace VisualVibes.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task RemoveFollowerAsync(Guid followerId, Guid followingId)
+        public async Task RemoveFollowerAsync(string followerId, string followingId)
         {
             var userFollower = await _context.UserFollower
                 .FirstOrDefaultAsync(uf => uf.FollowerId == followerId && uf.FollowingId == followingId);
@@ -40,7 +40,7 @@ namespace VisualVibes.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<UserFollower>> GetFollowersByUserIdAsync(Guid userId)
+        public async Task<IEnumerable<UserFollower>> GetFollowersByUserIdAsync(string userId)
         {
             return await _context.UserFollower
                 .Include(uf => uf.Follower)
@@ -48,7 +48,7 @@ namespace VisualVibes.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<UserFollower>> GetFollowingByUserIdAsync(Guid userId)
+        public async Task<IEnumerable<UserFollower>> GetFollowingByUserIdAsync(string userId)
         {
             return await _context.UserFollower
                 .Include(uf => uf.Following)

@@ -5,9 +5,9 @@ namespace VisualVibes.Domain.Models.BaseEntity
 {
     public class Post : BaseEntity
     {
-        public Guid UserId { get; set; }
+        public string UserId { get; set; }
 
-        public User User { get; set; }
+        public AppUser User { get; set; }
 
         public string? Caption { get; set; }
 

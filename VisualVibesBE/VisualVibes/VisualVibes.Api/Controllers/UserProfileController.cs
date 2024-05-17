@@ -34,7 +34,7 @@ namespace VisualVibes.Api.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetUserProfileByUserId(Guid id)
+        public async Task<IActionResult> GetUserProfileByUserId(string id)
         {
             var userProfile = await _mediator.Send(new GetUserProfileByUserIdQuery(id));
 

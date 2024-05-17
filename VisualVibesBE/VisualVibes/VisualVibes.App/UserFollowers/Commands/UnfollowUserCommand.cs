@@ -3,5 +3,5 @@ using VisualVibes.App.DTOs;
 
 namespace VisualVibes.App.UserFollowers.Commands
 {
-    public record UnfollowUserCommand(Guid FollowerId, Guid FollowingId) : IRequest<Unit>;
+    public record UnfollowUserCommand(string FollowerId, string FollowingId) : IRequest<Unit>;
 }

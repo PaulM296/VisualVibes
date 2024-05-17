@@ -12,7 +12,7 @@ namespace VisualVibes.Infrastructure.Repositories
 
         }
 
-        public async Task<Feed> GetByUserIdAsync(Guid userId)
+        public async Task<Feed> GetByUserIdAsync(string userId)
         {
             var feed = await _context.Feeds
                 .Include(f => f.FeedPosts)

@@ -4,9 +4,9 @@ namespace VisualVibes.App.Interfaces
 {
     public interface IUserFollowerRepository
     {
-        Task AddFollowerAsync(Guid followerId, Guid followingId);
-        Task RemoveFollowerAsync(Guid followerId, Guid followingId);
-        Task<IEnumerable<UserFollower>> GetFollowersByUserIdAsync(Guid userId);
-        Task<IEnumerable<UserFollower>> GetFollowingByUserIdAsync(Guid userId);
+        Task AddFollowerAsync(string followerId, string followingId);
+        Task RemoveFollowerAsync(string followerId, string followingId);
+        Task<IEnumerable<UserFollower>> GetFollowersByUserIdAsync(string userId);
+        Task<IEnumerable<UserFollower>> GetFollowingByUserIdAsync(string userId);
     }
 }

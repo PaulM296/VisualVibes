@@ -11,7 +11,7 @@ namespace VisualVibes.Infrastructure.Repositories
 
         }
 
-        public async Task<UserProfile> GetUserProfileByUserId(Guid userId)
+        public async Task<UserProfile> GetUserProfileByUserId(string userId)
         {
             return await _context.UserProfiles.FirstOrDefaultAsync(up => up.UserId == userId);
         }

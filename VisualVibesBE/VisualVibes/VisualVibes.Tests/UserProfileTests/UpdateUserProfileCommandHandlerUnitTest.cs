@@ -43,7 +43,6 @@ namespace VisualVibes.Tests.UserProfileTests
                 DateOfBirth = new DateTime(1998, 08, 21),
                 FirstName = "TestFirstName",
                 LastName = "TestLastName",
-                Email = "test.test@gmail.com",
                 Bio = "TestBio"
             };
 
@@ -53,7 +52,6 @@ namespace VisualVibes.Tests.UserProfileTests
                 DateOfBirth = userProfile.DateOfBirth.AddDays(1),
                 FirstName = "UpdatedFirstName",
                 LastName = "UpdatedLastName",
-                Email = "updated.email@gmail.com",
                 Bio = "Updated Bio",
             };
 
@@ -63,7 +61,6 @@ namespace VisualVibes.Tests.UserProfileTests
                 UserId = userProfile.UserId,
                 FirstName = updateUserProfileDto.FirstName,
                 LastName = updateUserProfileDto.LastName,
-                Email = updateUserProfileDto.Email,
                 ProfilePicture = updateUserProfileDto.ProfilePicture,
                 Bio = updateUserProfileDto.Bio,
                 DateOfBirth = updateUserProfileDto.DateOfBirth
@@ -89,7 +86,6 @@ namespace VisualVibes.Tests.UserProfileTests
             Assert.NotNull(result);
             Assert.Equal(updateUserProfileDto.FirstName, result.FirstName);
             Assert.Equal(updateUserProfileDto.LastName, result.LastName);
-            Assert.Equal(updateUserProfileDto.Email, result.Email);
             Assert.Equal(updateUserProfileDto.ProfilePicture, result.ProfilePicture);
             Assert.Equal(updateUserProfileDto.Bio, result.Bio);
             Assert.Equal(updateUserProfileDto.DateOfBirth, result.DateOfBirth);

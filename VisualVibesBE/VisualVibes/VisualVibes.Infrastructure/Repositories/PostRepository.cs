@@ -20,7 +20,7 @@ namespace VisualVibes.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task<List<Post>> GetPostsByUserIdAsync(Guid userId)
+        public async Task<List<Post>> GetPostsByUserIdAsync(string userId)
         {
             return await _context.Posts
                 .Where(p => p.UserId == userId)

@@ -4,6 +4,6 @@ namespace VisualVibes.App.DTOs.FeedDtos
 {
     public class CreateFeedDto
     {
-        public Guid UserID { get; set; }
+        public string UserID { get; set; }
     }
 }

@@ -3,6 +3,8 @@ using VisualVibes.Infrastructure.Repositories;
 using VisualVibes.Infrastructure;
 using VisualVibes.App;
 using Microsoft.EntityFrameworkCore;
+using VisualVibes.Api.Services;
+using VisualVibes.Infrastructure.Services;
 
 namespace VisualVibes.Api.Extensions
 {
@@ -20,6 +22,8 @@ namespace VisualVibes.Api.Extensions
             services.AddScoped<IMessageRepository, MessageRepository>();
             services.AddScoped<IConversationRepository, ConversationRepository>();
             services.AddScoped<IUserFollowerRepository, UserFollowerRepository>();
+            services.AddScoped<IIdentityService, IdentityService>();
+            services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
 

@@ -2,5 +2,5 @@
 
 namespace VisualVibes.App.UserFollowers.Commands
 {
-    public record FollowUserCommand(Guid FollowerId, Guid FollowingId) : IRequest<Unit>;
+    public record FollowUserCommand(string FollowerId, string FollowingId) : IRequest<Unit>;
 }

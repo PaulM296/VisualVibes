@@ -17,7 +17,7 @@ namespace VisualVibes.IntegrationTests
         public async Task UserController_CreateUser_ShouldCreateUserInDbCorrectly()
         {
             //Arrange
-            var createUserDto = new CreateUserDto
+            var createUserDto = new RegisterUser
             {
                 Username = "TestUser",
                 Password = "passwordTest",

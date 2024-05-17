@@ -4,13 +4,13 @@ namespace VisualVibes.Domain.Models.BaseEntity
 {
     public class Conversation : BaseEntity
     {
-        public Guid FirstParticipantId { get; set; }
+        public string FirstParticipantId { get; set; }
 
-        public User FirstParticipant { get; set; }
+        public AppUser FirstParticipant { get; set; }
 
-        public Guid SecondParticipantId { get; set; }
+        public string SecondParticipantId { get; set; }
 
-        public User SecondParticipant { get; set; }
+        public AppUser SecondParticipant { get; set; }
 
         public ICollection<Message> Messages { get; set; }
     }

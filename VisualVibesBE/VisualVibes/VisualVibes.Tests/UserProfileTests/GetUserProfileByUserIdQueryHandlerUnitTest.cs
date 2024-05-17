@@ -41,7 +41,6 @@ namespace VisualVibes.Tests.UserProfileTests
                 UserId = userId,
                 FirstName = "John",
                 LastName = "Doe",
-                Email = "johndoe@gmail.com",
                 ProfilePicture = "profile.jpg",
                 Bio = "Bio",
                 DateOfBirth = new DateTime(2000, 1, 1)
@@ -53,7 +52,6 @@ namespace VisualVibes.Tests.UserProfileTests
                 UserId = userProfile.UserId,
                 FirstName = userProfile.FirstName,
                 LastName = userProfile.LastName,
-                Email = userProfile.Email,
                 ProfilePicture = userProfile.ProfilePicture,
                 Bio = userProfile.Bio,
                 DateOfBirth = userProfile.DateOfBirth

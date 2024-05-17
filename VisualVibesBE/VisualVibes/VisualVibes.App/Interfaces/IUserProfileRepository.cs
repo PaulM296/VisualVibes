@@ -4,6 +4,6 @@ namespace VisualVibes.App.Interfaces
 {
     public interface IUserProfileRepository : IBaseRepository<UserProfile>
     {
-        Task<UserProfile> GetUserProfileByUserId(Guid userId);
+        Task<UserProfile> GetUserProfileByUserId(string userId);
     }
 }

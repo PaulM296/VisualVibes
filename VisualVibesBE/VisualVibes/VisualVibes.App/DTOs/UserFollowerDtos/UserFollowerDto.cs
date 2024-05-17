@@ -5,7 +5,7 @@ namespace VisualVibes.App.DTOs.UserFollowerDtos
 {
     public class UserFollowerDto
     {
-        public Guid FollowerId { get; set; }
-        public Guid FollowingId { get; set; }
+        public string FollowerId { get; set; }
+        public string FollowingId { get; set; }
     }
 }

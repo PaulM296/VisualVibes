@@ -13,7 +13,7 @@ namespace VisualVibes.Infrastructure.Repositories
 
         }
 
-        public async Task<List<Conversation>> GetAllByUserIdAsync(Guid userId)
+        public async Task<List<Conversation>> GetAllByUserIdAsync(string userId)
         {
             return await _context.Conversations
             .Where(c => c.FirstParticipantId == userId || c.SecondParticipantId == userId)

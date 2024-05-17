@@ -3,5 +3,5 @@ using VisualVibes.App.DTOs.UserProfileDtos;
 
 namespace VisualVibes.App.UserProfiles.Queries
 {
-    public record GetUserProfileByUserIdQuery(Guid userId) : IRequest<ResponseUserProfileDto>;
+    public record GetUserProfileByUserIdQuery(string userId) : IRequest<ResponseUserProfileDto>;
 }

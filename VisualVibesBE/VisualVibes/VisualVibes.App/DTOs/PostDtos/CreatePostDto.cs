@@ -2,7 +2,7 @@
 {
     public class CreatePostDto
     {
-        public Guid UserId { get; set; }
+        public string UserId { get; set; }
         public string Caption { get; set; }
         public string Pictures { get; set; }
     }

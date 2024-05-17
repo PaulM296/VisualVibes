@@ -23,7 +23,6 @@ namespace VisualVibes.IntegrationTests
                 UserId = user.Id,
                 FirstName = "John",
                 LastName = "Doe",
-                Email = "johndoe@gmail.com",
                 ProfilePicture = "picture1.jpg",
                 Bio = "Bio of John Doe",
                 DateOfBirth = new DateTime(2000, 10, 18)
@@ -60,7 +59,6 @@ namespace VisualVibes.IntegrationTests
             Assert.NotNull(responseUserProfileDto);
             Assert.Equal(createUserProfileDto.FirstName, responseUserProfileDto.FirstName);
             Assert.Equal(createUserProfileDto.LastName, responseUserProfileDto.LastName);
-            Assert.Equal(createUserProfileDto.Email, responseUserProfileDto.Email);
             Assert.Equal(createUserProfileDto.ProfilePicture, responseUserProfileDto.ProfilePicture);
             Assert.Equal(createUserProfileDto.Bio, responseUserProfileDto.Bio);
             Assert.Equal(createUserProfileDto.DateOfBirth, responseUserProfileDto.DateOfBirth);
@@ -79,7 +77,6 @@ namespace VisualVibes.IntegrationTests
             {
                 FirstName = userProfile.FirstName,
                 LastName = userProfile.LastName,
-                Email = "updatedEmail",
                 ProfilePicture = "updatedProfilePicture.png",
                 Bio = userProfile.Bio,
                 DateOfBirth = userProfile.DateOfBirth
@@ -116,7 +113,6 @@ namespace VisualVibes.IntegrationTests
             Assert.NotNull(responseUserProfileDto);
             Assert.Equal(updateUserProfileDto.FirstName, responseUserProfileDto.FirstName);
             Assert.Equal(updateUserProfileDto.LastName, responseUserProfileDto.LastName);
-            Assert.Equal(updateUserProfileDto.Email, responseUserProfileDto.Email);
             Assert.Equal(updateUserProfileDto.ProfilePicture, responseUserProfileDto.ProfilePicture);
             Assert.Equal(updateUserProfileDto.Bio, responseUserProfileDto.Bio);
             Assert.Equal(updateUserProfileDto.DateOfBirth, responseUserProfileDto.DateOfBirth);
@@ -162,7 +158,6 @@ namespace VisualVibes.IntegrationTests
             Assert.NotNull(responseUserProfileDto);
             Assert.Equal(userProfile.FirstName, responseUserProfileDto.FirstName);
             Assert.Equal(userProfile.LastName, responseUserProfileDto.LastName);
-            Assert.Equal(userProfile.Email, responseUserProfileDto.Email);
             Assert.Equal(userProfile.ProfilePicture, responseUserProfileDto.ProfilePicture);
             Assert.Equal(userProfile.Bio, responseUserProfileDto.Bio);
             Assert.Equal(userProfile.DateOfBirth, responseUserProfileDto.DateOfBirth);

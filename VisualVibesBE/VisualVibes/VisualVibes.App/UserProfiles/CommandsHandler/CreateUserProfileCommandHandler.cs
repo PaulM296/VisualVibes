@@ -24,7 +24,7 @@ namespace VisualVibes.App.UserProfiles.CommandsHandler
 
         public async Task<ResponseUserProfileDto> Handle(CreateUserProfileCommand request, CancellationToken cancellationToken)
         {
-            var userExists = await _unitOfWork.UserRepository.GetByIdAsync(request.createUserProfileDto.UserId);
+            var userExists = await _unitOfWork.UserRepository.GetUserByIdAsync(request.createUserProfileDto.UserId);
             if (userExists == null)
             {
                 throw new UserNotFoundException($"The user with ID {request.createUserProfileDto.UserId} doesn't exist!");    
@@ -37,7 +37,7 @@ namespace VisualVibes.App.UserProfiles.CommandsHandler
                 DateOfBirth = request.createUserProfileDto.DateOfBirth,
                 FirstName = request.createUserProfileDto.FirstName,
                 LastName = request.createUserProfileDto.LastName,
-                Email = request.createUserProfileDto.Email,
+
                 Bio = request.createUserProfileDto.Bio,
             };
 

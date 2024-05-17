@@ -5,6 +5,6 @@ namespace VisualVibes.App.Interfaces
     public interface IPostRepository : IBaseRepository<Post>
     {
         Task<List<Post>> GetTopReactedPostsAsync(int count);
-        Task<List<Post>> GetPostsByUserIdAsync(Guid userId);
+        Task<List<Post>> GetPostsByUserIdAsync(string userId);
     }
 }
