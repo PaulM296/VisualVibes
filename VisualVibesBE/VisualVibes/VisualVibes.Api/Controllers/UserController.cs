@@ -21,9 +21,21 @@ namespace VisualVibes.Api.Controllers
         }
 
         [HttpPost]
+        [Route("register")]
         public async Task<IActionResult> RegisterUser(RegisterUser registerUserDto)
         {
             var response = await _mediator.Send(new RegisterUserCommand(registerUserDto));
+
+            var authenticationResult = new AuthenticationResult(response);
+
+            return Ok(authenticationResult);
+        }
+
+        [HttpPost]
+        [Route("login")]
+        public async Task<IActionResult> LoginUser(LoginDto loginUserDto)
+        {
+            var response = await _mediator.Send(new LoginUserCommand(loginUserDto));
 
             var authenticationResult = new AuthenticationResult(response);
 

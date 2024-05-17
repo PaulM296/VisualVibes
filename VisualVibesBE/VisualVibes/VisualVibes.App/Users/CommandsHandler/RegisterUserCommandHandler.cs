@@ -12,17 +12,15 @@ namespace VisualVibes.App.Users.CommandsHandler
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<RegisterUserCommandHandler> _logger;
-        private readonly IMapper _mapper;
         private readonly IAuthenticationService _authenticationService;
         private readonly IIdentityService _identityService;
 
         public RegisterUserCommandHandler(IAuthenticationService authenticationService, IUnitOfWork unitOfWork,
-            ILogger<RegisterUserCommandHandler> logger, IMapper mapper, IIdentityService identityService)
+            ILogger<RegisterUserCommandHandler> logger, IIdentityService identityService)
         {
             _authenticationService = authenticationService;
             _unitOfWork = unitOfWork;
             _logger = logger;
-            _mapper = mapper;
             _identityService = identityService;
         }
         public async Task<string> Handle(RegisterUserCommand request, CancellationToken cancellationToken)

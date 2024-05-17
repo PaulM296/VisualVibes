@@ -22,6 +22,207 @@ namespace VisualVibes.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex")
+                        .HasFilter("[NormalizedName] IS NOT NULL");
+
+                    b.ToTable("AspNetRoles", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RoleId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetRoleClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+                {
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ProviderKey")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ProviderDisplayName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("LoginProvider", "ProviderKey");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserLogins", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("RoleId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("UserId", "RoleId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetUserRoles", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("UserId", "LoginProvider", "Name");
+
+                    b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("VisualVibes.Domain.Models.AppUser", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Role")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex")
+                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.ToTable("AspNetUsers", (string)null);
+                });
+
             modelBuilder.Entity("VisualVibes.Domain.Models.BaseEntity.Comment", b =>
                 {
                     b.Property<Guid>("Id")
@@ -38,8 +239,9 @@ namespace VisualVibes.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
@@ -56,11 +258,13 @@ namespace VisualVibes.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("FirstParticipantId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("FirstParticipantId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<Guid>("SecondParticipantId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("SecondParticipantId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
@@ -77,8 +281,9 @@ namespace VisualVibes.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("UserID")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("UserID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
@@ -104,8 +309,9 @@ namespace VisualVibes.Infrastructure.Migrations
                     b.Property<DateTime>("Timestamp")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
@@ -131,8 +337,9 @@ namespace VisualVibes.Infrastructure.Migrations
                     b.Property<string>("Pictures")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
@@ -156,8 +363,9 @@ namespace VisualVibes.Infrastructure.Migrations
                     b.Property<DateTime>("Timestamp")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
@@ -166,25 +374,6 @@ namespace VisualVibes.Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Reactions");
-                });
-
-            modelBuilder.Entity("VisualVibes.Domain.Models.BaseEntity.User", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("VisualVibes.Domain.Models.BaseEntity.UserProfile", b =>
@@ -199,10 +388,6 @@ namespace VisualVibes.Infrastructure.Migrations
                     b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -214,8 +399,9 @@ namespace VisualVibes.Infrastructure.Migrations
                     b.Property<string>("ProfilePicture")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
@@ -242,17 +428,68 @@ namespace VisualVibes.Infrastructure.Migrations
 
             modelBuilder.Entity("VisualVibes.Domain.Models.UserFollower", b =>
                 {
-                    b.Property<Guid>("FollowerId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("FollowerId")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<Guid>("FollowingId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("FollowingId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("FollowerId", "FollowingId");
 
                     b.HasIndex("FollowingId");
 
                     b.ToTable("UserFollower");
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+                {
+                    b.HasOne("VisualVibes.Domain.Models.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+                {
+                    b.HasOne("VisualVibes.Domain.Models.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VisualVibes.Domain.Models.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+                {
+                    b.HasOne("VisualVibes.Domain.Models.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("VisualVibes.Domain.Models.BaseEntity.Comment", b =>
@@ -263,7 +500,7 @@ namespace VisualVibes.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("VisualVibes.Domain.Models.BaseEntity.User", "User")
+                    b.HasOne("VisualVibes.Domain.Models.AppUser", "User")
                         .WithMany("Comments")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -276,13 +513,13 @@ namespace VisualVibes.Infrastructure.Migrations
 
             modelBuilder.Entity("VisualVibes.Domain.Models.BaseEntity.Conversation", b =>
                 {
-                    b.HasOne("VisualVibes.Domain.Models.BaseEntity.User", "FirstParticipant")
+                    b.HasOne("VisualVibes.Domain.Models.AppUser", "FirstParticipant")
                         .WithMany("StartedConversations")
                         .HasForeignKey("FirstParticipantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("VisualVibes.Domain.Models.BaseEntity.User", "SecondParticipant")
+                    b.HasOne("VisualVibes.Domain.Models.AppUser", "SecondParticipant")
                         .WithMany("JoinedConversations")
                         .HasForeignKey("SecondParticipantId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -295,7 +532,7 @@ namespace VisualVibes.Infrastructure.Migrations
 
             modelBuilder.Entity("VisualVibes.Domain.Models.BaseEntity.Feed", b =>
                 {
-                    b.HasOne("VisualVibes.Domain.Models.BaseEntity.User", "User")
+                    b.HasOne("VisualVibes.Domain.Models.AppUser", "User")
                         .WithOne("UserFeed")
                         .HasForeignKey("VisualVibes.Domain.Models.BaseEntity.Feed", "UserID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -312,7 +549,7 @@ namespace VisualVibes.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("VisualVibes.Domain.Models.BaseEntity.User", "User")
+                    b.HasOne("VisualVibes.Domain.Models.AppUser", "User")
                         .WithMany("Messages")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -325,7 +562,7 @@ namespace VisualVibes.Infrastructure.Migrations
 
             modelBuilder.Entity("VisualVibes.Domain.Models.BaseEntity.Post", b =>
                 {
-                    b.HasOne("VisualVibes.Domain.Models.BaseEntity.User", "User")
+                    b.HasOne("VisualVibes.Domain.Models.AppUser", "User")
                         .WithMany("Posts")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -342,7 +579,7 @@ namespace VisualVibes.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("VisualVibes.Domain.Models.BaseEntity.User", "User")
+                    b.HasOne("VisualVibes.Domain.Models.AppUser", "User")
                         .WithMany("Reactions")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -355,7 +592,7 @@ namespace VisualVibes.Infrastructure.Migrations
 
             modelBuilder.Entity("VisualVibes.Domain.Models.BaseEntity.UserProfile", b =>
                 {
-                    b.HasOne("VisualVibes.Domain.Models.BaseEntity.User", "User")
+                    b.HasOne("VisualVibes.Domain.Models.AppUser", "User")
                         .WithOne("UserProfile")
                         .HasForeignKey("VisualVibes.Domain.Models.BaseEntity.UserProfile", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -385,13 +622,13 @@ namespace VisualVibes.Infrastructure.Migrations
 
             modelBuilder.Entity("VisualVibes.Domain.Models.UserFollower", b =>
                 {
-                    b.HasOne("VisualVibes.Domain.Models.BaseEntity.User", "Follower")
+                    b.HasOne("VisualVibes.Domain.Models.AppUser", "Follower")
                         .WithMany("Following")
                         .HasForeignKey("FollowerId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("VisualVibes.Domain.Models.BaseEntity.User", "Following")
+                    b.HasOne("VisualVibes.Domain.Models.AppUser", "Following")
                         .WithMany("Followers")
                         .HasForeignKey("FollowingId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -402,26 +639,7 @@ namespace VisualVibes.Infrastructure.Migrations
                     b.Navigation("Following");
                 });
 
-            modelBuilder.Entity("VisualVibes.Domain.Models.BaseEntity.Conversation", b =>
-                {
-                    b.Navigation("Messages");
-                });
-
-            modelBuilder.Entity("VisualVibes.Domain.Models.BaseEntity.Feed", b =>
-                {
-                    b.Navigation("FeedPosts");
-                });
-
-            modelBuilder.Entity("VisualVibes.Domain.Models.BaseEntity.Post", b =>
-                {
-                    b.Navigation("Comments");
-
-                    b.Navigation("FeedPosts");
-
-                    b.Navigation("Reactions");
-                });
-
-            modelBuilder.Entity("VisualVibes.Domain.Models.BaseEntity.User", b =>
+            modelBuilder.Entity("VisualVibes.Domain.Models.AppUser", b =>
                 {
                     b.Navigation("Comments");
 
@@ -444,6 +662,25 @@ namespace VisualVibes.Infrastructure.Migrations
 
                     b.Navigation("UserProfile")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("VisualVibes.Domain.Models.BaseEntity.Conversation", b =>
+                {
+                    b.Navigation("Messages");
+                });
+
+            modelBuilder.Entity("VisualVibes.Domain.Models.BaseEntity.Feed", b =>
+                {
+                    b.Navigation("FeedPosts");
+                });
+
+            modelBuilder.Entity("VisualVibes.Domain.Models.BaseEntity.Post", b =>
+                {
+                    b.Navigation("Comments");
+
+                    b.Navigation("FeedPosts");
+
+                    b.Navigation("Reactions");
                 });
 #pragma warning restore 612, 618
         }

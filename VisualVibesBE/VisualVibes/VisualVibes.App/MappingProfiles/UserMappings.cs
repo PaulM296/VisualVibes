@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using VisualVibes.App.DTOs.UserDtos;
-using VisualVibes.Domain.Models.BaseEntity;
+using VisualVibes.Domain.Models;
 
 namespace VisualVibes.App.MappingProfiles
 {
@@ -8,7 +8,7 @@ namespace VisualVibes.App.MappingProfiles
     {
         public UserMappings()
         {
-            CreateMap<User, ResponseUserDto>();
+            CreateMap<AppUser, ResponseUserDto>();
         }
     }
 }

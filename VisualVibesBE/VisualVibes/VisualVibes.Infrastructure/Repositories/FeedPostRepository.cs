@@ -55,6 +55,13 @@ namespace VisualVibes.Infrastructure.Repositories
 
         public async Task EnsureFeedForUserAsync(string userId)
         {
+            bool hasPosts = await _context.Posts.AnyAsync();
+
+            if (!hasPosts)
+            {
+                return;
+            }
+
             var feed = await _context.Feeds.FirstOrDefaultAsync(f => f.UserID == userId);
             if (feed == null)
             {
@@ -63,7 +70,6 @@ namespace VisualVibes.Infrastructure.Repositories
                 await _context.SaveChangesAsync();
             }
 
-            
             if (!await _context.FeedPost.AnyAsync(fp => fp.FeedId == feed.Id))
             {
                 
