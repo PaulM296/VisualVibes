@@ -2,6 +2,7 @@
 using VisualVibes.App.Interfaces;
 using VisualVibes.Domain.Models.BaseEntity;
 using Microsoft.EntityFrameworkCore;
+using VisualVibes.Infrastructure.Exceptions;
 
 namespace VisualVibes.Infrastructure.Repositories
 {

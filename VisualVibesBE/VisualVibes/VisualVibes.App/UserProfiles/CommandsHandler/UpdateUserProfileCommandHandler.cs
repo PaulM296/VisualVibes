@@ -27,7 +27,7 @@ namespace VisualVibes.App.UserProfiles.CommandsHandler
 
             if (getUserProfile == null)
             {
-                throw new UserProfileNotFoundException($"The userProfile with Id {request.id} doesn't exist and it could not be updated!");
+                throw new UserProfileNotFoundException($"The User with UserProfile Id {request.id} doesn't exist and it could not be updated!");
             }
 
             getUserProfile.ProfilePicture = request.updateUserProfileDto.ProfilePicture;

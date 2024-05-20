@@ -18,7 +18,7 @@ namespace VisualVibes.Infrastructure.Repositories
         {
             if (_context.Set<T>().Contains(entity))
             {
-                throw new EntityAlreadyExistsException($"Could not add the {nameof(T)}, because it already exists.");
+                throw new EntityAlreadyExistsException($"Could not add the {typeof(T).Name}, because it already exists.");
             }
 
             _context.Set<T>().Add(entity);
@@ -34,7 +34,7 @@ namespace VisualVibes.Infrastructure.Repositories
 
             if (entities.Count == 0)
             {
-                throw new EntityNotFoundException($"Could not find the {nameof(T)}");
+                throw new EntityNotFoundException($"Could not find any {typeof(T).Name} entities.");
             }
 
             return entities;
@@ -46,7 +46,7 @@ namespace VisualVibes.Infrastructure.Repositories
 
             if (entity == null)
             {
-                throw new EntityNotFoundException($"Could not find the {nameof(T)}");
+                throw new EntityNotFoundException($"Could not find the specified {typeof(T).Name}."); ;
             }
 
             return entity;
@@ -58,7 +58,7 @@ namespace VisualVibes.Infrastructure.Repositories
 
             if (entityToRemove ==  null)
             {
-                throw new EntityNotFoundException($"The {nameof(T)} does not exist, therefore it could not be removed.");
+                throw new EntityNotFoundException($"The {typeof(T).Name} does not exist, therefore it could not be removed.");
             }
 
             _context.Set<T>().Remove(entityToRemove);
@@ -73,7 +73,7 @@ namespace VisualVibes.Infrastructure.Repositories
 
             if (entity == null)
             {
-                throw new EntityNotFoundException($"The {nameof(T)} has not been found, therefore it could not be removed.");
+                throw new EntityNotFoundException($"The {typeof(T).Name} has not been found, therefore it could not be removed.");
             }
 
             _context.Set<T>().Update(updatedEntity);

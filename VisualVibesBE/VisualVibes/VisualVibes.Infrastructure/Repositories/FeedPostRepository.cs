@@ -22,7 +22,7 @@ namespace VisualVibes.Infrastructure.Repositories
 
             if (post == null)
             {
-                throw new EntityNotFoundException($"Post with ID {postId} not found.");
+                throw new EntityNotFoundException($"Could not find {nameof(Post)} with ID {postId}!");
             }
 
             foreach (var follower in post.User.Followers)
