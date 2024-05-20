@@ -1,6 +1,7 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using VisualVibes.App.Comments.Queries;
 using VisualVibes.App.DTOs.ReactionDtos;
 using VisualVibes.App.Reactions.Commands;
 using VisualVibes.App.Reactions.Queries;
@@ -8,7 +9,8 @@ using VisualVibes.App.Reactions.Queries;
 namespace VisualVibes.Api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/reactions")]
+    [Authorize]
     public class ReactionController : ControllerBase
     {
         private readonly IMediator _mediator;

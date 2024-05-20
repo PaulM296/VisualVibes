@@ -1,6 +1,7 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Runtime.InteropServices;
 using VisualVibes.App.DTOs.MessageDtos;
 using VisualVibes.App.Messages.Commands;
 using VisualVibes.App.Messages.Queries;
@@ -8,7 +9,8 @@ using VisualVibes.App.Messages.Queries;
 namespace VisualVibes.Api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/messages")]
+    [Authorize]
     public class MessagesController : ControllerBase
     {
         private readonly IMediator _mediator;

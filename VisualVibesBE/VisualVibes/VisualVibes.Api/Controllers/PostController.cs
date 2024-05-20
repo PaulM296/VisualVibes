@@ -1,4 +1,6 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VisualVibes.App.DTOs.PostDtos;
 using VisualVibes.App.Posts.Commands;
@@ -7,7 +9,8 @@ using VisualVibes.App.Posts.Queries;
 namespace VisualVibes.Api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/activityPosts")]
+    [Authorize]
     public class PostController : ControllerBase
     {
         private readonly IMediator _mediator;

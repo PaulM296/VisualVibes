@@ -1,4 +1,6 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VisualVibes.App.DTOs.FeedDtos;
 using VisualVibes.App.Feeds.Commands;
@@ -6,7 +8,8 @@ using VisualVibes.App.Feeds.Commands;
 namespace VisualVibes.Api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/feeds")]
+    [Authorize]
     public class FeedController : ControllerBase
     {
         private readonly IMediator _mediator;

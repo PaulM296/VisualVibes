@@ -8,5 +8,7 @@ namespace VisualVibes.App.Interfaces
         void CreateUser(UserProfile userProfile);
         void ChangePassword(int id, string newPassword);
         Task<AppUser> GetUserByIdAsync(string id);
+        Task<AppUser> RemoveUserAsync(AppUser user);
+        Task<AppUser> UpdateUserAsync(AppUser updatedUser);
     }
 }

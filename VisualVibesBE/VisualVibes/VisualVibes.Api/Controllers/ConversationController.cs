@@ -1,14 +1,17 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using VisualVibes.Api.Extensions;
 using VisualVibes.App.Conversations.Commands;
 using VisualVibes.App.Conversations.Queries;
 using VisualVibes.App.DTOs.ConversationDtos;
-using VisualVibes.App.DTOs.UserDtos;
 
 namespace VisualVibes.Api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/conversations")]
+    [Authorize]
     public class ConversationController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -27,19 +30,21 @@ namespace VisualVibes.Api.Controllers
         }
 
         [HttpGet("user/{id}")]
-        public async Task<IActionResult> GetAllUserConversations(string id)
+        public async Task<IActionResult> GetAllUserConversations()
         {
-            var conversations = await _mediator.Send(new GetAllUserConversationsQuery(id));
+            var userId = HttpContext.GetUserIdClaimValue();
+
+            var conversations = await _mediator.Send(new GetAllUserConversationsQuery(userId));
 
             return Ok(conversations);
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> RemoveUser(Guid id)
+        public async Task<IActionResult> RemoveConversation(Guid id)
         {
             var response = await _mediator.Send(new RemoveConversationCommand(id));
 
-            return Ok();
+            return Ok(response);
         }
     }
 }

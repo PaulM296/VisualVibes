@@ -1,5 +1,8 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using VisualVibes.Api.Extensions;
 using VisualVibes.Api.Models;
 using VisualVibes.App.DTOs.UserDtos;
 using VisualVibes.App.UserFollowers.Commands;
@@ -10,14 +13,15 @@ using VisualVibes.App.Users.Queries;
 namespace VisualVibes.Api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/users")]
     public class UserController : ControllerBase
     {
         private readonly IMediator _mediator;
-
-        public UserController(IMediator mediator)
+        private readonly ILogger<UserController> _logger;
+        public UserController(IMediator mediator, ILogger<UserController> logger)
         {
             _mediator = mediator;
+            _logger = logger;
         }
 
         [HttpPost]
@@ -43,39 +47,55 @@ namespace VisualVibes.Api.Controllers
         }
 
         [HttpPost("follow")]
-        public async Task<IActionResult> FollowUser([FromBody] FollowUserCommand command)
+        [Authorize]
+        public async Task<IActionResult> FollowUser(string followingId)
         {
-            var follower = await _mediator.Send(command);
+            var followerId = HttpContext.GetUserIdClaimValue();
 
-            return Ok(follower);
+            var command = new FollowUserCommand(followerId, followingId);
+
+            var response = await _mediator.Send(command);
+
+            return Ok(response);
         }
 
         [HttpPost("unfollow")]
-        public async Task<IActionResult> UnfollowUser([FromBody] UnfollowUserCommand command)
+        [Authorize]
+        public async Task<IActionResult> UnfollowUser(string followingId)
         {
+            var followerIdStr = HttpContext.GetUserIdClaimValue();
+
+            var command = new UnfollowUserCommand(followerIdStr, followingId);
             var response = await _mediator.Send(command);
 
             return Ok(response);
         }
 
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(string id, UpdateUserDto updateUserDto)
+        [HttpPut]
+        [Authorize]
+        public async Task<IActionResult> UpdateUser(UpdateUserDto updateUserDto)
         {
-            var updatedUser = await _mediator.Send(new UpdateUserCommand(id, updateUserDto));
+            var userId = HttpContext.GetUserIdClaimValue();
+
+            var updatedUser = await _mediator.Send(new UpdateUserCommand(userId, updateUserDto));
 
             return Ok(updatedUser);
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> RemoveUser(string id)
+        [HttpDelete]
+        [Authorize]
+        public async Task<IActionResult> RemoveUser()
         {
-            var response = await _mediator.Send(new RemoveUserCommand(id));
+            var userId = HttpContext.GetUserIdClaimValue();
+
+            var response = await _mediator.Send(new RemoveUserCommand(userId));
 
             return Ok(response);
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<IActionResult> GetUserById(string id)
         {
             var users = await _mediator.Send(new GetUserByIdQuery(id));
@@ -84,6 +104,7 @@ namespace VisualVibes.Api.Controllers
         }
 
         [HttpGet("{userId}/followers")]
+        [Authorize]
         public async Task<IActionResult> GetUserFollowers(string userId)
         {
             var userFollowers = await _mediator.Send(new GetUserFollowersByIdQuery(userId));
@@ -92,6 +113,7 @@ namespace VisualVibes.Api.Controllers
         }
 
         [HttpGet("{userId}/following")]
+        [Authorize]
         public async Task<IActionResult> GetUserFollowing(string userId)
         {
             var userFollowers = await _mediator.Send(new GetUserFollowingByIdQuery(userId));

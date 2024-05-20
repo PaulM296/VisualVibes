@@ -1,4 +1,6 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VisualVibes.App.DTOs.UserProfileDtos;
 using VisualVibes.App.UserProfiles.Commands;
@@ -7,7 +9,8 @@ using VisualVibes.App.UserProfiles.Queries;
 namespace VisualVibes.Api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/userProfiles")]
+    [Authorize]
     public class UserProfileController : ControllerBase
     {
         private readonly IMediator _mediator;
