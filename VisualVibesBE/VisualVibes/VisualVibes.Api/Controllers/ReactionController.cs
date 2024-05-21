@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VisualVibes.Api.Extensions;
+using VisualVibes.App.DTOs.PaginationDtos;
 using VisualVibes.App.DTOs.ReactionDtos;
 using VisualVibes.App.Reactions.Commands;
 using VisualVibes.App.Reactions.Queries;
@@ -51,9 +52,9 @@ namespace VisualVibes.Api.Controllers
         }
 
         [HttpGet("post/users/{id}")]
-        public async Task<IActionResult> GetAllPostReactions(Guid id)
+        public async Task<IActionResult> GetAllPostReactions(Guid id, [FromQuery] PaginationRequestDto paginationRequestDto)
         {
-            var postReactions = await _mediator.Send(new GetAllPostReactionsQuery(id));
+            var postReactions = await _mediator.Send(new GetAllPostReactionsQuery(id, paginationRequestDto));
 
             return Ok(postReactions);
         }
