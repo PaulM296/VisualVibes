@@ -6,6 +6,7 @@ using VisualVibes.Api.Extensions;
 using VisualVibes.App.Conversations.Commands;
 using VisualVibes.App.Conversations.Queries;
 using VisualVibes.App.DTOs.ConversationDtos;
+using VisualVibes.App.DTOs.PaginationDtos;
 
 namespace VisualVibes.Api.Controllers
 {
@@ -31,12 +32,12 @@ namespace VisualVibes.Api.Controllers
             return Ok(response);
         }
 
-        [HttpGet("user/{id}")]
-        public async Task<IActionResult> GetAllUserConversations()
+        [HttpGet("user")]
+        public async Task<IActionResult> GetAllUserConversations([FromQuery]PaginationRequestDto paginationRequestDto)
         {
             var userId = HttpContext.GetUserIdClaimValue();
 
-            var conversations = await _mediator.Send(new GetAllUserConversationsQuery(userId));
+            var conversations = await _mediator.Send(new GetAllUserConversationsQuery(userId, paginationRequestDto));
 
             return Ok(conversations);
         }

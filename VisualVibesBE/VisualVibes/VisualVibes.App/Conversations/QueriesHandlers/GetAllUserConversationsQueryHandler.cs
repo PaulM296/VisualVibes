@@ -3,12 +3,13 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using VisualVibes.App.Conversations.Queries;
 using VisualVibes.App.DTOs.ConversationDtos;
+using VisualVibes.App.DTOs.PaginationDtos;
 using VisualVibes.App.Exceptions;
 using VisualVibes.App.Interfaces;
 
 namespace VisualVibes.App.Conversations.QueriesHandlers
 {
-    public class GetAllUserConversationsQueryHandler : IRequestHandler<GetAllUserConversationsQuery, ICollection<ResponseConversationDto>>
+    public class GetAllUserConversationsQueryHandler : IRequestHandler<GetAllUserConversationsQuery, PaginationResponseDto<ResponseConversationDto>>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<GetAllUserConversationsQueryHandler> _logger;
@@ -20,16 +21,21 @@ namespace VisualVibes.App.Conversations.QueriesHandlers
             _logger = logger;
             _mapper = mapper;
         }
-        public async Task<ICollection<ResponseConversationDto>> Handle(GetAllUserConversationsQuery request, CancellationToken cancellationToken)
+        public async Task<PaginationResponseDto<ResponseConversationDto>> Handle(GetAllUserConversationsQuery request, CancellationToken cancellationToken)
         {
-            var conversations = await _unitOfWork.ConversationRepository.GetAllByUserIdAsync(request.UserId);
+            var conversations = await _unitOfWork.ConversationRepository
+                .GetAllPagedConversationsByUserIdAsync(request.UserId, request.paginationRequestDto.PageIndex,
+                request.paginationRequestDto.PageSize);
 
-            if (conversations.Count == 0)
+            if (conversations.Items.Count == 0)
             {
                 throw new ConversationNotFoundException($"Could not get the conversations for UserId {request.UserId}, because it doesn't have any yet!");
             }
 
-            var conversationDtos = _mapper.Map<ICollection<ResponseConversationDto>>(conversations);
+            var conversationDtos = new PaginationResponseDto<ResponseConversationDto>(
+                items: _mapper.Map<List<ResponseConversationDto>>(conversations.Items),
+                pageIndex: conversations.PageIndex,
+                totalPages: conversations.TotalPages);
 
             _logger.LogInformation("All user conversations successfully retrieved!");
 
