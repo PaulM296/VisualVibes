@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VisualVibes.Api.Extensions;
 using VisualVibes.App.DTOs.MessageDtos;
+using VisualVibes.App.DTOs.PaginationDtos;
 using VisualVibes.App.Messages.Commands;
 using VisualVibes.App.Messages.Queries;
 
@@ -42,9 +43,9 @@ namespace VisualVibes.Api.Controllers
         }
 
         [HttpGet("conversation/{id}")]
-        public async Task<IActionResult> GetAllConversationMessages(Guid id)
+        public async Task<IActionResult> GetAllConversationMessages(Guid id, [FromQuery]PaginationRequestDto paginationRequestDto)
         {
-            var messages = await _mediator.Send(new GetAllConversationMessagesQuery(id));
+            var messages = await _mediator.Send(new GetAllConversationMessagesQuery(id, paginationRequestDto));
 
             return Ok(messages);
         }

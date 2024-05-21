@@ -27,7 +27,7 @@ namespace VisualVibes.App.Messages.CommandsHandler
                 UserId = request.userId,
                 ConversationId = request.createMessageDto.ConversationId,
                 Content = request.createMessageDto.Content,
-                Timestamp = request.createMessageDto.Timestamp
+                Timestamp = DateTime.UtcNow
             };
 
             var createdMessage = await _unitOfWork.MessageRepository.AddAsync(message);
