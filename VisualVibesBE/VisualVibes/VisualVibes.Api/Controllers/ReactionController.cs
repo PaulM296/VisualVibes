@@ -1,10 +1,10 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VisualVibes.App.DTOs.ReactionDtos;
 using VisualVibes.App.Reactions.Commands;
 using VisualVibes.App.Reactions.Queries;
+using VisualVibes.App.Reactions.QueriesHandler;
 
 namespace VisualVibes.Api.Controllers
 {
@@ -43,12 +43,20 @@ namespace VisualVibes.Api.Controllers
             return Ok(updateReaction);
         }
 
-        [HttpGet("post/{id}")]
+        [HttpGet("post/users/{id}")]
         public async Task<IActionResult> GetAllPostReactions(Guid id)
         {
             var postReactions = await _mediator.Send(new GetAllPostReactionsQuery(id));
 
             return Ok(postReactions);
+        }
+
+        [HttpGet("post/{postId}/reactions/total")]
+        public async Task<IActionResult> GetAllPostReactionNumber(Guid postId)
+        {
+            var totalPostReactions = await _mediator.Send(new GetTotalReactionNumberForPostQuery(postId));
+
+            return Ok(totalPostReactions);
         }
 
     }

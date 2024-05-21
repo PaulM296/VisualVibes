@@ -51,7 +51,7 @@ namespace VisualVibes.Api.Services
             return new SecurityTokenDescriptor()
             {
                 Subject = identity,
-                Expires = DateTime.Now.AddHours(2),
+                Expires = DateTime.Now.AddHours(6),
                 Audience = _settings!.Audiences?[0]!,
                 Issuer = _settings.Issuer,
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(_key), 

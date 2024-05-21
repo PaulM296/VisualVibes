@@ -12,7 +12,6 @@ namespace VisualVibes.App.DTOs.PostDtos
         public string Caption { get; set; }
 
         [Required]
-        [Url(ErrorMessage = "Invalid URL format.")]
         public string Pictures { get; set; }
     }
 }

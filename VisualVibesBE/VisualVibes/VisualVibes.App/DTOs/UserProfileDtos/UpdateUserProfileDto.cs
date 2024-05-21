@@ -10,7 +10,6 @@ namespace VisualVibes.App.DTOs.UserProfileDtos
         [Required]
         public string LastName { get; set; }
 
-        [Url(ErrorMessage = "Invalid URL format.")]
         public string? ProfilePicture { get; set; }
 
         [StringLength(200, ErrorMessage = "Bio must have 200 characters or fewer!")]
