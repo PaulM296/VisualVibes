@@ -24,7 +24,7 @@ namespace VisualVibes.App.Reactions.CommandsHandler
         {
             var reaction = new Reaction()
             {
-                UserId = request.createReactionDto.UserId,
+                UserId = request.userId,
                 PostId = request.createReactionDto.PostId,
                 ReactionType = request.createReactionDto.ReactionType,
                 Timestamp = DateTime.UtcNow,

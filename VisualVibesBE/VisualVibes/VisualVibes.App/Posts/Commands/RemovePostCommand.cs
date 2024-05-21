@@ -2,5 +2,5 @@
 
 namespace VisualVibes.App.Posts.Commands
 {
-    public record RemovePostCommand(Guid Id) : IRequest<Unit>;
+    public record RemovePostCommand(string userId, Guid Id) : IRequest<Unit>;
 }

@@ -24,7 +24,7 @@ namespace VisualVibes.App.Messages.CommandsHandler
         {
             var message = new Message()
             {
-                UserId = request.createMessageDto.UserId,
+                UserId = request.userId,
                 ConversationId = request.createMessageDto.ConversationId,
                 Content = request.createMessageDto.Content,
                 Timestamp = request.createMessageDto.Timestamp

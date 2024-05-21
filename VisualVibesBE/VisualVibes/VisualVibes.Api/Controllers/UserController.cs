@@ -63,9 +63,9 @@ namespace VisualVibes.Api.Controllers
         [Authorize]
         public async Task<IActionResult> UnfollowUser(string followingId)
         {
-            var followerIdStr = HttpContext.GetUserIdClaimValue();
+            var followerId = HttpContext.GetUserIdClaimValue();
 
-            var command = new UnfollowUserCommand(followerIdStr, followingId);
+            var command = new UnfollowUserCommand(followerId, followingId);
             var response = await _mediator.Send(command);
 
             return Ok(response);

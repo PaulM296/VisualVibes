@@ -2,5 +2,5 @@
 
 namespace VisualVibes.App.Messages.Commands
 {
-    public record RemoveMessageCommand(Guid Id) : IRequest<Unit>; 
+    public record RemoveMessageCommand(string userId, Guid Id) : IRequest<Unit>; 
 }

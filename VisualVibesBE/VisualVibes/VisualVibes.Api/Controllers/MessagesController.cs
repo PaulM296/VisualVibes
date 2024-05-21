@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using VisualVibes.Api.Extensions;
 using VisualVibes.App.DTOs.MessageDtos;
 using VisualVibes.App.Messages.Commands;
 using VisualVibes.App.Messages.Queries;
@@ -23,7 +24,9 @@ namespace VisualVibes.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateMessage(CreateMessageDto createMessageDto)
         {
-            var createMessage = await _mediator.Send(new CreateMessageCommand(createMessageDto));
+            var userId = HttpContext.GetUserIdClaimValue();
+
+            var createMessage = await _mediator.Send(new CreateMessageCommand(userId, createMessageDto));
 
             return Ok(createMessage);
         }
@@ -31,7 +34,9 @@ namespace VisualVibes.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> RemoveMessage(Guid id)
         {
-            var removeMessage = await _mediator.Send(new RemoveMessageCommand(id));
+            var userId = HttpContext.GetUserIdClaimValue();
+
+            var removeMessage = await _mediator.Send(new RemoveMessageCommand(userId, id));
 
             return Ok(removeMessage);
         }

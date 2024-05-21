@@ -23,10 +23,10 @@ namespace VisualVibes.App.Posts.CommandsHandler
         {
             var post = new Post()
             {
-                UserId = request.createPostDto.UserId,
+                UserId = request.userId,
                 Caption = request.createPostDto.Caption,
                 Pictures = request.createPostDto.Pictures,
-                CreatedAt = DateTime.UtcNow,
+                CreatedAt = DateTime.UtcNow
             };
 
             var createdPost = await _unitOfWork.PostRepository.AddAsync(post);

@@ -3,6 +3,6 @@ using VisualVibes.App.DTOs;
 
 namespace VisualVibes.App.Reactions.Commands
 {
-    public record RemoveReactionCommand(Guid Id) : IRequest<Unit>;
+    public record RemoveReactionCommand(string userId, Guid Id) : IRequest<Unit>;
 
 }

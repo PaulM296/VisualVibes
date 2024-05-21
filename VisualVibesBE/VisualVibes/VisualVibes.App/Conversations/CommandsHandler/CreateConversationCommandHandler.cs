@@ -25,7 +25,7 @@ namespace VisualVibes.App.Conversations.CommandsHandler
             var conversation = new Conversation()
             {
                 Id = Guid.NewGuid(),
-                FirstParticipantId = request.createConversationDto.FirstParticipantId,
+                FirstParticipantId = request.userId,
                 SecondParticipantId = request.createConversationDto.SecondParticipantId,
             };
 

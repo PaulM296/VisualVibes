@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using VisualVibes.Api.Extensions;
 using VisualVibes.App.DTOs.ReactionDtos;
 using VisualVibes.App.Reactions.Commands;
 using VisualVibes.App.Reactions.Queries;
@@ -23,7 +24,9 @@ namespace VisualVibes.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateReaction(CreateReactionDto createReactionDto)
         {
-            var createReaction = await _mediator.Send(new CreateReactionCommand(createReactionDto));
+            var userId = HttpContext.GetUserIdClaimValue();
+
+            var createReaction = await _mediator.Send(new CreateReactionCommand(userId, createReactionDto));
 
             return Ok(createReaction);
         }
@@ -31,14 +34,18 @@ namespace VisualVibes.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> RemoveReaction(Guid id)
         {
-            var removeReaction = await _mediator.Send(new RemoveReactionCommand(id));
+            var userId = HttpContext.GetUserIdClaimValue();
+
+            var removeReaction = await _mediator.Send(new RemoveReactionCommand(userId, id));
 
             return Ok(removeReaction);
         }
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateReaction(Guid id, UpdateReactionDto updateReactionDto)
         {
-            var updateReaction = await _mediator.Send(new UpdateReactionCommand(id, updateReactionDto));
+            var userId = HttpContext.GetUserIdClaimValue();
+
+            var updateReaction = await _mediator.Send(new UpdateReactionCommand(userId, id, updateReactionDto));
 
             return Ok(updateReaction);
         }

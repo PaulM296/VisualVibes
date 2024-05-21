@@ -3,5 +3,5 @@ using VisualVibes.App.DTOs.ConversationDtos;
 
 namespace VisualVibes.App.Conversations.Commands
 {
-    public record CreateConversationCommand(CreateConversationDto createConversationDto) : IRequest<ResponseConversationDto>;
+    public record CreateConversationCommand(string userId, CreateConversationDto createConversationDto) : IRequest<ResponseConversationDto>;
 }

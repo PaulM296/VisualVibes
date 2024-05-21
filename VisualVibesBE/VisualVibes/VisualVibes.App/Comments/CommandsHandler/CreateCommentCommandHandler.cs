@@ -25,7 +25,7 @@ namespace VisualVibes.App.Comments.CommandsHandler
         {
             var comment = new Comment()
             {
-                UserId = request.createCommentDto.UserId,
+                UserId = request.userId,
                 PostId = request.createCommentDto.PostId,
                 Text = request.createCommentDto.Text,
                 CreatedAt = DateTime.UtcNow

@@ -2,9 +2,11 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using VisualVibes.Api.Extensions;
 using VisualVibes.App.Comments.Commands;
 using VisualVibes.App.Comments.Queries;
 using VisualVibes.App.DTOs.CommentDtos;
+using VisualVibes.App.DTOs.PaginationDtos;
 
 namespace VisualVibes.Api.Controllers
 {
@@ -23,7 +25,9 @@ namespace VisualVibes.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateComment(CreateCommentDto createCommentDto)
         {
-            var createComment = await _mediator.Send(new CreateCommentCommand(createCommentDto));
+            var userId = HttpContext.GetUserIdClaimValue();
+
+            var createComment = await _mediator.Send(new CreateCommentCommand(userId, createCommentDto));
 
             return Ok(createComment);
         }
@@ -31,7 +35,9 @@ namespace VisualVibes.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> RemoveComment(Guid id)
         {
-            var deleteComment = await _mediator.Send(new RemoveCommentCommand(id));
+            var userId = HttpContext.GetUserIdClaimValue();
+
+            var deleteComment = await _mediator.Send(new RemoveCommentCommand(userId, id));
 
             return Ok(deleteComment);
         }
@@ -39,15 +45,17 @@ namespace VisualVibes.Api.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateCommnet(Guid id, UpdateCommentDto updateCommentDto)
         {
-            var updateComment = await _mediator.Send(new UpdateCommentCommand(id, updateCommentDto));
+            var userId = HttpContext.GetUserIdClaimValue();
+
+            var updateComment = await _mediator.Send(new UpdateCommentCommand(userId, id, updateCommentDto));
 
             return Ok(updateComment);
         }
 
         [HttpGet("post/{id}")]
-        public async Task<IActionResult> GetAllPostComments(Guid id)
+        public async Task<IActionResult> GetAllPostComments(Guid id, [FromQuery]PaginationRequestDto paginationRequestDto)
         {
-            var postComments = await _mediator.Send(new GetAllPostCommentsQuery(id));
+            var postComments = await _mediator.Send(new GetAllPostCommentsQuery(id, paginationRequestDto));
             
             return Ok(postComments);
         }

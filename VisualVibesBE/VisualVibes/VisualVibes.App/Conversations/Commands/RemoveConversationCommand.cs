@@ -3,5 +3,5 @@ using VisualVibes.App.DTOs;
 
 namespace VisualVibes.App.Conversations.Commands
 {
-    public record RemoveConversationCommand(Guid Id) : IRequest<Unit>;
+    public record RemoveConversationCommand(string userId, Guid Id) : IRequest<Unit>;
 }

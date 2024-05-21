@@ -4,5 +4,5 @@ using VisualVibes.Domain.Models.BaseEntity;
 
 namespace VisualVibes.App.Posts.Commands
 {
-    public record UpdatePostCommand(Guid postId, UpdatePostDto updatePostDto) : IRequest<ResponsePostDto>;
+    public record UpdatePostCommand(string userId, Guid postId, UpdatePostDto updatePostDto) : IRequest<ResponsePostDto>;
 }

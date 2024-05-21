@@ -24,7 +24,9 @@ namespace VisualVibes.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateConversation(CreateConversationDto requestConversationDto)
         {
-            var response = await _mediator.Send(new CreateConversationCommand(requestConversationDto));
+            var userId = HttpContext.GetUserIdClaimValue();
+
+            var response = await _mediator.Send(new CreateConversationCommand(userId, requestConversationDto));
 
             return Ok(response);
         }
@@ -42,7 +44,9 @@ namespace VisualVibes.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> RemoveConversation(Guid id)
         {
-            var response = await _mediator.Send(new RemoveConversationCommand(id));
+            var userId = HttpContext.GetUserIdClaimValue();
+
+            var response = await _mediator.Send(new RemoveConversationCommand(userId, id));
 
             return Ok(response);
         }
