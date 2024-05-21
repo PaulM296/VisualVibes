@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using VisualVibes.App.Comments.CommandsHandler;
 using VisualVibes.App.Comments.Queries;
 using VisualVibes.App.DTOs.CommentDtos;
 using VisualVibes.App.Exceptions;

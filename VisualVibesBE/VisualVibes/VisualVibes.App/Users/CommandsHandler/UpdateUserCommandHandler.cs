@@ -31,7 +31,9 @@ namespace VisualVibes.App.Users.CommandsHandler
             }
 
             user.UserName = request.updateUserDto.UserName;
+            user.NormalizedUserName = request.updateUserDto.UserName.ToUpper();
             user.Email = request.updateUserDto.Email;
+            user.NormalizedEmail = request.updateUserDto.Email.ToUpper();
             user.Role = request.updateUserDto.Role;
             user.UserProfile.Bio = request.updateUserDto.Bio;
             user.UserProfile.ProfilePicture = request.updateUserDto.ProfilePicture;
