@@ -1,9 +1,9 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VisualVibes.App.DTOs.FeedDtos;
 using VisualVibes.App.Feeds.Commands;
+using VisualVibes.App.Feeds.Queries;
 
 namespace VisualVibes.Api.Controllers
 {
@@ -26,6 +26,20 @@ namespace VisualVibes.Api.Controllers
 
             return Ok(createFeed);
         }
-        
+
+        [HttpGet("user/{userId}")]
+        public async Task<IActionResult> GetUserFeed(string userId)
+        {
+            var query = new GetUserFeedByUserIdQuery(userId);
+            var responseFeedDto = await _mediator.Send(query);
+
+            if (responseFeedDto == null)
+            {
+                return NotFound($"Feed for user {userId} not found.");
+            }
+
+            return Ok(responseFeedDto);
+        }
+
     }
 }

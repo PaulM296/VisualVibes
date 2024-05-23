@@ -11,5 +11,8 @@ namespace VisualVibes.App.Interfaces
         Task<IEnumerable<FeedPost>> GetByFeedIdAsync(Guid feedId);
         Task RemoveAsync(FeedPost feedPost);
         Task<IEnumerable<FeedPost>> GetByPostIdAsync(Guid postId);
+        Task<bool> ExistsAsync(Guid feedId, Guid postId);
+        Task AddAsync(FeedPost feedPost);
+        Task RemoveByPostAndFeedIdAsync(Guid feedId, Guid postId);
     }
 }

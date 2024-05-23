@@ -25,7 +25,8 @@ namespace VisualVibes.Api.Middleware
             } 
             catch (Exception ex) when (ex is EntityNotFoundException || ex is CommentsNotFoundException 
             || ex is ConversationNotFoundException || ex is MessageNotFoundException || ex is PostNotFoundException
-            || ex is ReactionNotFoundException || ex is UserNotFoundException || ex is UserProfileNotFoundException)
+            || ex is ReactionNotFoundException || ex is UserNotFoundException || ex is UserProfileNotFoundException
+            || ex is FeedNotFoundException)
             {
                 await HandleExceptionAsync(context, ex, HttpStatusCode.NotFound);
             }

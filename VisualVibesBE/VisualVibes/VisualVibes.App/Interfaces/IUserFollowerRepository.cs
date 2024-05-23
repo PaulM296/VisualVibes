@@ -8,5 +8,6 @@ namespace VisualVibes.App.Interfaces
         Task RemoveFollowerAsync(string followerId, string followingId);
         Task<IEnumerable<UserFollower>> GetFollowersByUserIdAsync(string userId);
         Task<IEnumerable<UserFollower>> GetFollowingByUserIdAsync(string userId);
+        Task<IEnumerable<FeedPost>> GetFeedPostsByUserIdAsync(Guid feedId, string userId);
     }
 }

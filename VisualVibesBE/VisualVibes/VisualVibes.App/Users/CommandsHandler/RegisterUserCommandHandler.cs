@@ -42,15 +42,17 @@ namespace VisualVibes.App.Users.CommandsHandler
             };
 
             var createdUser = await _authenticationService.Register(newUser, newUserProfile, request.registerUser.Password);
+            await _unitOfWork.SaveAsync();
 
             // Ensure a feed is created for the new user
-            var feed = new Feed 
-            { 
-                UserID = createdUser.Id 
+            var feed = new Feed
+            {
+                UserID = createdUser.Id
             };
             await _unitOfWork.FeedRepository.AddAsync(feed);
-            await _unitOfWork.FeedPostRepository.EnsureFeedForUserAsync(newUser.Id);
             await _unitOfWork.SaveAsync();
+
+            await _unitOfWork.FeedPostRepository.EnsureFeedForUserAsync(createdUser.Id);
 
             _logger.LogInformation("New user successfully added!");
 

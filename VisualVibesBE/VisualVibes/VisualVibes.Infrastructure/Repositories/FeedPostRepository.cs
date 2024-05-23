@@ -55,19 +55,19 @@ namespace VisualVibes.Infrastructure.Repositories
 
         public async Task EnsureFeedForUserAsync(string userId)
         {
-            bool hasPosts = await _context.Posts.AnyAsync();
-
-            if (!hasPosts)
-            {
-                return;
-            }
-
             var feed = await _context.Feeds.FirstOrDefaultAsync(f => f.UserID == userId);
             if (feed == null)
             {
                 feed = new Feed { UserID = userId };
                 _context.Feeds.Add(feed);
                 await _context.SaveChangesAsync();
+            }
+
+            bool hasPosts = await _context.Posts.AnyAsync();
+
+            if (!hasPosts)
+            {
+                return;
             }
 
             if (!await _context.FeedPost.AnyAsync(fp => fp.FeedId == feed.Id))
@@ -122,6 +122,27 @@ namespace VisualVibes.Infrastructure.Repositories
             return await _context.FeedPost
                                  .Where(fp => fp.PostId == postId)
                                  .ToListAsync();
+        }
+
+        public async Task<bool> ExistsAsync(Guid feedId, Guid postId)
+        {
+            return await _context.FeedPost.AnyAsync(fp => fp.FeedId == feedId && fp.PostId == postId);
+        }
+
+        public async Task AddAsync(FeedPost feedPost)
+        {
+            _context.FeedPost.Add(feedPost);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task RemoveByPostAndFeedIdAsync(Guid feedId, Guid postId)
+        {
+            var feedPost = await _context.FeedPost.FirstOrDefaultAsync(fp => fp.FeedId == feedId && fp.PostId == postId);
+            if (feedPost != null)
+            {
+                _context.FeedPost.Remove(feedPost);
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }

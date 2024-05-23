@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using VisualVibes.App.Interfaces;
 using VisualVibes.Domain.Models;
+using VisualVibes.Domain.Models.BaseEntity;
 using VisualVibes.Infrastructure.Exceptions;
 
 namespace VisualVibes.Infrastructure.Repositories
@@ -31,9 +32,19 @@ namespace VisualVibes.Infrastructure.Repositories
             var userFollower = await _context.UserFollower
                 .FirstOrDefaultAsync(uf => uf.FollowerId == followerId && uf.FollowingId == followingId);
 
-            if(userFollower == null)
+            if (userFollower == null)
             {
                 throw new EntityNotFoundException($"The follower does not exist, therefore it could not be removed.");
+            }
+
+            var feed = await _context.Feeds.FirstOrDefaultAsync(f => f.UserID == followerId);
+            if (feed != null)
+            {
+                var feedPostsToRemove = await _context.FeedPost
+                    .Where(fp => fp.FeedId == feed.Id && fp.Post.UserId == followingId)
+                    .ToListAsync();
+
+                _context.FeedPost.RemoveRange(feedPostsToRemove);
             }
 
             _context.UserFollower.Remove(userFollower);
@@ -54,6 +65,14 @@ namespace VisualVibes.Infrastructure.Repositories
                 .Include(uf => uf.Following)
                 .Where(uf => uf.FollowerId == userId)
                 .ToListAsync();
+        }
+
+        public async Task<IEnumerable<FeedPost>> GetFeedPostsByUserIdAsync(Guid feedId, string userId)
+        {
+            return await _context.FeedPost
+            .Include(fp => fp.Post)
+            .Where(fp => fp.FeedId == feedId && fp.Post.UserId == userId)
+            .ToListAsync();
         }
     }
 }
