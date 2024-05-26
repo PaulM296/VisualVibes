@@ -20,6 +20,7 @@ namespace VisualVibes.Domain.Models.BaseEntity
         public ICollection<FeedPost> FeedPosts { get; set; }
 
         public DateTime CreatedAt { get; set; }
-
+        public Guid ImageId { get; set; }
+        public Image Image { get; set; }
     }
 }

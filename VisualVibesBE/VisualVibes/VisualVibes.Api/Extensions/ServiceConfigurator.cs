@@ -22,6 +22,7 @@ namespace VisualVibes.Api.Extensions
             services.AddScoped<IMessageRepository, MessageRepository>();
             services.AddScoped<IConversationRepository, ConversationRepository>();
             services.AddScoped<IUserFollowerRepository, UserFollowerRepository>();
+            services.AddScoped<IImageRepository, ImageRepository>();
             services.AddScoped<IIdentityService, IdentityService>();
             services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();

@@ -27,6 +27,7 @@ namespace VisualVibes.Infrastructure.Repositories
         {
             var user = await _context.Users
                 .Include(u => u.UserProfile)
+                    .ThenInclude(i => i.Image)
                 .Include(u => u.Followers)
                     .ThenInclude(f => f.Follower)
                 .Include(u => u.Following)

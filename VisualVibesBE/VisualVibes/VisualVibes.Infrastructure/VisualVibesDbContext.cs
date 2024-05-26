@@ -19,6 +19,7 @@ namespace VisualVibes.Infrastructure
         public DbSet<Reaction> Reactions { get; set; }
         public DbSet<UserFollower> UserFollower { get; set; }
         public DbSet<FeedPost> FeedPost { get; set; }
+        public DbSet<Image> Images {  get; set; }
 
         public VisualVibesDbContext(DbContextOptions options) : base(options)
         {
@@ -33,6 +34,8 @@ namespace VisualVibes.Infrastructure
             modelBuilder.ApplyConfiguration(new CommentConfiguration());
             modelBuilder.ApplyConfiguration(new ReactionConfiguration());
             modelBuilder.ApplyConfiguration(new FeedPostConfiguration());
+            modelBuilder.ApplyConfiguration(new UserProfileConfiguration());
+            modelBuilder.ApplyConfiguration(new PostConfiguration());
         }
     }
 }

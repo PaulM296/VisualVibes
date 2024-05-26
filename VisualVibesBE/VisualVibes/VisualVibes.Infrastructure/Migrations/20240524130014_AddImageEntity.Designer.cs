@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VisualVibes.Infrastructure;
 
@@ -11,9 +12,11 @@ using VisualVibes.Infrastructure;
 namespace VisualVibes.Infrastructure.Migrations
 {
     [DbContext(typeof(VisualVibesDbContext))]
-    partial class VisualVibesDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240524130014_AddImageEntity")]
+    partial class AddImageEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -369,8 +372,7 @@ namespace VisualVibes.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ImageId")
-                        .IsUnique();
+                    b.HasIndex("ImageId");
 
                     b.HasIndex("UserId");
 
@@ -437,8 +439,7 @@ namespace VisualVibes.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ImageId")
-                        .IsUnique();
+                    b.HasIndex("ImageId");
 
                     b.HasIndex("UserId")
                         .IsUnique();
@@ -598,9 +599,9 @@ namespace VisualVibes.Infrastructure.Migrations
             modelBuilder.Entity("VisualVibes.Domain.Models.BaseEntity.Post", b =>
                 {
                     b.HasOne("VisualVibes.Domain.Models.BaseEntity.Image", "Image")
-                        .WithOne()
-                        .HasForeignKey("VisualVibes.Domain.Models.BaseEntity.Post", "ImageId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .WithMany()
+                        .HasForeignKey("ImageId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("VisualVibes.Domain.Models.AppUser", "User")
@@ -636,9 +637,9 @@ namespace VisualVibes.Infrastructure.Migrations
             modelBuilder.Entity("VisualVibes.Domain.Models.BaseEntity.UserProfile", b =>
                 {
                     b.HasOne("VisualVibes.Domain.Models.BaseEntity.Image", "Image")
-                        .WithOne()
-                        .HasForeignKey("VisualVibes.Domain.Models.BaseEntity.UserProfile", "ImageId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .WithMany()
+                        .HasForeignKey("ImageId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("VisualVibes.Domain.Models.AppUser", "User")

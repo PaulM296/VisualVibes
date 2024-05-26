@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using VisualVibes.App.DTOs.ImageDtos;
 using VisualVibes.App.DTOs.UserProfileDtos;
 using VisualVibes.App.UserProfiles.Commands;
 using VisualVibes.App.UserProfiles.Queries;
@@ -21,8 +22,21 @@ namespace VisualVibes.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateUserProfile(CreateUserProfileDto createUserProfileDto)
+        public async Task<IActionResult> CreateUserProfile([FromForm] CreateUserProfileDto createUserProfileDto)
         {
+            var file = Request.Form.Files.FirstOrDefault();
+            if (file != null && file.Length > 0)
+            {
+                var imageDto = new CreateImageDto
+                {
+                    Name = file.FileName,
+                    Type = file.ContentType,
+                    Data = file
+                };
+
+                createUserProfileDto.ProfilePicture = imageDto;
+            }
+
             var userProfile = await _mediator.Send(new CreateUserProfileCommand(createUserProfileDto));
 
             return Created(string.Empty, userProfile);

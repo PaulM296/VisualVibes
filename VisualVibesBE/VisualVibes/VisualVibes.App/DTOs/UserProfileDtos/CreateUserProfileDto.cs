@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using VisualVibes.App.DTOs.ImageDtos;
 
 namespace VisualVibes.App.DTOs.UserProfileDtos
 {
@@ -13,7 +14,7 @@ namespace VisualVibes.App.DTOs.UserProfileDtos
         [Required]
         public string LastName { get; set; }
 
-        public string? ProfilePicture { get; set; }
+        public CreateImageDto ProfilePicture { get; set; }
 
         [StringLength(200, ErrorMessage = "Bio must have 200 characters or fewer!")]
         public string? Bio { get; set; }

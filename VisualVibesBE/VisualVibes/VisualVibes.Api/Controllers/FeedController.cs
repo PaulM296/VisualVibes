@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using VisualVibes.Api.Extensions;
 using VisualVibes.App.DTOs.FeedDtos;
 using VisualVibes.App.Feeds.Commands;
 using VisualVibes.App.Feeds.Queries;
@@ -27,9 +28,11 @@ namespace VisualVibes.Api.Controllers
             return Ok(createFeed);
         }
 
-        [HttpGet("user/{userId}")]
-        public async Task<IActionResult> GetUserFeed(string userId)
+        [HttpGet("user")]
+        public async Task<IActionResult> GetUserFeed()
         {
+            var userId = HttpContext.GetUserIdClaimValue();
+
             var query = new GetUserFeedByUserIdQuery(userId);
             var responseFeedDto = await _mediator.Send(query);
 

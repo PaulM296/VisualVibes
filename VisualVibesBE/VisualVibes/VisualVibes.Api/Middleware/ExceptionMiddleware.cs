@@ -26,7 +26,7 @@ namespace VisualVibes.Api.Middleware
             catch (Exception ex) when (ex is EntityNotFoundException || ex is CommentsNotFoundException 
             || ex is ConversationNotFoundException || ex is MessageNotFoundException || ex is PostNotFoundException
             || ex is ReactionNotFoundException || ex is UserNotFoundException || ex is UserProfileNotFoundException
-            || ex is FeedNotFoundException)
+            || ex is FeedNotFoundException || ex is ImageNotFoundException)
             {
                 await HandleExceptionAsync(context, ex, HttpStatusCode.NotFound);
             }
@@ -37,6 +37,10 @@ namespace VisualVibes.Api.Middleware
             catch (Exception ex) when (ex is EntityAlreadyExistsException || ex is EmailAlreadyExistsException)
             {
                 await HandleExceptionAsync(context, ex, HttpStatusCode.Conflict);
+            }
+            catch (InvalidImageFormatException ex)
+            {
+                await HandleExceptionAsync(context, ex, HttpStatusCode.UnsupportedMediaType);
             }
             catch (Exception ex)
             {

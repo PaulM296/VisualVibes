@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
+using VisualVibes.App.Extensions;
 using VisualVibes.Domain.Enum;
 
 namespace VisualVibes.App.DTOs.UserDtos
@@ -33,6 +35,7 @@ namespace VisualVibes.App.DTOs.UserDtos
         [StringLength(200, ErrorMessage = "Bio must have 200 characters or fewer!")]
         public string? Bio {  get; set; }
 
-        public string? ProfilePicture { get; set; }
+        [AllowedExtensions(new string[] { ".png", ".jpg", ".jpeg" })]
+        public IFormFile? ProfilePicture { get; set; }
     }
 }

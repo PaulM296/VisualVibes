@@ -17,5 +17,7 @@ namespace VisualVibes.Domain.Models.BaseEntity
         public string? Bio {  get; set; }
 
         public DateTime DateOfBirth { get; set; }
+        public Guid ImageId { get; set; }
+        public Image Image { get; set; }
     }
 }

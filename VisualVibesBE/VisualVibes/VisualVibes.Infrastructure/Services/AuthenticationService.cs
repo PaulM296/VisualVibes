@@ -73,7 +73,8 @@ namespace VisualVibes.Infrastructure.Services
                 UserId = identityUser.Id,
                 ProfilePicture = newUserProfile.ProfilePicture,
                 Bio = newUserProfile.Bio,
-                DateOfBirth = newUserProfile.DateOfBirth
+                DateOfBirth = newUserProfile.DateOfBirth,
+                ImageId = newUserProfile.ImageId
             };
 
             try

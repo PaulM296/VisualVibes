@@ -14,12 +14,15 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="MediatR" Version="12.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.17" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.1" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="FeedPosts\QueriesHandler\" />
     <Folder Include="FeedPosts\Queries\" />
+    <Folder Include="Images\QueriesHandler\" />
+    <Folder Include="Images\Queries\" />
   </ItemGroup>
 
 </Project>

@@ -30,15 +30,40 @@ namespace VisualVibes.App.UserProfiles.CommandsHandler
                 throw new UserNotFoundException($"The user with ID {request.createUserProfileDto.UserId} doesn't exist!");    
             }
 
+            Image image = null;
+            if (request.createUserProfileDto.ProfilePicture != null)
+            {
+                if (!IsValidImageFormat(request.createUserProfileDto.ProfilePicture.Type))
+                {
+                    throw new InvalidImageFormatException("Unsupported image format. Only PNG, JPEG, and JPG are supported.");
+                }
+
+                byte[] imageData;
+                using (var memoryStream = new MemoryStream())
+                {
+                    await request.createUserProfileDto.ProfilePicture.Data.CopyToAsync(memoryStream);
+                    imageData = memoryStream.ToArray();
+                }
+
+                image = new Image
+                {
+                    Name = request.createUserProfileDto.ProfilePicture.Name,
+                    Type = request.createUserProfileDto.ProfilePicture.Type,
+                    Data = imageData
+                };
+
+                await _unitOfWork.ImageRepository.UploadImage(image);
+            }
+
             var userProfile = new UserProfile
             {
                 UserId = request.createUserProfileDto.UserId,
-                ProfilePicture = request.createUserProfileDto.ProfilePicture,
                 DateOfBirth = request.createUserProfileDto.DateOfBirth,
                 FirstName = request.createUserProfileDto.FirstName,
                 LastName = request.createUserProfileDto.LastName,
-
                 Bio = request.createUserProfileDto.Bio,
+                ImageId = image?.Id ?? Guid.Empty,
+                Image = image
             };
 
             try
@@ -55,6 +80,12 @@ namespace VisualVibes.App.UserProfiles.CommandsHandler
             _logger.LogInformation("New UserProfile has been successfully created!");
 
             return _mapper.Map<ResponseUserProfileDto>(userProfile);
+        }
+
+        private bool IsValidImageFormat(string imageType)
+        {
+            var supportedFormats = new[] { "image/png", "image/jpeg", "image/jpg" };
+            return supportedFormats.Contains(imageType.ToLower());
         }
     }
 }

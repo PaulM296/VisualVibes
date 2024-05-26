@@ -1,6 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.ComponentModel.DataAnnotations;
+using VisualVibes.App.DTOs.UserDtos;
+using VisualVibes.App.Exceptions;
 using VisualVibes.App.Interfaces;
 using VisualVibes.App.Users.Commands;
 using VisualVibes.Domain.Models;
@@ -32,13 +37,43 @@ namespace VisualVibes.App.Users.CommandsHandler
                 Role = request.registerUser.Role
             };
 
+            Image image = null;
+            if (request.registerUser.ProfilePicture != null)
+            {
+                // Validate image format
+                var allowedFormats = new[] { ".png", ".jpg", ".jpeg" };
+                var fileExtension = Path.GetExtension(request.registerUser.ProfilePicture.FileName).ToLower();
+                if (!allowedFormats.Contains(fileExtension))
+                {
+                    throw new InvalidImageFormatException("Invalid image format. Only .png, .jpg, and .jpeg are allowed.");
+                }
+
+                // Convert image to binary format
+                byte[] imageData;
+                using (var memoryStream = new MemoryStream())
+                {
+                    await request.registerUser.ProfilePicture.CopyToAsync(memoryStream);
+                    imageData = memoryStream.ToArray();
+                }
+
+                image = new Image
+                {
+                    Name = request.registerUser.ProfilePicture.FileName,
+                    Type = request.registerUser.ProfilePicture.ContentType,
+                    Data = imageData
+                };
+
+                await _unitOfWork.ImageRepository.UploadImage(image);
+                await _unitOfWork.SaveAsync();
+            }
+
             var newUserProfile = new UserProfile
             {
                 FirstName = request.registerUser.FirstName,
                 LastName = request.registerUser.LastName,
                 DateOfBirth = request.registerUser.DateOfBirth,
                 Bio = request.registerUser.Bio,
-                ProfilePicture = request.registerUser.ProfilePicture
+                ImageId = image?.Id ?? Guid.Empty
             };
 
             var createdUser = await _authenticationService.Register(newUser, newUserProfile, request.registerUser.Password);
@@ -59,6 +94,7 @@ namespace VisualVibes.App.Users.CommandsHandler
             var claims = _identityService.CreateClaimsIdentity(createdUser);
 
             return _identityService.CreateSecurityToken(claims);
+
         }
     }
 }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VisualVibes.Api.Extensions;
+using VisualVibes.App.DTOs.ImageDtos;
 using VisualVibes.App.DTOs.PostDtos;
 using VisualVibes.App.Posts.Commands;
 using VisualVibes.App.Posts.Queries;
@@ -22,7 +23,7 @@ namespace VisualVibes.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreatePost(CreatePostDto createPostDto)
+        public async Task<IActionResult> CreatePost([FromForm] CreatePostDto createPostDto)
         {
             var userId = HttpContext.GetUserIdClaimValue();
 

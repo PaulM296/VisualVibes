@@ -1,4 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
+using VisualVibes.App.DTOs.ImageDtos;
+using VisualVibes.App.Extensions;
 
 namespace VisualVibes.App.DTOs.PostDtos
 {
@@ -8,7 +11,7 @@ namespace VisualVibes.App.DTOs.PostDtos
         [StringLength(1000, ErrorMessage = "Caption must have 1000 characters or fewer!")]
         public string Caption { get; set; }
 
-        [Required]
-        public string Pictures { get; set; }
+        [AllowedExtensions(new string[] { ".png", ".jpg", ".jpeg" })]
+        public IFormFile? Image { get; set; }
     }
 }

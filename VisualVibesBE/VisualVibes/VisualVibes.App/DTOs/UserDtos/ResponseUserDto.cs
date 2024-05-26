@@ -13,5 +13,6 @@
         public DateTime DateOfBirth { get; set; }
         public string? Bio { get; set; }
         public string? ProfilePicture { get; set; }
+        public Guid ImageId { get; set; }
     }
 }
