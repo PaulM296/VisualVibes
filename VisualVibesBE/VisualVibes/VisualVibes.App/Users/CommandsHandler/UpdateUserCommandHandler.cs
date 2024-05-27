@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using System.Linq;
 using VisualVibes.App.DTOs.UserDtos;
 using VisualVibes.App.Exceptions;
 using VisualVibes.App.Interfaces;
 using VisualVibes.App.Users.Commands;
+using VisualVibes.Domain.Models.BaseEntity;
 
 namespace VisualVibes.App.Users.CommandsHandler
 {
@@ -29,6 +31,37 @@ namespace VisualVibes.App.Users.CommandsHandler
             {
                 throw new UserNotFoundException($"The user with ID {request.userId} doesn't exist and it could not be updated!");
             }
+            
+            Image image = null;
+            if (request.updateUserDto.ProfilePicture != null)
+            {
+                // Validate image format
+                var allowedFormats = new[] { ".png", ".jpg", ".jpeg" };
+                var fileExtension = Path.GetExtension(request.updateUserDto.ProfilePicture.FileName).ToLower();
+                if (!allowedFormats.Contains(fileExtension))
+                {
+                    throw new InvalidImageFormatException("Invalid image format. Only .png, .jpg, and .jpeg are allowed.");
+                }
+
+                // Convert image to binary format
+                byte[] imageData;
+                using (var memoryStream = new MemoryStream())
+                {
+                    await request.updateUserDto.ProfilePicture.CopyToAsync(memoryStream);
+                    imageData = memoryStream.ToArray();
+                }
+
+                image = new Image
+                {
+                    Name = request.updateUserDto.ProfilePicture.FileName,
+                    Type = request.updateUserDto.ProfilePicture.ContentType,
+                    Data = imageData
+                };
+
+                await _unitOfWork.ImageRepository.UploadImage(image);
+                await _unitOfWork.SaveAsync();
+            }
+
 
             user.UserName = request.updateUserDto.UserName;
             user.NormalizedUserName = request.updateUserDto.UserName.ToUpper();
@@ -36,7 +69,7 @@ namespace VisualVibes.App.Users.CommandsHandler
             user.NormalizedEmail = request.updateUserDto.Email.ToUpper();
             user.Role = request.updateUserDto.Role;
             user.UserProfile.Bio = request.updateUserDto.Bio;
-            user.UserProfile.ProfilePicture = request.updateUserDto.ProfilePicture;
+            user.UserProfile.ImageId = image?.Id ?? Guid.Empty;
             user.UserProfile.FirstName = request.updateUserDto.FirstName;
             user.UserProfile.LastName = request.updateUserDto.LastName;
 

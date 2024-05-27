@@ -9,5 +9,6 @@
         public string? ProfilePicture { get; set; }
         public string? Bio { get; set; }
         public DateTime DateOfBirth { get; set; }
+        public Guid ImageId { get; set; }
     }
 }

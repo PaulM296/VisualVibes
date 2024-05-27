@@ -74,7 +74,7 @@ namespace VisualVibes.Api.Controllers
 
         [HttpPut]
         [Authorize]
-        public async Task<IActionResult> UpdateUser(UpdateUserDto updateUserDto)
+        public async Task<IActionResult> UpdateUser([FromForm] UpdateUserDto updateUserDto)
         {
             var userId = HttpContext.GetUserIdClaimValue();
 
