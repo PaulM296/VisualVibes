@@ -1,0 +1,16 @@
+.homepageContent {
+  display: flex;
+  height: 88vh;
+  padding-top: 60px;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  overflow: auto;
+}
+
+.homepageContent::-webkit-scrollbar {
+  display: none;
+}
+
+.homeContainer {
+  height: auto;
+}
