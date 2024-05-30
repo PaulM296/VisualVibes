@@ -16,13 +16,14 @@ const handleImageError = () => {
     <div className="activityPost">
         <div className="activityPostWrapper">
             <div className="activityPostTop">
-                {imageLoaded ? (
+                {imageLoaded && (
                     <img className="activityPostProfileImg" 
                     src="src/assets/testProfilePicture.jpg" 
                     alt="Profile" 
                     onError={handleImageError}
                     />
-                ) : (
+                )} 
+                {!imageLoaded && (
                     <AccountCircleRoundedIcon className="activityPostProfileIcon" />
                 )}
                 <input 
