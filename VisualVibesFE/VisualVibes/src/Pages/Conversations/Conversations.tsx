@@ -1,17 +1,17 @@
 import React from 'react'
 import { Helmet } from 'react-helmet-async'
 
-const UserProfile = () => {
+const Conversations = () => {
   return (
     <>
         <Helmet>
-            <title>My Profile</title>
+            <title>Conversations</title>
         </Helmet>
         <div>
-            UserProfile
+            Conversations
         </div>
     </>
   )
 }
 
-export default UserProfile
+export default Conversations

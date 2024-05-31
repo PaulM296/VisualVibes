@@ -12,15 +12,15 @@ const Signup = () => {
 
   return (
     <>
-    <Helmet>
-        <title>SignUp</title>
-    </Helmet>
-    <div className="signup">
-        Signup page
-    </div>
-    <button className="signupLoginButton" onClick={handleLogin}>
-        Alreay have an account? Log in
-    </button>
+        <Helmet>
+            <title>SignUp</title>
+        </Helmet>
+        <div className="signup">
+            Signup page
+        </div>
+        <button className="signupLoginButton" onClick={handleLogin}>
+            Alreay have an account? Log in
+        </button>
     </>
   )
 }
