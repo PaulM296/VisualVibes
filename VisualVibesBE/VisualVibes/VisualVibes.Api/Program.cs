@@ -20,6 +20,17 @@ builder.Services.AddDbContext(builder);
 builder.Services.AddFileSystemLogger();
 builder.Services.AddAutoMapper();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins",
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                   .AllowAnyMethod()
+                   .AllowAnyHeader();
+        });
+});
+
 var app = builder.Build();
 
 //app.UseMiddleware<ExceptionMiddleware>();
@@ -35,6 +46,9 @@ app.UseTiming();
 
 app.UseHttpsRedirection();
 
+app.UseCors("AllowAllOrigins");
+
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
