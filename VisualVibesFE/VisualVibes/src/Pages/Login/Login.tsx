@@ -1,11 +1,12 @@
 import React from 'react';
 import './Login.css';
 import { Helmet } from 'react-helmet-async';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 import { loginUser } from '../../Services/AuthenticationServiceApi';
 import { UserLoginModel } from '../../Models/UserLoginModel';
 import { useFormik } from 'formik';
+import { Button, TextField } from '@mui/material';
 
 const Login: React.FC = () => {
     const formik = useFormik<UserLoginModel>({
@@ -34,10 +35,6 @@ const Login: React.FC = () => {
 
     const navigate = useNavigate();
 
-    const handleSignup = () => {
-        navigate('/signup');
-    };
-
     return (
         <>
             <Helmet>
@@ -54,34 +51,35 @@ const Login: React.FC = () => {
                     <div className="loginRight">
                         <div className="loginBox">
                             <form onSubmit={formik.handleSubmit} className="loginForm">
-                            <label className={`loginLabel ${formik.touched.email && formik.errors.email ? "errorLabel" : ""}`}>
-                                    { formik.touched.email && formik.errors.email ? formik.errors.email : "Email"}
-                                </label>
-                                <input
-                                    type="email"
+                                <TextField
+                                    id="outlined-basic"
+                                    label="Email Address"
+                                    variant="outlined"
                                     name="email"
+                                    placeholder="Email Address"
                                     value={formik.values.email}
                                     onChange={formik.handleChange}
-                                    placeholder="Email Address"
-                                    className="loginInput"
                                     onBlur={formik.handleBlur}
+                                    error={formik.touched.email && Boolean(formik.errors.email)}
+                                    helperText={formik.touched.email && formik.errors.email}
                                 />
-                                <label className={`loginLabel ${formik.touched.password && formik.errors.password ? "errorLabel" : ""}`}>
-                                    { formik.touched.password && formik.errors.password ? formik.errors.password : "Password"}
-                                </label>
-                                <input
-                                    type="password"
+                                <TextField
+                                    id="outlined-basic"
+                                    label="Password"
+                                    variant="outlined"
                                     name="password"
+                                    type="password"
+                                    placeholder="Password"
                                     value={formik.values.password}
                                     onChange={formik.handleChange}
-                                    placeholder="Password"
-                                    className="loginInput"
                                     onBlur={formik.handleBlur}
+                                    error={formik.touched.password && Boolean(formik.errors.password)}
+                                    helperText={formik.touched.password && formik.errors.password}
                                 />
-                                <button type="submit" className="loginButton">Log In</button>
-                                <button type="button" className="loginRegistrationButton" onClick={handleSignup}>
-                                    Don't have an account? Sign up
-                                </button>
+                                <Button type="submit" variant="contained" className="loginButton">Log in</Button>
+                                <div className="registration">
+                                    <p className="loginRegistration">Don't have an account? <Link to="/signup" className="signupLink">Signup now</Link></p>
+                                </div>
                             </form>
                         </div>
                     </div>

@@ -4,6 +4,10 @@ import { Helmet } from 'react-helmet-async';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import { registerUser } from '../../Services/AuthenticationServiceApi';
+import { Link } from 'react-router-dom';
+import { TextField, FormControl, InputLabel, Select, MenuItem, FormHelperText } from '@mui/material';
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 const validationSchemaStep1 = Yup.object().shape({
     email: Yup.string().email('Invalid email').required('Email is required'),
@@ -57,36 +61,35 @@ const Signup: React.FC = () => {
     });
 
     const formikStep2 = useFormik({
-        initialValues: initialValuesStep2,
-        validationSchema: validationSchemaStep2,
-        enableReinitialize: true,
-        onSubmit: async (values) => {
-            const formData = new FormData();
-            formData.append('Email', values.email);
-            formData.append('UserName', values.username);
-            formData.append('Password', values.password);
-            formData.append('Role', values.role);
-            formData.append('FirstName', values.firstName);
-            formData.append('LastName', values.lastName);
-            formData.append('DateOfBirth', new Date(values.dateOfBirth).toISOString());
-            formData.append('Bio', values.bio || '');
-            if (values.image) {
-                formData.append('ProfilePicture', values.image);
-            }
-
-            // Log the FormData entries
-            for (const pair of formData.entries()) {
-                console.log(`${pair[0]}: ${pair[1]}`);
-            }
-
-            try {
-                const response = await registerUser(formData);
-                console.log(response.data);
-            } catch (error) {
-                console.error(error);
-            }
-        }
-    });
+      initialValues: initialValuesStep2,
+      validationSchema: validationSchemaStep2,
+      enableReinitialize: true,
+      onSubmit: async (values) => {
+          const formData = new FormData();
+          formData.append('Email', values.email);
+          formData.append('UserName', values.username);
+          formData.append('Password', values.password);
+          formData.append('Role', values.role);
+          formData.append('FirstName', values.firstName);
+          formData.append('LastName', values.lastName);
+          formData.append('DateOfBirth', new Date(values.dateOfBirth).toISOString());
+          formData.append('Bio', values.bio || '');
+          if (values.image) {
+              formData.append('ProfilePicture', values.image);
+          }
+  
+          for (const pair of formData.entries()) {
+              console.log(`${pair[0]}: ${pair[1]}`);
+          }
+  
+          try {
+              const response = await registerUser(formData);
+              console.log(response.data);
+          } catch (error) {
+              console.error('Error registering user:', error.response ? error.response.data : error.message);
+          }
+      }
+  });
 
     return (
         <>
@@ -103,106 +106,144 @@ const Signup: React.FC = () => {
                         {step === 1 && (
                             <form onSubmit={formikStep1.handleSubmit} className="signupForm">
                                 <div className="formGroup">
-                                    <label className={`signupLabel ${formikStep1.touched.email && formikStep1.errors.email && "errorLabel"}`}>
-                                        {formikStep1.touched.email && formikStep1.errors.email ? formikStep1.errors.email : "Email"}
-                                    </label>
-                                    <input
+                                    <TextField
+                                        id="outlined-basic"
+                                        label="Email"
+                                        variant="outlined"
                                         type="email"
                                         placeholder="Email"
-                                        className="signupInput"
+                                        className={`signupInput ${formikStep1.touched.email && formikStep1.errors.email ? "errorInput" : ""}`}
                                         {...formikStep1.getFieldProps('email')}
+                                        error={formikStep1.touched.email && Boolean(formikStep1.errors.email)}
+                                        helperText={formikStep1.touched.email && formikStep1.errors.email}
                                     />
                                 </div>
                                 <div className="formGroup">
-                                    <label className={`signupLabel ${formikStep1.touched.username && formikStep1.errors.username && "errorLabel"}`}>
-                                        {formikStep1.touched.username && formikStep1.errors.username ? formikStep1.errors.username : "Username"}
-                                    </label>
-                                    <input
+                                    <TextField
+                                        id="outlined-basic"
+                                        label="Username"
+                                        variant="outlined"
                                         type="text"
                                         placeholder="Username"
-                                        className="signupInput"
+                                        className={`signupInput ${formikStep1.touched.username && formikStep1.errors.username ? "errorInput" : ""}`}
                                         {...formikStep1.getFieldProps('username')}
+                                        error={formikStep1.touched.username && Boolean(formikStep1.errors.username)}
+                                        helperText={formikStep1.touched.username && formikStep1.errors.username}
                                     />
                                 </div>
                                 <div className="formGroup">
-                                    <label className={`signupLabel ${formikStep1.touched.password && formikStep1.errors.password && "errorLabel"}`}>
-                                        {formikStep1.touched.password && formikStep1.errors.password ? formikStep1.errors.password : "Password"}
-                                    </label>
-                                    <input
+                                    <TextField
+                                        id="outlined-basic"
+                                        label="Create Password"
+                                        variant="outlined"
                                         type="password"
                                         placeholder="Create Password"
-                                        className="signupInput"
+                                        className={`signupInput ${formikStep1.touched.password && formikStep1.errors.password ? "errorInput" : ""}`}
                                         {...formikStep1.getFieldProps('password')}
+                                        error={formikStep1.touched.password && Boolean(formikStep1.errors.password)}
+                                        helperText={formikStep1.touched.password && formikStep1.errors.password}
                                     />
                                 </div>
                                 <div className="formGroup">
-                                    <label className={`signupLabel ${formikStep1.touched.confirmPassword && formikStep1.errors.confirmPassword && "errorLabel"}`}>
-                                        {formikStep1.touched.confirmPassword && formikStep1.errors.confirmPassword ? formikStep1.errors.confirmPassword : "Confirm Password"}
-                                    </label>
-                                    <input
+                                    <TextField
+                                        id="outlined-basic"
+                                        label="Confirm Password"
+                                        variant="outlined"
                                         type="password"
                                         placeholder="Confirm Password"
-                                        className="signupInput"
+                                        className={`signupInput ${formikStep1.touched.confirmPassword && formikStep1.errors.confirmPassword ? "errorInput" : ""}`}
                                         {...formikStep1.getFieldProps('confirmPassword')}
+                                        error={formikStep1.touched.confirmPassword && Boolean(formikStep1.errors.confirmPassword)}
+                                        helperText={formikStep1.touched.confirmPassword && formikStep1.errors.confirmPassword}
                                     />
                                 </div>
                                 <button type="submit" className="signupButton">Next</button>
+                                <p className="signupLoginPrompt">
+                                    Already have an account? <Link to="/login" className="signupLoginLink">Login</Link>
+                                </p>
                             </form>
                         )}
                         {step === 2 && (
                             <form onSubmit={formikStep2.handleSubmit} className="signupForm">
                                 <div className="formGroup">
-                                    <label className={`signupLabel ${formikStep2.touched.firstName && formikStep2.errors.firstName && "errorLabel"}`}>
-                                        {formikStep2.touched.firstName && formikStep2.errors.firstName ? formikStep2.errors.firstName : "First Name"}
-                                    </label>
-                                    <input
+                                    <TextField
+                                        id="outlined-basic"
+                                        label="First Name"
+                                        variant="outlined"
                                         type="text"
                                         placeholder="First Name"
-                                        className="signupInput"
+                                        className={`signupInput ${formikStep2.touched.firstName && formikStep2.errors.firstName ? "errorInput" : ""}`}
                                         {...formikStep2.getFieldProps('firstName')}
+                                        error={formikStep2.touched.firstName && Boolean(formikStep2.errors.firstName)}
+                                        helperText={formikStep2.touched.firstName && formikStep2.errors.firstName}
                                     />
                                 </div>
                                 <div className="formGroup">
-                                    <label className={`signupLabel ${formikStep2.touched.lastName && formikStep2.errors.lastName && "errorLabel"}`}>
-                                        {formikStep2.touched.lastName && formikStep2.errors.lastName ? formikStep2.errors.lastName : "Last Name"}
-                                    </label>
-                                    <input
+                                    <TextField
+                                        id="outlined-basic"
+                                        label="Last Name"
+                                        variant="outlined"
                                         type="text"
                                         placeholder="Last Name"
-                                        className="signupInput"
+                                        className={`signupInput ${formikStep2.touched.lastName && formikStep2.errors.lastName ? "errorInput" : ""}`}
                                         {...formikStep2.getFieldProps('lastName')}
+                                        error={formikStep2.touched.lastName && Boolean(formikStep2.errors.lastName)}
+                                        helperText={formikStep2.touched.lastName && formikStep2.errors.lastName}
                                     />
                                 </div>
-                                <div className="formGroup">
-                                    <label className={`signupLabel ${formikStep2.touched.dateOfBirth && formikStep2.errors.dateOfBirth && "errorLabel"}`}>
-                                        {formikStep2.touched.dateOfBirth && formikStep2.errors.dateOfBirth ? formikStep2.errors.dateOfBirth : "Date of Birth"}
-                                    </label>
-                                    <input
-                                        type="date"
-                                        className="signupInput"
-                                        {...formikStep2.getFieldProps('dateOfBirth')}
-                                    />
+                                <div className="formGroupRow">
+                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                        <DatePicker
+                                            format="DD-MM-YYYY"
+                                            label="Date of birth"
+                                            onChange={(value) => formikStep2.setFieldValue('dateOfBirth', value)}
+                                            slotProps={{
+                                                textField: {
+                                                    variant: "outlined",
+                                                    className: 'signupInput',
+                                                    error: formikStep2.touched.dateOfBirth && Boolean(formikStep2.errors.dateOfBirth),
+                                                    helperText: formikStep2.touched.dateOfBirth && formikStep2.errors.dateOfBirth,
+                                                }
+                                            }}
+                                        />
+                                    </LocalizationProvider>
+                                    <FormControl
+                                        variant="outlined"
+                                        className={`signupInput ${formikStep2.touched.role && formikStep2.errors.role ? "errorInput" : ""}`}
+                                        error={formikStep2.touched.role && Boolean(formikStep2.errors.role)}
+                                    >
+                                        <InputLabel id="role-label">Role</InputLabel>
+                                        <Select
+                                            labelId="role-label"
+                                            id="role"
+                                            value={formikStep2.values.role}
+                                            onChange={(event) => formikStep2.setFieldValue('role', event.target.value)}
+                                            label="Role"
+                                        >
+                                            <MenuItem value=""><em>Select role</em></MenuItem>
+                                            <MenuItem value="admin">Admin</MenuItem>
+                                            <MenuItem value="user">User</MenuItem>
+                                        </Select>
+                                        {formikStep2.touched.role && formikStep2.errors.role && (
+                                            <FormHelperText>{formikStep2.errors.role}</FormHelperText>
+                                        )}
+                                    </FormControl>
                                 </div>
                                 <div className="formGroup">
-                                    <label className={`signupLabel ${formikStep2.touched.role && formikStep2.errors.role && "errorLabel"}`}>
-                                        {formikStep2.touched.role && formikStep2.errors.role ? formikStep2.errors.role : "Role"}
-                                    </label>
-                                    <select className="signupInput" {...formikStep2.getFieldProps('role')}>
-                                        <option value="">Select role</option>
-                                        <option value="admin">Admin</option>
-                                        <option value="user">User</option>
-                                    </select>
-                                </div>
-                                <div className="formGroup">
-                                    <label className="signupLabel">Bio (optional)</label>
-                                    <textarea
+                                    <TextField
+                                        id="outlined-basic"
+                                        label="Bio (optional)"
+                                        variant="outlined"
+                                        multiline
+                                        rows={2}
                                         placeholder="Bio (optional)"
-                                        className="signupInput"
+                                        className={`signupInput ${formikStep2.touched.bio && formikStep2.errors.bio ? "errorInput" : ""}`}
                                         {...formikStep2.getFieldProps('bio')}
+                                        error={formikStep2.touched.bio && Boolean(formikStep2.errors.bio)}
+                                        helperText={formikStep2.touched.bio && formikStep2.errors.bio}
                                     />
                                 </div>
                                 <div className="formGroup">
-                                    <label className="signupLabel">Profile Image</label>
                                     <input
                                         type="file"
                                         className="signupInput"
@@ -214,6 +255,9 @@ const Signup: React.FC = () => {
                                     />
                                 </div>
                                 <button type="submit" className="signupButton">Sign Up</button>
+                                <p className="signupLoginPrompt">
+                                    Already have an account? <Link to="/login" className="signupLoginLink">Login</Link>
+                                </p>
                             </form>
                         )}
                     </div>
