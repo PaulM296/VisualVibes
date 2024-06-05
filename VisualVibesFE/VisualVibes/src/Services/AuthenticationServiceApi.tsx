@@ -10,8 +10,10 @@ const registerUser = (userData: FormData) => {
     });
 };
 
-const loginUser = (userData: UserLoginModel) => {
-    return axios.post(`${BASE_URL}/login`, userData);
+const loginUser = async (userData: UserLoginModel) => {
+    const response = await axios.post(`${BASE_URL}/users/login`, userData);
+    localStorage.setItem('token', response.data.token);
+    return response;
 };
 
 export { registerUser, loginUser };

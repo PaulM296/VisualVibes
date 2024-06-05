@@ -4,6 +4,9 @@ import { Card, CardContent, Avatar, TextField, Button, Box, Typography } from '@
 import AddPhotoAlternateRoundedIcon from '@mui/icons-material/AddPhotoAlternateRounded';
 import './CreatePost.css';
 import Navbar from '../../Components/Navbar/Navbar';
+import { ResponsePostModel } from '../../Models/ReponsePostModel';
+import UserPostServiceApi from '../../Services/UserPostServiceApi';
+import { CreatePostModel } from '../../Models/CreatePostModel';
 
 const CreatePost: React.FC = () => {
   const [content, setContent] = useState('');
@@ -26,10 +29,28 @@ const CreatePost: React.FC = () => {
     }
   };
 
-  const handleSubmit = () => {
-    console.log('Post submitted:', content, file);
-  };
+  const handleSubmit = async () => {
+    const token = localStorage.getItem('token'); // Retrieve the JWT token from localStorage
 
+    if (!token) {
+      console.error('No token found');
+      return; // Optionally handle the case where the token is missing
+    }
+
+    const createPostDto: CreatePostModel = {
+      caption: content,
+      image: file || undefined,
+    };
+
+    try {
+      const response: ResponsePostModel = await UserPostServiceApi.createPost(createPostDto, token);
+      console.log('Post created:', response);
+      // Handle successful post creation (e.g., navigate to another page, show a success message, etc.)
+    } catch (error) {
+      console.error('Error creating post:', error);
+      // Handle error (e.g., show an error message)
+    }
+  };
   return (
     <>
       <Helmet>
