@@ -1,4 +1,4 @@
-import { AppBar, Avatar, Badge, Box, Button, IconButton, InputBase, Menu, MenuItem, Toolbar, Typography, alpha, styled } from '@mui/material';
+import { AppBar, Avatar, Badge, Box, IconButton, InputBase, Menu, MenuItem, Toolbar, Typography, alpha, styled } from '@mui/material';
 import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import React from 'react'
@@ -180,8 +180,9 @@ const Navbar = () => {
           >
             <MenuIcon />
           </IconButton>
-          <Button
-            variant="text"
+          <Typography
+            variant="h5"
+            component="div"
             color="inherit"
             sx={{ 
               display: { xs: 'none', sm: 'block' }, 
@@ -195,10 +196,11 @@ const Navbar = () => {
             }}
             onClick={location.pathname !== '/' ? () => navigate('/') : undefined}
           >
-            <Typography variant="h6" noWrap component="div">
+            VisualVibes
+            {/* <Typography variant="h6" noWrap component="div">
               VisualVibes
-            </Typography>
-          </Button>
+            </Typography> */}
+          </Typography>
           <Box sx={{ flexGrow: 1 }} />
           <Search>
             <SearchIconWrapper>
