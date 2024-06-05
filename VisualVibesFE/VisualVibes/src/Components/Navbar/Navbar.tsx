@@ -5,7 +5,7 @@ import React from 'react'
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import MoreIcon from '@mui/icons-material/MoreVert';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -52,6 +52,7 @@ const Navbar = () => {
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -72,6 +73,18 @@ const Navbar = () => {
   const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setMobileMoreAnchorEl(event.currentTarget);
   };
+
+  const handleUserProfileRedirection = () => {
+    navigate('/userProfile');
+  } 
+
+  const handleUserSettingsRedirection = () => {
+    navigate('/userSettings');
+  }
+
+  const handleCreatePostRedirection = () => {
+    navigate('/createPost');
+  }
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -95,8 +108,9 @@ const Navbar = () => {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>My Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>Settings</MenuItem>
+      <MenuItem onClick={handleUserProfileRedirection}>My Profile</MenuItem>
+      <MenuItem onClick={handleUserSettingsRedirection}>Settings</MenuItem>
+      <MenuItem onClick={handleCreatePostRedirection}>Create Post</MenuItem>
       <MenuItem onClick={handleLogout}>Logout</MenuItem>
     </Menu>
   );
@@ -169,12 +183,17 @@ const Navbar = () => {
           <Button
             variant="text"
             color="inherit"
-
-            sx={{ display: { xs: 'none', sm: 'block' }, 
-            textTransform: 'none',
-            borderRadius: '35px'
-          }}
-            onClick={() => console.log('Button Clicked')}
+            sx={{ 
+              display: { xs: 'none', sm: 'block' }, 
+              textTransform: 'none',
+              borderRadius: '35px',
+              color: 'white',
+              '&:hover': {
+                backgroundColor: location.pathname === '/' ? 'inherit' : 'rgba(255, 255, 255, 0.08)',
+              },
+              cursor: location.pathname === '/' ? 'default' : 'pointer',
+            }}
+            onClick={location.pathname !== '/' ? () => navigate('/') : undefined}
           >
             <Typography variant="h6" noWrap component="div">
               VisualVibes

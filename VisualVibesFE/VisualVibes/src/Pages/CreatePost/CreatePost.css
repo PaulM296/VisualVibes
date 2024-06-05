@@ -1,0 +1,23 @@
+.createPostContainer {
+    display: flex;
+    flex-direction: column;
+    height: 92vh;
+    flex: 2;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+}
+
+.card {
+    width: 100%;
+    max-width: 800px;
+}
+
+.cardContent {
+    padding: 20px;
+}
+
+.textField {
+    font-size: 1.25rem;
+}

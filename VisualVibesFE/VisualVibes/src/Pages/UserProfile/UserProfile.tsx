@@ -1,16 +1,15 @@
 import React from 'react'
 import { Helmet } from 'react-helmet-async'
 
-const UserProfile = () => {
+const UserProfile: React.FC = () => {
   return (
     <>
         <Helmet>
-            <title>My Profile</title>
+            MyProfile
         </Helmet>
-        <div>
-            UserProfile
-        </div>
+        <div>MyProfile</div>
     </>
+    
   )
 }
 

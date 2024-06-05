@@ -4,11 +4,12 @@ import Login from "./Pages/Login/Login";
 import { HelmetProvider } from "react-helmet-async";
 import { Route, Routes } from "react-router-dom";
 import Signup from "./Pages/Signup/Signup";
-import UserProfile from "./Pages/UserProfile/UserProfile";
 import NotFound from "./Pages/NotFound/NotFound";
-import Post from "./Pages/Post/Post";
 import Conversations from "./Pages/Conversations/Conversations";
 import Messages from "./Pages/Messages/Messages";
+import UserSettings from "./Pages/UserSettings/UserSettings";
+import UserProfile from "./Pages/UserProfile/UserProfile";
+import CreatePost from "./Pages/CreatePost/CreatePost";
 
 export type userContextType = {
   userName: string;
@@ -24,10 +25,11 @@ const App = () => {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/userProfile" element={<UserProfile />} />
-        <Route path="/post" element={<Post />} />
+        <Route path="/userSettings" element={<UserSettings />} />
+        <Route path="/createPost" element={<CreatePost />} />
         <Route path="/conversations" element={<Conversations />} />
         <Route path="/messages" element={<Messages />} />
+        <Route path="/userProfile" element={<UserProfile/>} />
         <Route path="*" element={<NotFound/>} />
       </Routes>
     </HelmetProvider>

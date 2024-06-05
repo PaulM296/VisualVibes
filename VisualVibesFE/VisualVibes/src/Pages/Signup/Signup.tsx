@@ -5,7 +5,7 @@ import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import { registerUser } from '../../Services/AuthenticationServiceApi';
 import { Link } from 'react-router-dom';
-import { TextField, FormControl, InputLabel, Select, MenuItem, FormHelperText } from '@mui/material';
+import { TextField, FormControl, InputLabel, Select, MenuItem, FormHelperText, Button } from '@mui/material';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
@@ -35,7 +35,7 @@ const Signup: React.FC = () => {
         firstName: '',
         lastName: '',
         dateOfBirth: '',
-        role: 'user',
+        role: '',
         bio: '',
         image: null
     });
@@ -157,7 +157,7 @@ const Signup: React.FC = () => {
                                         helperText={formikStep1.touched.confirmPassword && formikStep1.errors.confirmPassword}
                                     />
                                 </div>
-                                <button type="submit" className="signupButton">Next</button>
+                                <Button type="submit" variant="contained" className="signupButton">Next</Button>
                                 <p className="signupLoginPrompt">
                                     Already have an account? <Link to="/login" className="signupLoginLink">Login</Link>
                                 </p>
@@ -254,7 +254,7 @@ const Signup: React.FC = () => {
                                         }}
                                     />
                                 </div>
-                                <button type="submit" className="signupButton">Sign Up</button>
+                                <Button type="submit" variant="contained" className="signupButton">Sign Up</Button>
                                 <p className="signupLoginPrompt">
                                     Already have an account? <Link to="/login" className="signupLoginLink">Login</Link>
                                 </p>
