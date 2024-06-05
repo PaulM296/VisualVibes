@@ -83,11 +83,11 @@ const Signup: React.FC = () => {
           }
   
           try {
-              const response = await registerUser(formData);
-              console.log(response.data);
-          } catch (error) {
-              console.error('Error registering user:', error.response ? error.response.data : error.message);
-          }
+            const response = await registerUser(formData);
+            console.log(response.data);
+        } catch (error) {
+            console.error(error);
+        }
       }
   });
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './Login.css';
 import { Helmet } from 'react-helmet-async';
 import { Link, useNavigate } from 'react-router-dom';
@@ -6,9 +6,17 @@ import * as Yup from 'yup';
 import { loginUser } from '../../Services/AuthenticationServiceApi';
 import { UserLoginModel } from '../../Models/UserLoginModel';
 import { useFormik } from 'formik';
-import { Button, TextField } from '@mui/material';
+import { Alert, Button, Snackbar, TextField } from '@mui/material';
 
 const Login: React.FC = () => {
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
+    const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
+
+    const handleCloseSnackbar = () => {
+        setSnackbarOpen(false);
+    };
+
     const formik = useFormik<UserLoginModel>({
         initialValues: {
             email: '',
@@ -25,10 +33,15 @@ const Login: React.FC = () => {
                 const response = await loginUser(values);
                 console.log(response.data);
                 localStorage.setItem('token', response.data.token);
-                navigate('/');
+                setSnackbarSeverity('success');
+                setSnackbarMessage('Login successful');
+                setSnackbarOpen(true);
+                navigate('/', { state: { message: 'Login successful', severity: 'success' } });
             } catch (error) {
                 console.error('Login failed:', error);
-                alert('Login failed. Please check your credentials and try again.');
+                setSnackbarSeverity('error');
+                setSnackbarMessage('Login failed. Please check your credentials and try again.');
+                setSnackbarOpen(true);
             }
         }
     });
@@ -85,6 +98,16 @@ const Login: React.FC = () => {
                     </div>
                 </div>
             </div>
+            <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={3000}
+                onClose={handleCloseSnackbar}
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            >
+                <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity}>
+                    {snackbarMessage}
+                </Alert>
+            </Snackbar>
         </>
     );
 };
