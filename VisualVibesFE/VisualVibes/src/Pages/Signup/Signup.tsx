@@ -4,8 +4,8 @@ import { Helmet } from 'react-helmet-async';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import { registerUser } from '../../Services/AuthenticationServiceApi';
-import { Link } from 'react-router-dom';
-import { TextField, FormControl, InputLabel, Select, MenuItem, FormHelperText, Button } from '@mui/material';
+import { Link, useNavigate } from 'react-router-dom';
+import { TextField, FormControl, InputLabel, Select, MenuItem, FormHelperText, Button, Snackbar, Alert } from '@mui/material';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
@@ -27,6 +27,17 @@ const validationSchemaStep2 = Yup.object().shape({
 
 const Signup: React.FC = () => {
     const [step, setStep] = useState(1);
+
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
+    const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
+
+    const navigate = useNavigate();
+
+    const handleCloseSnackbar = () => {
+        setSnackbarOpen(false);
+    };
+
     const [initialValuesStep2, setInitialValuesStep2] = useState({
         email: '',
         username: '',
@@ -61,35 +72,44 @@ const Signup: React.FC = () => {
     });
 
     const formikStep2 = useFormik({
-      initialValues: initialValuesStep2,
-      validationSchema: validationSchemaStep2,
-      enableReinitialize: true,
-      onSubmit: async (values) => {
-          const formData = new FormData();
-          formData.append('Email', values.email);
-          formData.append('UserName', values.username);
-          formData.append('Password', values.password);
-          formData.append('Role', values.role);
-          formData.append('FirstName', values.firstName);
-          formData.append('LastName', values.lastName);
-          formData.append('DateOfBirth', new Date(values.dateOfBirth).toISOString());
-          formData.append('Bio', values.bio || '');
-          if (values.image) {
-              formData.append('ProfilePicture', values.image);
-          }
-  
-          for (const pair of formData.entries()) {
-              console.log(`${pair[0]}: ${pair[1]}`);
-          }
-  
-          try {
-            const response = await registerUser(formData);
-            console.log(response.data);
-        } catch (error) {
-            console.error(error);
+        initialValues: initialValuesStep2,
+        validationSchema: validationSchemaStep2,
+        enableReinitialize: true,
+        onSubmit: async (values) => {
+            const formData = new FormData();
+            formData.append('Email', values.email);
+            formData.append('UserName', values.username);
+            formData.append('Password', values.password);
+            formData.append('Role', values.role);
+            formData.append('FirstName', values.firstName);
+            formData.append('LastName', values.lastName);
+            formData.append('DateOfBirth', new Date(values.dateOfBirth).toISOString());
+            formData.append('Bio', values.bio || '');
+            if (values.image) {
+                formData.append('ProfilePicture', values.image);
+            }
+
+            for (const pair of formData.entries()) {
+                console.log(`${pair[0]}: ${pair[1]}`);
+            }
+
+            try {
+                const response = await registerUser(formData);
+                console.log(response.data);
+                setSnackbarSeverity('success');
+                setSnackbarMessage('Registration successful');
+                setSnackbarOpen(true);
+                setTimeout(() => {
+                    navigate('/login');
+                }, 2000);
+            } catch (error) {
+                console.error(error);
+                setSnackbarSeverity('error');
+                setSnackbarMessage('Registration failed. Please try again.');
+                setSnackbarOpen(true);
+            }
         }
-      }
-  });
+    });
 
     return (
         <>
@@ -99,7 +119,7 @@ const Signup: React.FC = () => {
             <div className="signup">
                 <div className="signupWrapper">
                     <div className="signupLeft">
-                        <h3 className="signupLogo">Let's Make it Happen Together!</h3>
+                        <h3 className="signupLogo">Let's Vibe Together!!</h3>
                     </div>
                     <div className="signupRight">
                         <h2>Create An Account</h2>
@@ -165,7 +185,7 @@ const Signup: React.FC = () => {
                         )}
                         {step === 2 && (
                             <form onSubmit={formikStep2.handleSubmit} className="signupForm">
-                                <div className="formGroup">
+                                <div className="formGroupRow">
                                     <TextField
                                         id="outlined-basic"
                                         label="First Name"
@@ -177,8 +197,6 @@ const Signup: React.FC = () => {
                                         error={formikStep2.touched.firstName && Boolean(formikStep2.errors.firstName)}
                                         helperText={formikStep2.touched.firstName && formikStep2.errors.firstName}
                                     />
-                                </div>
-                                <div className="formGroup">
                                     <TextField
                                         id="outlined-basic"
                                         label="Last Name"
@@ -263,6 +281,16 @@ const Signup: React.FC = () => {
                     </div>
                 </div>
             </div>
+            <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={3000}
+                onClose={handleCloseSnackbar}
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            >
+                <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity}>
+                    {snackbarMessage}
+                </Alert>
+            </Snackbar>
         </>
     );
 };

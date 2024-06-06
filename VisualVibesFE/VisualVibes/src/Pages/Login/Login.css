@@ -103,3 +103,20 @@
 .errorLabel {
     color: red;
 }
+
+.registration {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.loginRegistration {
+    text-align: center;
+}
+
+.loginRight h2 {
+    margin-bottom: 20px;
+    text-align: center;
+    width: 100%;
+}

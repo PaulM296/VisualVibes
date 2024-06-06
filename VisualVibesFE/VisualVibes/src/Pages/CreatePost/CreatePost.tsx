@@ -1,17 +1,29 @@
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Card, CardContent, Avatar, TextField, Button, Box, Typography } from '@mui/material';
+import { Card, CardContent, Avatar, TextField, Button, Box, Typography, Snackbar, Alert } from '@mui/material';
 import AddPhotoAlternateRoundedIcon from '@mui/icons-material/AddPhotoAlternateRounded';
 import './CreatePost.css';
 import Navbar from '../../Components/Navbar/Navbar';
 import { ResponsePostModel } from '../../Models/ReponsePostModel';
 import UserPostServiceApi from '../../Services/UserPostServiceApi';
 import { CreatePostModel } from '../../Models/CreatePostModel';
+import { useNavigate } from 'react-router-dom';
 
 const CreatePost: React.FC = () => {
   const [content, setContent] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
+
+  const handleCloseSnackbar = () => {
+      setSnackbarOpen(false);
+  };
+
+  const navigate = useNavigate();
+
 
   const handleContentChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setContent(event.target.value);
@@ -30,25 +42,33 @@ const CreatePost: React.FC = () => {
   };
 
   const handleSubmit = async () => {
-    const token = localStorage.getItem('token'); // Retrieve the JWT token from localStorage
+    const token = localStorage.getItem('token');
 
     if (!token) {
       console.error('No token found');
-      return; // Optionally handle the case where the token is missing
+      return;
     }
 
-    const createPostDto: CreatePostModel = {
+    const createPostModel: CreatePostModel = {
       caption: content,
       image: file || undefined,
     };
 
     try {
-      const response: ResponsePostModel = await UserPostServiceApi.createPost(createPostDto, token);
+      const response: ResponsePostModel = await UserPostServiceApi.createPost(createPostModel, token);
       console.log('Post created:', response);
-      // Handle successful post creation (e.g., navigate to another page, show a success message, etc.)
+      setSnackbarSeverity('success');
+      setSnackbarMessage('Post created successful');
+      setSnackbarOpen(true);
+
+      setTimeout(() => {
+        navigate('/userProfile');
+      }, 2000);
     } catch (error) {
       console.error('Error creating post:', error);
-      // Handle error (e.g., show an error message)
+      setSnackbarSeverity('error');
+      setSnackbarMessage('Error creating post');
+      setSnackbarOpen(true);
     }
   };
   return (
@@ -109,6 +129,16 @@ const CreatePost: React.FC = () => {
           </CardContent>
         </Card>
       </div>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={2000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </>
   );
 };

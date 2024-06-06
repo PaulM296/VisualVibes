@@ -43,6 +43,8 @@
 
 .signupRight h2 {
     margin-bottom: 20px;
+    text-align: center;
+    width: 100%;
 }
 
 .signupForm {
@@ -50,9 +52,16 @@
     flex-direction: column;
 }
 
+.signupForm {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .formGroup {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
+    width: 100%;
     margin-bottom: 40px;
 }
 
@@ -60,21 +69,57 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    width: 100%;
     margin-bottom: 40px;
+    
 }
 
 .signupInput {
-    width: 100%;
+    width: 48%;
     height: 40px;
     border-radius: 5px;
     border: 1px solid gray;
     padding: 10px;
     font-size: 16px;
     box-sizing: border-box;
+    margin-bottom: 20px;
 }
 
 .signupInput[type="file"] {
+    width: 50%;
     padding: 5px;
+}
+
+.signupInput {
+    width: 50%;
+    height: 40px;
+    border-radius: 5px;
+    border: 1px solid gray;
+    padding: 10px;
+    font-size: 16px;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+}
+
+.signupInput[type="file"] {
+    width: 50%;
+    padding: 5px;
+}
+
+.signupButton {
+    width: 50%;
+    height: 50px;
+    border-radius: 5px;
+    background-color: blue;
+    color: white;
+    font-size: 18px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.signupLoginPrompt {
+    text-align: center;
 }
 
 .signupInput:focus {
@@ -86,6 +131,10 @@ textarea.signupInput {
     width: 100%;
     height: 100px;
     resize: none;
+}
+
+.formGroupRow .signupInput {
+    margin-right: 2%;
 }
 
 .signupButton {
@@ -114,4 +163,9 @@ textarea.signupInput {
 
 .signupLoginLink:hover {
     text-decoration: underline;
+}
+
+.bioGroup {
+    margin-bottom: 20px;
+    width: 100%;
 }

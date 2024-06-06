@@ -62,6 +62,7 @@ const Login: React.FC = () => {
                         </span>
                     </div>
                     <div className="loginRight">
+                        <h2>Log In</h2>
                         <div className="loginBox">
                             <form onSubmit={formik.handleSubmit} className="loginForm">
                                 <TextField
