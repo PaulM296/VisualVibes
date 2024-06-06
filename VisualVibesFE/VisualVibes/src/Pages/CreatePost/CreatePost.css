@@ -7,6 +7,7 @@
     align-items: center;
     text-align: center;
     padding: 20px;
+    overflow: visible;
 }
 
 .card {
@@ -18,6 +19,64 @@
     padding: 20px;
 }
 
-.textField {
-    font-size: 1.25rem;
+.postHeader {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.toolbar {
+    display: flex;
+    gap: 0.2rem;
+    margin-bottom: 16px;
+}
+
+.toolbar .active {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.emojiPickerContainer {
+    padding: 0;
+}
+
+.editableDiv {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 10px;
+    min-height: 150px;
+    outline: none;
+    margin-bottom: 16px;
+    text-align: left;
+}
+
+.actionButtonsContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 16px;
+}
+
+.uploadContainer {
+    display: flex;
+    align-items: center;
+}
+
+.fileInput {
+    display: none;
+}
+
+.uploadLabel {
+    display: flex;
+    align-items: center;
+}
+
+.previewContainer {
+    display: flex;
+    justify-content: center;
+    margin-top: 16px;
+}
+
+.previewImage {
+    max-height: 200px;
+    max-width: 100%;
 }

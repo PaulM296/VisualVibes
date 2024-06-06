@@ -1,32 +1,52 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Card, CardContent, Avatar, TextField, Button, Box, Typography, Snackbar, Alert } from '@mui/material';
-import AddPhotoAlternateRoundedIcon from '@mui/icons-material/AddPhotoAlternateRounded';
+import { Card, CardContent, Avatar, Button, Box, Typography, Snackbar, Alert, IconButton, ClickAwayListener, Popper } from '@mui/material';
+import { AiOutlineBold, AiOutlineItalic, AiOutlineUnderline } from 'react-icons/ai';
+import EmojiSmile from '@mui/icons-material/EmojiEmotionsOutlined';
+import Picker from '@emoji-mart/react';
+import data from '@emoji-mart/data';
 import './CreatePost.css';
 import Navbar from '../../Components/Navbar/Navbar';
 import { ResponsePostModel } from '../../Models/ReponsePostModel';
 import UserPostServiceApi from '../../Services/UserPostServiceApi';
 import { CreatePostModel } from '../../Models/CreatePostModel';
 import { useNavigate } from 'react-router-dom';
+import AddPhotoAlternateRoundedIcon from '@mui/icons-material/AddPhotoAlternateRounded';
+
+type EmojiType = {
+  native: string;
+};
 
 const CreatePost: React.FC = () => {
   const [content, setContent] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
-
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
 
+  const [activeCommand, setActiveCommand] = useState({ bold: false, italic: false, underline: false });
+
   const handleCloseSnackbar = () => {
-      setSnackbarOpen(false);
+    setSnackbarOpen(false);
   };
 
   const navigate = useNavigate();
 
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = !!anchorEl;
+  const editorRef = useRef<HTMLDivElement>(null);
 
-  const handleContentChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setContent(event.target.value);
+  const toggleEmojiShowing = (event: React.MouseEvent<HTMLButtonElement>) => {
+    if (editorRef.current) {
+      editorRef.current.focus();
+    }
+    event.stopPropagation();
+    setAnchorEl(anchorEl ? null : event.currentTarget);
+  };
+
+  const emojiSelectClick = (emoji: EmojiType) => {
+    document.execCommand('insertText', false, emoji.native);
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -58,7 +78,7 @@ const CreatePost: React.FC = () => {
       const response: ResponsePostModel = await UserPostServiceApi.createPost(createPostModel, token);
       console.log('Post created:', response);
       setSnackbarSeverity('success');
-      setSnackbarMessage('Post created successful');
+      setSnackbarMessage('Post created successfully');
       setSnackbarOpen(true);
 
       setTimeout(() => {
@@ -71,41 +91,106 @@ const CreatePost: React.FC = () => {
       setSnackbarOpen(true);
     }
   };
+
+  const isCommandActive = (command: string) => {
+    return document.queryCommandState(command);
+  };
+
+  const updateActiveCommand = () => {
+    setActiveCommand({
+      bold: isCommandActive('bold'),
+      italic: isCommandActive('italic'),
+      underline: isCommandActive('underline'),
+    });
+  };
+
+  const execCommand = (command: string) => {
+    document.execCommand(command);
+    updateActiveCommand();
+  };
+
+  useEffect(() => {
+    const handleSelectionChange = () => {
+      updateActiveCommand();
+    };
+
+    document.addEventListener('selectionchange', handleSelectionChange);
+    return () => {
+      document.removeEventListener('selectionchange', handleSelectionChange);
+    };
+  }, []);
+
   return (
     <>
       <Helmet>
         <title>Create Post</title>
       </Helmet>
-      <Navbar/>
+      <Navbar />
       <div className="createPostContainer">
         <Card className="card">
           <CardContent className="cardContent">
-            <Box display="flex" alignItems="center" marginBottom={2}>
+            <Box className="postHeader">
               <Avatar src="/path/to/avatar.jpg" alt="User Avatar" />
-              <Typography variant="h6" marginLeft={2}>
+              <Typography variant="h6" className="postHeaderText" style={{ marginLeft: '16px' }}>
                 Share your vibes!
               </Typography>
             </Box>
-            <TextField
-              fullWidth
-              multiline
-              rows={6}
-              variant="outlined"
-              placeholder="Write something..."
-              value={content}
-              onChange={handleContentChange}
-              className="textField"
-            />
-            <Box display="flex" justifyContent="space-between" alignItems="center" marginTop={2}>
-              <Box display="flex" alignItems="center">
+            <div
+              ref={editorRef}
+              className="editableDiv"
+              contentEditable
+              onInput={(e) => setContent(e.currentTarget.innerHTML)}
+              onFocus={updateActiveCommand}
+            ></div>
+            <Box className="toolbar">
+              <IconButton
+                size="small"
+                onClick={() => execCommand('bold')}
+                className={activeCommand.bold ? 'active' : ''}
+              >
+                <AiOutlineBold />
+              </IconButton>
+              <IconButton
+                size="small"
+                onClick={() => execCommand('italic')}
+                className={activeCommand.italic ? 'active' : ''}
+              >
+                <AiOutlineItalic />
+              </IconButton>
+              <IconButton
+                size="small"
+                onClick={() => execCommand('underline')}
+                className={activeCommand.underline ? 'active' : ''}
+              >
+                <AiOutlineUnderline />
+              </IconButton>
+              <ClickAwayListener onClickAway={() => setAnchorEl(null)}>
+                <Box className="emojiPickerContainer">
+                  <IconButton size="small" onClick={toggleEmojiShowing}>
+                    <EmojiSmile fontSize="small" />
+                  </IconButton>
+                  <Popper
+                    style={{ zIndex: 1400 }}
+                    id="emoji-panel"
+                    open={open}
+                    anchorEl={anchorEl}
+                    placement="bottom-start"
+                  >
+                    <Picker data={data} onEmojiSelect={emojiSelectClick} />
+                  </Popper>
+                </Box>
+              </ClickAwayListener>
+            </Box>
+            <Box className="actionButtonsContainer">
+              <Box className="uploadContainer">
                 <input
                   accept="image/*"
-                  style={{ display: 'none' }}
+                  className="fileInput"
                   id="upload-photo"
                   type="file"
                   onChange={handleFileChange}
                 />
-                <label htmlFor="upload-photo" style={{ display: 'flex', alignItems: 'center' }}>
+                <label htmlFor="upload-photo" className="uploadLabel">
                   <Button
                     color="primary"
                     aria-label="upload picture"
@@ -122,8 +207,8 @@ const CreatePost: React.FC = () => {
               </Button>
             </Box>
             {preview && (
-              <Box display="flex" justifyContent="center" marginTop={2}>
-                <img src={preview} alt="Preview" style={{ maxHeight: '200px', maxWidth: '100%' }} />
+              <Box className="previewContainer">
+                <img src={preview} alt="Preview" className="previewImage" />
               </Box>
             )}
           </CardContent>
