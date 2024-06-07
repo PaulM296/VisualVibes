@@ -40,6 +40,13 @@ namespace VisualVibes.Api.Controllers
             return Ok(response);
         }
 
+        [HttpGet("user/{userId}")]
+        public async Task<IActionResult> GetPostsByUserId(string userId)
+        {
+            var response = await _mediator.Send(new GetPostsByUserIdQuery(userId));
+
+            return Ok(response);
+        }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdatePost(Guid id, UpdatePostDto updatePostDto)

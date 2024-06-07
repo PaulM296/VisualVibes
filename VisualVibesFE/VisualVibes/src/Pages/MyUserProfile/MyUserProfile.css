@@ -1,0 +1,17 @@
+.userProfileContainer {
+    height: auto;
+}
+
+.userProfileContent {
+    display: flex;
+    height: 100vh;
+    padding-top: 60px;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    overflow: auto;
+}
+  
+.userProfileContent::-webkit-scrollbar {
+    display: none;
+}
+  

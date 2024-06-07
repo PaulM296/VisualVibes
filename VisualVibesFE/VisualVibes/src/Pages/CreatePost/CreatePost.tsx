@@ -82,7 +82,7 @@ const CreatePost: React.FC = () => {
       setSnackbarOpen(true);
 
       setTimeout(() => {
-        navigate('/userProfile');
+        navigate('/myUserProfile');
       }, 2000);
     } catch (error) {
       console.error('Error creating post:', error);

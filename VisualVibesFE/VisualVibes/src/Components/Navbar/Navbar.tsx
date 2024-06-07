@@ -75,7 +75,7 @@ const Navbar = () => {
   };
 
   const handleUserProfileRedirection = () => {
-    navigate('/userProfile');
+    navigate('/myUserProfile');
   } 
 
   const handleUserSettingsRedirection = () => {

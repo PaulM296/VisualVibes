@@ -2,8 +2,8 @@ import axios from "axios";
 import { BASE_URL } from "../Config/ApiConfig";
 import { UserLoginModel } from "../Models/UserLoginModel";
 
-const registerUser = (userData: FormData) => {
-    return axios.post(`${BASE_URL}/users/register`, userData, {
+const registerUser = async (userData: FormData) => {
+    return await axios.post(`${BASE_URL}/users/register`, userData, {
         headers: {
             'Content-Type': 'multipart/form-data'
         }

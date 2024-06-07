@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VisualVibes.App.DTOs.ImageDtos;
 using VisualVibes.App.Images.Commands;
+using VisualVibes.App.Images.Queries;
 
 namespace VisualVibes.Api.Controllers
 {
@@ -33,6 +34,23 @@ namespace VisualVibes.Api.Controllers
             var response = await _mediator.Send(command);
 
             return Ok(response);
-        } 
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetImageById(Guid id)
+        {
+            var query = new GetImageByIdQuery(id);
+            var image = await _mediator.Send(query);
+
+            if (image == null)
+            {
+                return NotFound();
+            }
+
+            var base64 = Convert.ToBase64String(image.Data);
+            var imgSrc = $"data:{image.Type};base64,{base64}";
+
+            return Ok(new { imageSrc = imgSrc });
+        }
     }
 }

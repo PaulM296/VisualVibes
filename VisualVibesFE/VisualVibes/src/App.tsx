@@ -8,8 +8,9 @@ import NotFound from "./Pages/NotFound/NotFound";
 import Conversations from "./Pages/Conversations/Conversations";
 import Messages from "./Pages/Messages/Messages";
 import UserSettings from "./Pages/UserSettings/UserSettings";
-import UserProfile from "./Pages/UserProfile/UserProfile";
 import CreatePost from "./Pages/CreatePost/CreatePost";
+import MyUserProfile from "./Pages/MyUserProfile/MyUserProfile";
+import OtherUserProfile from "./Pages/OtherUserProfile/OtherUserProfile";
 
 export type userContextType = {
   userName: string;
@@ -29,7 +30,8 @@ const App = () => {
         <Route path="/createPost" element={<CreatePost />} />
         <Route path="/conversations" element={<Conversations />} />
         <Route path="/messages" element={<Messages />} />
-        <Route path="/userProfile" element={<UserProfile/>} />
+        <Route path="/myUserProfile" element={<MyUserProfile/>} />
+        <Route path="/user/:userId" element={<OtherUserProfile />} />
         <Route path="*" element={<NotFound/>} />
       </Routes>
     </HelmetProvider>

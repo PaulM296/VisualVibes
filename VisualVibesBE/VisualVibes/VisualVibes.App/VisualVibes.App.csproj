@@ -21,8 +21,6 @@
   <ItemGroup>
     <Folder Include="FeedPosts\QueriesHandler\" />
     <Folder Include="FeedPosts\Queries\" />
-    <Folder Include="Images\QueriesHandler\" />
-    <Folder Include="Images\Queries\" />
   </ItemGroup>
 
 </Project>
