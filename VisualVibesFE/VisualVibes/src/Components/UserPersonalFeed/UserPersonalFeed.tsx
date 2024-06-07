@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Avatar, Typography } from '@mui/material';
-import { MoreVert } from '@mui/icons-material';
+import { differenceInDays, differenceInHours, differenceInMinutes } from 'date-fns';
 import './UserPersonalFeed.css';
 import { User } from '../../Models/User';
 import { getUserIdFromToken } from '../../Utils/auth';
@@ -76,6 +76,27 @@ const MyUserProfile: React.FC = () => {
     fetchUserData();
   }, []);
 
+  const formatPostDate = (date: Date | string) => {
+    if (typeof date === 'string') {
+      date = new Date(date);
+    }
+    const now = new Date();
+
+    const adjustedDate = new Date(date.getTime() + 3 * 60 * 60 * 1000);
+
+    const minutesDifference = differenceInMinutes(now, adjustedDate);
+    const hoursDifference = differenceInHours(now, adjustedDate);
+    const daysDifference = differenceInDays(now, adjustedDate);
+
+    if (minutesDifference < 60) {
+      return `Created ${minutesDifference} minutes ago`;
+    } else if (hoursDifference < 24) {
+      return `Created ${hoursDifference} hours ago`;
+    } else {
+      return `Created ${daysDifference} days ago`;
+    }
+  };
+
   if (loading) {
     return <p>Loading...</p>;
   }
@@ -100,14 +121,13 @@ const MyUserProfile: React.FC = () => {
               <div className="feedPostTopLeft">
                 <Avatar alt={user.userName} src={profilePicture} className="feedPostProfileImg" />
                 <span className="feedPostUsername"> {user.userName}</span>
-                <span className="feedPostDate">{new Date(post.createdAt).toLocaleTimeString()}</span>
               </div>
               <div className="feedPostTopRight">
-                <MoreVert />
+                <span className="feedPostDate">{formatPostDate(post.createdAt)}</span>
               </div>
             </div>
             <div className="feedPostCenter">
-              <span className="feedPostText"> {post.caption}</span>
+            <span className="feedPostText" dangerouslySetInnerHTML={{ __html: post.caption }}></span>
               {post.imageId && postImages[post.id] && (
                 <img className="feedPostImg" src={postImages[post.id]} alt="Post image" />
               )}
