@@ -8,7 +8,7 @@ import data from '@emoji-mart/data';
 import './CreatePost.css';
 import Navbar from '../../Components/Navbar/Navbar';
 import { ResponsePostModel } from '../../Models/ReponsePostModel';
-import UserPostServiceApi from '../../Services/UserPostServiceApi';
+import { createPost } from '../../Services/UserPostServiceApi';
 import { CreatePostModel } from '../../Models/CreatePostModel';
 import { useNavigate } from 'react-router-dom';
 import AddPhotoAlternateRoundedIcon from '@mui/icons-material/AddPhotoAlternateRounded';
@@ -75,7 +75,7 @@ const CreatePost: React.FC = () => {
     };
 
     try {
-      const response: ResponsePostModel = await UserPostServiceApi.createPost(createPostModel, token);
+      const response: ResponsePostModel = await createPost(createPostModel, token);
       console.log('Post created:', response);
       setSnackbarSeverity('success');
       setSnackbarMessage('Post created successfully');
