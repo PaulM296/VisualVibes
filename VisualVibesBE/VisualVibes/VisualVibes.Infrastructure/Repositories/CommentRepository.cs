@@ -33,5 +33,12 @@ namespace VisualVibes.Infrastructure.Repositories
 
             return commentsForPost;
         }
+
+        public async Task<int> GetPostTotalCommentNumber(Guid postId)
+        {
+            var reactionsForPost = await _context.Comments.CountAsync(r => r.PostId == postId);
+
+            return reactionsForPost;
+        }
     }
 }

@@ -10,7 +10,7 @@ const MyUserProfile: React.FC = () => {
   return (
     <>
         <Helmet>
-            MyProfile
+          <title>MyProfile</title>
         </Helmet>
         <div className="userProfileContainer">
           <Navbar />

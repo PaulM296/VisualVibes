@@ -1,11 +1,17 @@
 import { AppBar, Avatar, Badge, Box, IconButton, InputBase, Menu, MenuItem, Toolbar, Typography, alpha, styled } from '@mui/material';
 import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import React from 'react'
+import React, { useEffect, useState } from 'react';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import MoreIcon from '@mui/icons-material/MoreVert';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { getUserIdFromToken } from '../../Utils/auth';
+import { getUserById, getImageById as getUserImageById } from '../../Services/UserServiceApi';
+import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded';
+import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
+import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
+import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -50,12 +56,40 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 const Navbar = () => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState<null | HTMLElement>(null);
-
+  const [profilePicture, setProfilePicture] = useState<string>('defaultProfilePicture.jpg');
   const navigate = useNavigate();
   const location = useLocation();
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          console.error('Token not found in localStorage');
+          return;
+        }
+
+        const userId = getUserIdFromToken();
+        if (!userId) {
+          console.error('User ID not found in token');
+          return;
+        }
+
+        const userData = await getUserById(userId, token);
+        if (userData.imageId) {
+          const imageSrc = await getUserImageById(userData.imageId, token);
+          setProfilePicture(imageSrc);
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -108,10 +142,22 @@ const Navbar = () => {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleUserProfileRedirection}>My Profile</MenuItem>
-      <MenuItem onClick={handleUserSettingsRedirection}>Settings</MenuItem>
-      <MenuItem onClick={handleCreatePostRedirection}>Create Post</MenuItem>
-      <MenuItem onClick={handleLogout}>Logout</MenuItem>
+      <MenuItem onClick={handleUserProfileRedirection}>
+        <AccountCircleRoundedIcon sx={{ marginRight: 2 }} />
+        My Profile
+      </MenuItem>
+      <MenuItem onClick={handleUserSettingsRedirection}>
+        <SettingsRoundedIcon sx={{ marginRight: 2 }} />
+        Settings 
+      </MenuItem>
+      <MenuItem onClick={handleCreatePostRedirection}>
+        <AddCircleRoundedIcon sx={{ marginRight: 2 }} />
+        Create Post
+      </MenuItem>
+      <MenuItem onClick={handleLogout}>
+        <LogoutRoundedIcon sx={{ marginRight: 2 }}/>
+        Logout
+      </MenuItem>
     </Menu>
   );
 
@@ -160,7 +206,7 @@ const Navbar = () => {
           aria-haspopup="true"
           color="inherit"
         >
-          <Avatar />
+          <Avatar src={profilePicture} />
         </IconButton>
         <p>Profile</p>
       </MenuItem>
@@ -197,9 +243,6 @@ const Navbar = () => {
             onClick={location.pathname !== '/' ? () => navigate('/') : undefined}
           >
             VisualVibes
-            {/* <Typography variant="h6" noWrap component="div">
-              VisualVibes
-            </Typography> */}
           </Typography>
           <Box sx={{ flexGrow: 1 }} />
           <Search>
@@ -236,7 +279,7 @@ const Navbar = () => {
               onClick={handleProfileMenuOpen}
               color="inherit"
             >
-              <Avatar />
+              <Avatar src={profilePicture} />
             </IconButton>
           </Box>
           <Box sx={{ display: { xs: 'flex', md: 'none' } }}>

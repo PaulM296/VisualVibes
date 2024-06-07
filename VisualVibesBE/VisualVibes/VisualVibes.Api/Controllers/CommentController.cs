@@ -7,6 +7,7 @@ using VisualVibes.App.Comments.Commands;
 using VisualVibes.App.Comments.Queries;
 using VisualVibes.App.DTOs.CommentDtos;
 using VisualVibes.App.DTOs.PaginationDtos;
+using VisualVibes.App.Reactions.Queries;
 
 namespace VisualVibes.Api.Controllers
 {
@@ -58,6 +59,14 @@ namespace VisualVibes.Api.Controllers
             var postComments = await _mediator.Send(new GetAllPostCommentsQuery(id, paginationRequestDto));
             
             return Ok(postComments);
+        }
+
+        [HttpGet("post/{postId}/comments/total")]
+        public async Task<IActionResult> GetAllPostCommentsNumber(Guid postId)
+        {
+            var totalPostComments = await _mediator.Send(new GetTotalCommentNumberForPostQuery(postId));
+
+            return Ok(totalPostComments);
         }
     }
 }

@@ -6,12 +6,16 @@ import { User } from '../../Models/User';
 import { getUserIdFromToken } from '../../Utils/auth';
 import { getUserById, getImageById as getUserImageById } from '../../Services/UserServiceApi';
 import { getPostsByUserId, getImageById as getPostImageById } from '../../Services/UserPostServiceApi';
+import { getReactionsCountByPostId } from '../../Services/ReactionServiceApi';
+import { getCommentsCountByPostId } from '../../Services/CommentServiceApi';
 import { ResponsePostModel } from '../../Models/ReponsePostModel';
 
 const MyUserProfile: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [posts, setPosts] = useState<ResponsePostModel[]>([]);
   const [postImages, setPostImages] = useState<{ [key: string]: string }>({});
+  const [reactionsCount, setReactionsCount] = useState<{ [key: string]: number }>({});
+  const [commentsCount, setCommentsCount] = useState<{ [key: string]: number }>({});
   const [loading, setLoading] = useState(true);
   const [profilePicture, setProfilePicture] = useState<string>('defaultProfilePicture.jpg');
 
@@ -65,6 +69,42 @@ const MyUserProfile: React.FC = () => {
         }, {} as { [key: string]: string });
 
         setPostImages(imagesMap);
+
+        const reactionsPromises = userPosts.map(async (post) => {
+          try {
+            const count = await getReactionsCountByPostId(post.id, token);
+            return { postId: post.id, count };
+          } catch (error) {
+            console.error(`Failed to fetch reactions count for post ${post.id}:`, error);
+            return { postId: post.id, count: 0 };
+          }
+        });
+
+        const commentsPromises = userPosts.map(async (post) => {
+          try {
+            const count = await getCommentsCountByPostId(post.id, token);
+            return { postId: post.id, count };
+          } catch (error) {
+            console.error(`Failed to fetch comments count for post ${post.id}:`, error);
+            return { postId: post.id, count: 0 };
+          }
+        });
+
+        const reactionsCounts = await Promise.all(reactionsPromises);
+        const commentsCounts = await Promise.all(commentsPromises);
+
+        const reactionsMap = reactionsCounts.reduce((acc, { postId, count }) => {
+          acc[postId] = count;
+          return acc;
+        }, {} as { [key: string]: number });
+
+        const commentsMap = commentsCounts.reduce((acc, { postId, count }) => {
+          acc[postId] = count;
+          return acc;
+        }, {} as { [key: string]: number });
+
+        setReactionsCount(reactionsMap);
+        setCommentsCount(commentsMap);
 
       } catch (error) {
         console.error('Error fetching user data:', error);
@@ -127,7 +167,7 @@ const MyUserProfile: React.FC = () => {
               </div>
             </div>
             <div className="feedPostCenter">
-            <span className="feedPostText" dangerouslySetInnerHTML={{ __html: post.caption }}></span>
+              <span className="feedPostText" dangerouslySetInnerHTML={{ __html: post.caption }}></span>
               {post.imageId && postImages[post.id] && (
                 <img className="feedPostImg" src={postImages[post.id]} alt="Post image" />
               )}
@@ -136,10 +176,10 @@ const MyUserProfile: React.FC = () => {
               <div className="feedPostBottomLeft">
                 <img className="reactionIcon" src="src/assets/Like.png" />
                 <img className="reactionIcon" src="src/assets/Love.png" />
-                <span className="feedPostReactionCounter">15 people like this</span>
+                <span className="feedPostReactionCounter">{reactionsCount[post.id] || 0} people reacted</span>
               </div>
               <div className="feedPostBottomRight">
-                <span className="feedPostCommentText"> 7 comments</span>
+                <span className="feedPostCommentText">{commentsCount[post.id] || 0} comments</span>
               </div>
             </div>
           </div>
