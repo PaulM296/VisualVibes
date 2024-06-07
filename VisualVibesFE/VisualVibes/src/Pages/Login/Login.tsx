@@ -7,6 +7,9 @@ import { loginUser } from '../../Services/AuthenticationServiceApi';
 import { UserLoginModel } from '../../Models/UserLoginModel';
 import { useFormik } from 'formik';
 import { Alert, Button, Snackbar, TextField } from '@mui/material';
+import EmailRoundedIcon from '@mui/icons-material/EmailRounded';
+import LockRoundedIcon from '@mui/icons-material/LockRounded';
+import usePasswordToggle from '../../Components/usePasswordToggle';
 
 const Login: React.FC = () => {
     const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -16,6 +19,8 @@ const Login: React.FC = () => {
     const handleCloseSnackbar = () => {
         setSnackbarOpen(false);
     };
+
+    const passwordInputProps = usePasswordToggle();
 
     const formik = useFormik<UserLoginModel>({
         initialValues: {
@@ -66,8 +71,8 @@ const Login: React.FC = () => {
                         <div className="loginBox">
                             <form onSubmit={formik.handleSubmit} className="loginForm">
                                 <TextField
-                                    id="outlined-basic"
-                                    label="Email Address"
+                                    id="outlined-email"
+                                    label={<div style={{ display: 'flex', alignItems: 'center' }}><EmailRoundedIcon style={{ marginRight: 5 }} />Email Address</div>}
                                     variant="outlined"
                                     name="email"
                                     placeholder="Email Address"
@@ -78,17 +83,17 @@ const Login: React.FC = () => {
                                     helperText={formik.touched.email && formik.errors.email}
                                 />
                                 <TextField
-                                    id="outlined-basic"
-                                    label="Password"
+                                    id="outlined-password"
+                                    label={<div style={{ display: 'flex', alignItems: 'center' }}><LockRoundedIcon style={{ marginRight: 5 }} />Password</div>}
                                     variant="outlined"
                                     name="password"
-                                    type="password"
                                     placeholder="Password"
                                     value={formik.values.password}
                                     onChange={formik.handleChange}
                                     onBlur={formik.handleBlur}
                                     error={formik.touched.password && Boolean(formik.errors.password)}
                                     helperText={formik.touched.password && formik.errors.password}
+                                    {...passwordInputProps}
                                 />
                                 <Button type="submit" variant="contained" className="loginButton">Log in</Button>
                                 <div className="registration">

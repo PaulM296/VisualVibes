@@ -8,6 +8,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import { TextField, FormControl, InputLabel, Select, MenuItem, FormHelperText, Button, Snackbar, Alert } from '@mui/material';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import EmailRoundedIcon from '@mui/icons-material/EmailRounded';
+import LockRoundedIcon from '@mui/icons-material/LockRounded';
+import usePasswordToggle from '../../Components/usePasswordToggle';
 
 const validationSchemaStep1 = Yup.object().shape({
     email: Yup.string().email('Invalid email').required('Email is required'),
@@ -37,6 +40,8 @@ const Signup: React.FC = () => {
     const handleCloseSnackbar = () => {
         setSnackbarOpen(false);
     };
+
+    const passwordInputProps = usePasswordToggle();
 
     const [initialValuesStep2, setInitialValuesStep2] = useState({
         email: '',
@@ -128,7 +133,7 @@ const Signup: React.FC = () => {
                                 <div className="formGroup">
                                     <TextField
                                         id="outlined-basic"
-                                        label="Email"
+                                        label={<div style={{ display: 'flex', alignItems: 'center' }}><EmailRoundedIcon style={{ marginRight: 5 }} />Email Address</div>}
                                         variant="outlined"
                                         type="email"
                                         placeholder="Email"
@@ -154,7 +159,7 @@ const Signup: React.FC = () => {
                                 <div className="formGroup">
                                     <TextField
                                         id="outlined-basic"
-                                        label="Create Password"
+                                        label={<div style={{ display: 'flex', alignItems: 'center' }}><LockRoundedIcon style={{ marginRight: 5 }} />Password</div>}
                                         variant="outlined"
                                         type="password"
                                         placeholder="Create Password"
@@ -162,12 +167,13 @@ const Signup: React.FC = () => {
                                         {...formikStep1.getFieldProps('password')}
                                         error={formikStep1.touched.password && Boolean(formikStep1.errors.password)}
                                         helperText={formikStep1.touched.password && formikStep1.errors.password}
+                                        {...passwordInputProps}
                                     />
                                 </div>
                                 <div className="formGroup">
                                     <TextField
                                         id="outlined-basic"
-                                        label="Confirm Password"
+                                        label={<div style={{ display: 'flex', alignItems: 'center' }}><LockRoundedIcon style={{ marginRight: 5 }} />Password</div>}
                                         variant="outlined"
                                         type="password"
                                         placeholder="Confirm Password"
@@ -175,6 +181,7 @@ const Signup: React.FC = () => {
                                         {...formikStep1.getFieldProps('confirmPassword')}
                                         error={formikStep1.touched.confirmPassword && Boolean(formikStep1.errors.confirmPassword)}
                                         helperText={formikStep1.touched.confirmPassword && formikStep1.errors.confirmPassword}
+                                        {...passwordInputProps}
                                     />
                                 </div>
                                 <Button type="submit" variant="contained" className="signupButton">Next</Button>
