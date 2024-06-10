@@ -8,7 +8,9 @@ namespace VisualVibes.App.MappingProfiles
     {
         public ReactionMappings()
         {
-            CreateMap<Reaction, ResponseReactionDto>();
+            CreateMap<Reaction, ResponseReactionDto>()
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.UserName))
+                .ForMember(dest => dest.ImageId, opt => opt.MapFrom(src => src.User.UserProfile.ImageId));
         }
     }
 }

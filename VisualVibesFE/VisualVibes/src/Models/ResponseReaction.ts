@@ -6,4 +6,6 @@ export interface ResponseReaction {
     postId: string;
     reactionType: ReactionType;
     timestamp: string;
+    userName: string;
+    imageId: string;
 }

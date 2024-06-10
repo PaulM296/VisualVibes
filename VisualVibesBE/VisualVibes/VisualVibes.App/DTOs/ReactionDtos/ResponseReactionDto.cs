@@ -10,5 +10,7 @@ namespace VisualVibes.App.DTOs.ReactionDtos
         public Guid PostId { get; set; }
         public ReactionType ReactionType { get; set; }
         public DateTime Timestamp { get; set; }
+        public string UserName { get; set; }
+        public Guid ImageId { get; set; }
     }
 }

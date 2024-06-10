@@ -12,6 +12,7 @@ import { ResponsePostModel } from '../../Models/ReponsePostModel';
 import { getReactionEmoji } from '../../Utils/getReactionEmoji';
 import { ResponseReaction } from '../../Models/ResponseReaction';
 import { ReactionType } from '../../Models/ReactionType';
+import { ReactionWithEmoji } from '../../Models/ReactionWithEmoji';
 
 const MyUserProfile: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -25,7 +26,7 @@ const MyUserProfile: React.FC = () => {
   const [showReactions, setShowReactions] = useState<{ [key: string]: boolean }>({});
   const [openReactionModal, setOpenReactionModal] = useState(false);
   const [openCommentModal, setOpenCommentModal] = useState(false);
-  const [reactions, setReactions] = useState<{ userName: string; avatar: string; reactionType: string }[]>([]);
+  const [reactions, setReactions] = useState<ReactionWithEmoji[]>([]);
   const [userReactions, setUserReactions] = useState<{ [key: string]: string }>({});
 
   useEffect(() => {
@@ -202,12 +203,16 @@ const MyUserProfile: React.FC = () => {
         console.error('Token not found in localStorage');
         return;
       }
-
+  
       const reactionData = await getPostReactions(postId, token);
-      const formattedReactions = reactionData.items.map((reaction: ResponseReaction) => ({
-        userName: reaction.userId,  // Assuming you need to fetch user details based on userId
-        avatar: '',  // You may need another API call to fetch user avatar based on userId
-        reactionType: ReactionType[reaction.reactionType]
+      const formattedReactions: ReactionWithEmoji[] = await Promise.all(reactionData.items.map(async (reaction: ResponseReaction) => {
+        const avatar = reaction.imageId ? await getUserImageById(reaction.imageId, token) : '';
+        return {
+          userName: reaction.userName,  
+          avatar,  
+          reactionType: ReactionType[reaction.reactionType],
+          reactionEmoji: getReactionEmoji(ReactionType[reaction.reactionType])
+        };
       }));
       setReactions(formattedReactions);
       setOpenReactionModal(true);
@@ -334,7 +339,7 @@ const MyUserProfile: React.FC = () => {
           )}
           {reactions.length > 0 && reactions.map((reaction, index) => (
             <div key={index} className="reactionItem">
-              <span>{reaction.reactionType}</span>
+              <span>{reaction.reactionEmoji}</span>
               <Avatar src={reaction.avatar} alt={reaction.userName} sx={{ margin: '0 10px' }} />
               <Typography>{reaction.userName}</Typography>
             </div>

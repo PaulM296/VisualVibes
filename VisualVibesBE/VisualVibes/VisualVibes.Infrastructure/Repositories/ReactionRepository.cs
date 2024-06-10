@@ -29,6 +29,8 @@ namespace VisualVibes.Infrastructure.Repositories
         public async Task<PaginationResponseDto<Reaction>> GetAllPagedReactionsAsync(Guid postId, int pageIndex, int pageSize)
         {
             var reactionsForPost = await _context.Reactions
+                .Include(r => r.User)
+                .ThenInclude(u => u.UserProfile)
                 .Where(r => r.PostId == postId)
                 .OrderByDescending(r => r.Timestamp)
                 .Skip((pageIndex - 1) * pageSize)
