@@ -44,15 +44,15 @@ export const addReaction = async (postId: string, reactionType: number, token: s
   }
 };
 
-export const getPostReactions = async (postId: string, token: string): Promise<PaginationResponse<ResponseReaction>> => {
+export const getPostReactions = async (postId: string, token: string, pageIndex: number = 1, pageSize: number = 10): Promise<PaginationResponse<ResponseReaction>> => {
   try {
     const response = await axios.get<PaginationResponse<ResponseReaction>>(`${BASE_URL}/reactions/post/users/${postId}`, {
       headers: {
         Authorization: `Bearer ${token}`
       },
       params: {
-        PageIndex: 1,
-        PageSize: 10
+        PageIndex: pageIndex,
+        PageSize: pageSize
       }
     });
     return response.data;

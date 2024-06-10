@@ -1,9 +1,8 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VisualVibes.Api.Extensions;
-using VisualVibes.App.DTOs.ImageDtos;
+using VisualVibes.App.DTOs.PaginationDtos;
 using VisualVibes.App.DTOs.PostDtos;
 using VisualVibes.App.Posts.Commands;
 using VisualVibes.App.Posts.Queries;
@@ -40,11 +39,18 @@ namespace VisualVibes.Api.Controllers
             return Ok(response);
         }
 
-        [HttpGet("user/{userId}")]
-        public async Task<IActionResult> GetPostsByUserId(string userId)
-        {
-            var response = await _mediator.Send(new GetPostsByUserIdQuery(userId));
+        //[HttpGet("user/{userId}")]
+        //public async Task<IActionResult> GetPostsByUserId(string userId)
+        //{
+        //    var response = await _mediator.Send(new GetPostsByUserIdQuery(userId));
 
+        //    return Ok(response);
+        //}
+
+        [HttpGet("user/{userId}")]
+        public async Task<IActionResult> GetPostsByUserId(string userId, [FromQuery] PaginationRequestDto paginationRequest)
+        {
+            var response = await _mediator.Send(new GetPaginatedPostsWithInformationByUserIdQuery(userId, paginationRequest));
             return Ok(response);
         }
 

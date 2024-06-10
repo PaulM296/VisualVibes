@@ -1,0 +1,161 @@
+.userPersonalFeedContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    width: 50%;
+    box-sizing: border-box;
+}
+
+.userInfo {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+    width: 100%;
+    justify-content: center;
+}
+
+.feedPost {
+    width: 100%;
+    border-radius: 10px;
+    -webkit-box-shadow: 0px 0px 16px -8px rgba(0, 0, 0, 0.68);
+    box-shadow: 0px 0px 16px -8px rgba(0, 0, 0, 0.68);
+    margin: 30px 0;
+}
+
+.feedPostWrapper {
+    padding: 14px;
+}
+
+.feedPostTop {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.feedPostTopLeft {
+    display: flex;
+    align-items: center;
+}
+
+.feedPostProfileImg {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.feedPostUsername {
+    font-size: 18px;
+    font-weight: 500;
+    margin: 0 10px;
+}
+
+.feedPostDate {
+    font-size: 14px;
+}
+
+.feedPostCenter {
+    margin: 20px 0;
+}
+
+.feedPostImg {
+    margin-top: 20px;
+    width: 100%;
+    max-height: 500px;
+    object-fit: contain;
+}
+
+.feedPostBottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.feedPostBottomLeft {
+    display: flex;
+    align-items: center;
+}
+
+.reactionIcon {
+    width: 24px;
+    height: 24px;
+    margin-right: 5px;
+    cursor: pointer;
+}
+
+.feedPostReactionCounter {
+    font-size: 18px;
+}
+
+.feedPostCommentText {
+    font-size: 18px;
+}
+
+.reactionButton {
+    position: relative;
+    display: inline-block;
+}
+  
+.reactionOptions {
+    display: flex;
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 5px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+}
+
+.reactionOpener {
+    font-size: 24px;
+}
+  
+.reactionOptions span {
+    margin-right: 5px;
+    cursor: pointer;
+    font-size: 24px;
+}
+  
+.reactionButton span {
+    cursor: pointer;
+}
+
+
+.modalContent {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 300px;
+    margin: auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+  
+.reactionItem {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+  
+.feedPostReactionCounter {
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.paginationControls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+  }
+  
+  .paginationControls Button {
+    min-width: 70px;
+  }

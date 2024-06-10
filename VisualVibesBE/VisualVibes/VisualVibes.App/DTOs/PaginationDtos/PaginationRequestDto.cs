@@ -7,6 +7,6 @@ namespace VisualVibes.App.DTOs.PaginationDtos
         [Required]
         public int PageIndex { get; set; }
 
-        public int PageSize { get; set; } = 20;
+        public int PageSize { get; set; } = 10;
     }
 }

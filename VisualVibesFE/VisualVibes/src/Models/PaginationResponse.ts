@@ -3,3 +3,8 @@ export interface PaginationResponse<T> {
     pageIndex: number;
     totalPages: number;
 }
+
+export interface PaginationRequestDto {
+    pageIndex: number;
+    pageSize: number;
+}
