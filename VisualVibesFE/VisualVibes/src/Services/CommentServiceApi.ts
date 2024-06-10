@@ -1,5 +1,7 @@
 import axios from 'axios';
 import { BASE_URL } from '../Config/ApiConfig';
+import { ResponseComment } from '../Models/ResponseComment';
+import { PaginationResponse } from '../Models/PaginationResponse';
 
 export const getCommentsCountByPostId = async (postId: string, token: string) => {
   try {
@@ -15,7 +17,7 @@ export const getCommentsCountByPostId = async (postId: string, token: string) =>
   }
 };
 
-export const getPostComments = async (postId: string, token: string, pageIndex = 0, pageSize = 10) => {
+export const getPostComments = async (postId: string, token: string, pageIndex: number = 1, pageSize: number = 10): Promise<PaginationResponse<ResponseComment>> => {
   try {
     const response = await axios.get(`${BASE_URL}/comments/post/${postId}`, {
       headers: {

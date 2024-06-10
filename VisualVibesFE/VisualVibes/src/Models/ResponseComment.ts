@@ -6,4 +6,13 @@ export interface ResponseComment {
     createdAt: Date;
     userName: string;
     imageId: string;
+    avatar: string;
+    commentText: string;
 }
+
+export interface FormattedComment {
+    userName: string;
+    avatar: string;
+    text: string;
+    createdAt: Date;
+  }

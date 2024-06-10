@@ -14,12 +14,13 @@ import { ResponseReaction } from '../../Models/ResponseReaction';
 import { ReactionType } from '../../Models/ReactionType';
 import { ReactionWithEmoji } from '../../Models/ReactionWithEmoji';
 import { PaginationRequestDto, PaginationResponse } from '../../Models/PaginationResponse';
+import { ResponseComment, FormattedComment } from '../../Models/ResponseComment';
 
 const MyUserProfile: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [posts, setPosts] = useState<ResponsePostModel[]>([]);
   const [postImages, setPostImages] = useState<{ [key: string]: string }>({});
-  const [comments, setComments] = useState<{ userName: string; avatar: string; commentText: string }[]>([]);
+  const [comments, setComments] = useState<FormattedComment[]>([]);
   const [loading, setLoading] = useState(true);
   const [profilePicture, setProfilePicture] = useState<string>('defaultProfilePicture.jpg');
   const [showReactions, setShowReactions] = useState<{ [key: string]: boolean }>({});
@@ -32,6 +33,8 @@ const MyUserProfile: React.FC = () => {
   const [reactionsCount, setReactionsCount] = useState<{ [key: string]: number }>({});
   const [commentsCount, setCommentsCount] = useState<{ [key: string]: number }>({});
   const [currentPostId, setCurrentPostId] = useState<string | null>(null);
+  const [currentCommentPageIndex, setCurrentCommentPageIndex] = useState(1);
+  const [commentTotalPages, setCommentTotalPages] = useState(1);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -209,17 +212,34 @@ const MyUserProfile: React.FC = () => {
     }
   };
 
-  const fetchComments = async (postId: string) => {
+  const fetchComments = async (postId: string, pageIndex: number = 1, pageSize: number = 10) => {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
         console.error('Token not found in localStorage');
         return;
       }
-
-      const commentData = await getPostComments(postId, token);
-
-      setComments(commentData.items);
+  
+      console.log(`Attempting to fetch comments for postId: ${postId} with token: ${token}`);
+      const commentData = await getPostComments(postId, token, pageIndex, pageSize);
+      console.log('Received comment data:', commentData);
+  
+      const formattedComments: FormattedComment[] = await Promise.all(commentData.items.map(async (comment: ResponseComment) => {
+        const avatar = comment.imageId ? await getUserImageById(comment.imageId, token) : '';
+        return {
+          userName: comment.userName,
+          avatar,
+          text: comment.text,
+          createdAt: comment.createdAt
+        };
+      }));
+  
+      console.log('Formatted comments:', formattedComments);
+  
+      setComments(formattedComments);
+      setCurrentPostId(postId);
+      setCurrentCommentPageIndex(pageIndex);
+      setCommentTotalPages(commentData.totalPages);
       setOpenCommentModal(true);
     } catch (error) {
       console.error('Error fetching comments:', error);
@@ -347,19 +367,36 @@ const MyUserProfile: React.FC = () => {
       </Modal>
       <Modal open={openCommentModal} onClose={handleClose}>
         <div className="modalContent">
-          <Typography variant="h6">Comments</Typography>
-          {comments.length === 0 && (
+            <Typography variant="h6">Comments</Typography>
+            {comments.length === 0 && (
             <Typography sx={{ mt: 2 }}>No comments yet.</Typography>
-          )}
-          {comments.length > 0 && comments.map((comment, index) => (
+            )}
+            {comments.length > 0 && comments.map((comment, index) => (
             <div key={index} className="reactionItem">
-              <Avatar src={comment.avatar} alt={comment.userName} sx={{ margin: '0 10px' }} />
-              <Typography>{comment.userName}</Typography>
-              <Typography sx={{ marginLeft: '10px' }}>{comment.commentText}</Typography>
+                <Avatar src={comment.avatar} alt={comment.userName} sx={{ margin: '0 10px' }} />
+                <Typography>{comment.userName}</Typography>
+                <Typography sx={{ marginLeft: '10px' }}>{comment.text}</Typography>
             </div>
-          ))}
+            ))}
+            <div className="paginationControls">
+            <Button
+                disabled={currentCommentPageIndex === 1}
+                onClick={() => fetchComments(currentPostId!, currentCommentPageIndex - 1)}
+                style={{ float: 'left' }}
+            >
+                Previous
+            </Button>
+            <Typography>{currentCommentPageIndex} / {commentTotalPages}</Typography>
+            <Button
+                disabled={currentCommentPageIndex === commentTotalPages}
+                onClick={() => fetchComments(currentPostId!, currentCommentPageIndex + 1)}
+                style={{ float: 'right' }}
+            >
+                Next
+            </Button>
+            </div>
         </div>
-      </Modal>
+        </Modal>
     </div>
   );
 };

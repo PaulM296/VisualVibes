@@ -15,6 +15,8 @@ namespace VisualVibes.Infrastructure.Repositories
         public async Task<PaginationResponseDto<Comment>> GetAllPagedCommentsAsync(Guid postId, int pageIndex, int pageSize)
         {
             var commentsForPost = await _context.Comments
+                .Include(r => r.User)
+                .ThenInclude(u => u.UserProfile)
                 .Where(c => c.PostId == postId)
                 .OrderByDescending(c => c.CreatedAt)
                 .Skip((pageIndex - 1) * pageSize)
