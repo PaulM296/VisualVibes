@@ -14,3 +14,21 @@ export const getCommentsCountByPostId = async (postId: string, token: string) =>
     throw error;
   }
 };
+
+export const getPostComments = async (postId: string, token: string, pageIndex = 0, pageSize = 10) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/comments/post/${postId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+      params: {
+        PageIndex: pageIndex,
+        PageSize: pageSize
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Failed to fetch comments:', error);
+    throw error;
+  }
+};
