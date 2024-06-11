@@ -63,62 +63,7 @@ const MyUserProfile: React.FC = () => {
           setProfilePicture(imageSrc);
         }
 
-        const paginationRequest: PaginationRequestDto = {
-          pageIndex: 1,
-          pageSize: 10
-        };
-
-        const userPostsResponse: PaginationResponse<ResponsePostModel> = await getPostsByUserId(userId, paginationRequest, token);
-        const userPosts = userPostsResponse.items;
-        setPosts(userPosts);
-        setPageIndex(userPostsResponse.pageIndex);
-        setTotalPages(userPostsResponse.totalPages);
-
-        const imagesPromises = userPosts.map(async (post) => {
-          if (post.imageId) {
-            try {
-              const imageSrc = await getPostImageById(post.imageId, token);
-              return { postId: post.id, imageSrc };
-            } catch (error) {
-              console.error(`Failed to fetch image for post ${post.id}:`, error);
-              return { postId: post.id, imageSrc: '' };
-            }
-          }
-          return { postId: post.id, imageSrc: '' };
-        });
-
-        const images = await Promise.all(imagesPromises);
-        const imagesMap = images.reduce((acc, { postId, imageSrc }) => {
-          if (imageSrc) {
-            acc[postId] = imageSrc;
-          }
-          return acc;
-        }, {} as { [key: string]: string });
-
-        setPostImages(imagesMap);
-
-        const reactionsMap = userPosts.reduce((acc, post) => {
-          acc[post.id] = post.reactions.length;
-          return acc;
-        }, {} as { [key: string]: number });
-
-        const commentsMap = userPosts.reduce((acc, post) => {
-          acc[post.id] = post.comments.length;
-          return acc;
-        }, {} as { [key: string]: number });
-
-        const userReactionsMap = userPosts.reduce((acc, post) => {
-          const userReaction = post.reactions.find(r => r.userId === userId);
-          if (userReaction) {
-            acc[post.id] = ReactionType[userReaction.reactionType];
-          }
-          return acc;
-        }, {} as { [key: string]: string });
-
-        setReactionsCount(reactionsMap);
-        setCommentsCount(commentsMap);
-        setUserReactions(userReactionsMap);
-
+        await fetchPosts(userId, 1, token);
       } catch (error) {
         console.error('Error fetching user data:', error);
       } finally {
@@ -128,6 +73,68 @@ const MyUserProfile: React.FC = () => {
 
     fetchUserData();
   }, []);
+
+  const fetchPosts = async (userId: string, pageIndex: number, token: string) => {
+    const paginationRequest: PaginationRequestDto = {
+      pageIndex: pageIndex,
+      pageSize: 10
+    };
+
+    const userPostsResponse: PaginationResponse<ResponsePostModel> = await getPostsByUserId(userId, paginationRequest, token);
+    const userPosts = userPostsResponse.items;
+    setPosts((prevPosts) => {
+      // Filter out any duplicates
+      const newPosts = userPosts.filter(post => !prevPosts.some(prevPost => prevPost.id === post.id));
+      return [...prevPosts, ...newPosts];
+    });
+    setPageIndex(userPostsResponse.pageIndex);
+    setTotalPages(userPostsResponse.totalPages);
+
+    const imagesPromises = userPosts.map(async (post) => {
+      if (post.imageId) {
+        try {
+          const imageSrc = await getPostImageById(post.imageId, token);
+          return { postId: post.id, imageSrc };
+        } catch (error) {
+          console.error(`Failed to fetch image for post ${post.id}:`, error);
+          return { postId: post.id, imageSrc: '' };
+        }
+      }
+      return { postId: post.id, imageSrc: '' };
+    });
+
+    const images = await Promise.all(imagesPromises);
+    const imagesMap = images.reduce((acc, { postId, imageSrc }) => {
+      if (imageSrc) {
+        acc[postId] = imageSrc;
+      }
+      return acc;
+    }, {} as { [key: string]: string });
+
+    setPostImages((prevImages) => ({ ...prevImages, ...imagesMap }));
+
+    const reactionsMap = userPosts.reduce((acc, post) => {
+      acc[post.id] = post.reactions.length;
+      return acc;
+    }, {} as { [key: string]: number });
+
+    const commentsMap = userPosts.reduce((acc, post) => {
+      acc[post.id] = post.comments.length;
+      return acc;
+    }, {} as { [key: string]: number });
+
+    const userReactionsMap = userPosts.reduce((acc, post) => {
+      const userReaction = post.reactions.find(r => r.userId === userId);
+      if (userReaction) {
+        acc[post.id] = ReactionType[userReaction.reactionType];
+      }
+      return acc;
+    }, {} as { [key: string]: string });
+
+    setReactionsCount(reactionsMap);
+    setCommentsCount(commentsMap);
+    setUserReactions(userReactionsMap);
+  };
 
   const reactionTypes: { [key: string]: number } = {
     'Like': ReactionType.Like,
@@ -258,14 +265,13 @@ const MyUserProfile: React.FC = () => {
 
       await addComment(currentPostId, newComment, token);
 
-      // Increment the comment count for the current post
       setCommentsCount(prev => ({
         ...prev,
         [currentPostId]: (prev[currentPostId] || 0) + 1
       }));
 
       setNewComment('');
-      fetchComments(currentPostId, currentCommentPageIndex); // Refresh the comments list
+      fetchComments(currentPostId, currentCommentPageIndex);
     } catch (error) {
       console.error('Error adding comment:', error);
     }
@@ -273,7 +279,7 @@ const MyUserProfile: React.FC = () => {
 
   const handleOpenComments = (postId: string) => {
     setCurrentPostId(postId);
-    setComments([]); // Reset comments when opening the modal
+    setComments([]);
     fetchComments(postId);
   };
 
@@ -281,6 +287,16 @@ const MyUserProfile: React.FC = () => {
     setOpenReactionModal(false);
     setOpenCommentModal(false);
     setCurrentPostId(null);
+  };
+
+  const loadMorePosts = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token || !user) return;
+      await fetchPosts(user.id, pageIndex + 1, token);
+    } catch (error) {
+      console.error('Error loading more posts:', error);
+    }
   };
 
   if (loading) {
@@ -365,6 +381,11 @@ const MyUserProfile: React.FC = () => {
           </div>
         </div>
       ))}
+      {pageIndex < totalPages && (
+        <Button onClick={loadMorePosts} variant="contained" color="primary" style={{ marginTop: '10px' }}>
+          Load More
+        </Button>
+      )}
       <Modal open={openReactionModal} onClose={handleClose}>
         <div className="modalContent">
           <Typography variant="h6">Reactions</Typography>

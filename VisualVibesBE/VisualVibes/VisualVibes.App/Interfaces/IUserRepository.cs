@@ -1,4 +1,5 @@
-﻿using VisualVibes.Domain.Models;
+﻿using System.Linq.Expressions;
+using VisualVibes.Domain.Models;
 using VisualVibes.Domain.Models.BaseEntity;
 
 namespace VisualVibes.App.Interfaces
@@ -10,5 +11,6 @@ namespace VisualVibes.App.Interfaces
         Task<AppUser> GetUserByIdAsync(string id);
         Task<AppUser> RemoveUserAsync(AppUser user);
         Task<AppUser> UpdateUserAsync(AppUser updatedUser);
+        Task<IEnumerable<AppUser>> FindAsync(Expression<Func<AppUser, bool>> predicate);
     }
 }

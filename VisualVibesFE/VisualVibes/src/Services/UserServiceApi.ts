@@ -25,4 +25,16 @@ const getImageById = async (imageId: string, token: string): Promise<string> => 
     }
 };
 
-export { getUserById, getImageById };
+const searchUsers = async (query: string, token: string): Promise<User[]> => {
+    const response = await axios.get<User[]>(`${BASE_URL}/users/search`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        },
+        params: {
+            query
+        }
+    });
+    return response.data;
+}
+
+export { getUserById, getImageById, searchUsers };

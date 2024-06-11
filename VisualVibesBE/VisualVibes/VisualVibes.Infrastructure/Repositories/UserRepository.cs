@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 using VisualVibes.App.Interfaces;
 using VisualVibes.Domain.Models;
 using VisualVibes.Domain.Models.BaseEntity;
@@ -69,6 +70,14 @@ namespace VisualVibes.Infrastructure.Repositories
             await _context.SaveChangesAsync();
 
             return user;
+        }
+
+        public async Task<IEnumerable<AppUser>> FindAsync(Expression<Func<AppUser, bool>> predicate)
+        {
+            return await _context.Users
+                .Include(u => u.UserProfile)
+                .Where(predicate)
+                .ToListAsync();
         }
 
     }

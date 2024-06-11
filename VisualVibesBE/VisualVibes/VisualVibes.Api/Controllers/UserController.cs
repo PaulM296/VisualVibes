@@ -121,5 +121,13 @@ namespace VisualVibes.Api.Controllers
             return Ok(userFollowers);
         }
 
+        [HttpGet("search")]
+        [Authorize]
+        public async Task<IActionResult> SearchUsers([FromQuery] string query)
+        {
+            var users = await _mediator.Send(new SearchUsersQuery(query));
+            return Ok(users);
+        }
+
     }
 }
