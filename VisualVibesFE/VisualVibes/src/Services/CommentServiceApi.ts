@@ -34,3 +34,20 @@ export const getPostComments = async (postId: string, token: string, pageIndex: 
     throw error;
   }
 };
+
+export const addComment = async (postId: string, text: string, token: string) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/comments`, {
+      postId,
+      text
+    }, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Failed to create comment:', error);
+    throw error;
+  }
+};

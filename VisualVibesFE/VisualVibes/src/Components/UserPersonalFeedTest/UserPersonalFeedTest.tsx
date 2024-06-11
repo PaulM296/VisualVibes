@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Avatar, Typography, Modal, Button } from '@mui/material';
+import { Avatar, Typography, Modal, Button, TextField } from '@mui/material';
 import { differenceInDays, differenceInHours, differenceInMinutes } from 'date-fns';
 import './UserPersonalFeedTest.css';
 import { User } from '../../Models/User';
@@ -7,7 +7,7 @@ import { getUserIdFromToken } from '../../Utils/auth';
 import { getUserById, getImageById as getUserImageById } from '../../Services/UserServiceApi';
 import { getPostsByUserId, getImageById as getPostImageById } from '../../Services/UserPostServiceApi';
 import { addReaction, getPostReactions } from '../../Services/ReactionServiceApi';
-import { getPostComments } from '../../Services/CommentServiceApi';
+import { getPostComments, addComment } from '../../Services/CommentServiceApi'; // Ensure addComment is imported
 import { ResponsePostModel } from '../../Models/ReponsePostModel';
 import { getReactionEmoji } from '../../Utils/getReactionEmoji';
 import { ResponseReaction } from '../../Models/ResponseReaction';
@@ -21,6 +21,7 @@ const MyUserProfile: React.FC = () => {
   const [posts, setPosts] = useState<ResponsePostModel[]>([]);
   const [postImages, setPostImages] = useState<{ [key: string]: string }>({});
   const [comments, setComments] = useState<FormattedComment[]>([]);
+  const [newComment, setNewComment] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [profilePicture, setProfilePicture] = useState<string>('defaultProfilePicture.jpg');
   const [showReactions, setShowReactions] = useState<{ [key: string]: boolean }>({});
@@ -220,10 +221,7 @@ const MyUserProfile: React.FC = () => {
         return;
       }
   
-      console.log(`Attempting to fetch comments for postId: ${postId} with token: ${token}`);
       const commentData = await getPostComments(postId, token, pageIndex, pageSize);
-      console.log('Received comment data:', commentData);
-  
       const formattedComments: FormattedComment[] = await Promise.all(commentData.items.map(async (comment: ResponseComment) => {
         const avatar = comment.imageId ? await getUserImageById(comment.imageId, token) : '';
         return {
@@ -234,8 +232,6 @@ const MyUserProfile: React.FC = () => {
         };
       }));
   
-      console.log('Formatted comments:', formattedComments);
-  
       setComments(formattedComments);
       setCurrentPostId(postId);
       setCurrentCommentPageIndex(pageIndex);
@@ -243,6 +239,18 @@ const MyUserProfile: React.FC = () => {
       setOpenCommentModal(true);
     } catch (error) {
       console.error('Error fetching comments:', error);
+    }
+  };
+
+  const handleAddComment = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token || !currentPostId || !newComment) return;
+      await addComment(currentPostId, newComment, token);
+      setNewComment('');
+      fetchComments(currentPostId, currentCommentPageIndex);
+    } catch (error) {
+      console.error('Error adding comment:', error);
     }
   };
 
@@ -366,37 +374,60 @@ const MyUserProfile: React.FC = () => {
         </div>
       </Modal>
       <Modal open={openCommentModal} onClose={handleClose}>
-        <div className="modalContent">
-            <Typography variant="h6">Comments</Typography>
+        <div className="modalContentLarge"> {/* Use new CSS class */}
+          <Typography variant="h6">Comments</Typography>
+          <div className="addCommentContainer">
+            <TextField
+              label="Add a comment"
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              fullWidth
+              multiline
+              rows={4}
+              variant="outlined"
+            />
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleAddComment}
+              style={{ marginTop: '10px' }}
+            >
+              Submit
+            </Button>
+          </div>
+          <div className="commentsContainer"> {/* Adjusted class name */}
             {comments.length === 0 && (
-            <Typography sx={{ mt: 2 }}>No comments yet.</Typography>
+              <Typography sx={{ mt: 2 }}>No comments yet.</Typography>
             )}
             {comments.length > 0 && comments.map((comment, index) => (
-            <div key={index} className="reactionItem">
+              <div key={index} className="commentItem"> {/* Adjusted class name */}
                 <Avatar src={comment.avatar} alt={comment.userName} sx={{ margin: '0 10px' }} />
-                <Typography>{comment.userName}</Typography>
-                <Typography sx={{ marginLeft: '10px' }}>{comment.text}</Typography>
-            </div>
+                <div>
+                  <Typography>{comment.userName}</Typography>
+                  <Typography sx={{ marginLeft: '10px' }}>{comment.text}</Typography>
+                </div>
+              </div>
             ))}
             <div className="paginationControls">
-            <Button
+              <Button
                 disabled={currentCommentPageIndex === 1}
                 onClick={() => fetchComments(currentPostId!, currentCommentPageIndex - 1)}
                 style={{ float: 'left' }}
-            >
+              >
                 Previous
-            </Button>
-            <Typography>{currentCommentPageIndex} / {commentTotalPages}</Typography>
-            <Button
+              </Button>
+              <Typography>{currentCommentPageIndex} / {commentTotalPages}</Typography>
+              <Button
                 disabled={currentCommentPageIndex === commentTotalPages}
                 onClick={() => fetchComments(currentPostId!, currentCommentPageIndex + 1)}
                 style={{ float: 'right' }}
-            >
+              >
                 Next
-            </Button>
+              </Button>
             </div>
+          </div>
         </div>
-        </Modal>
+      </Modal>
     </div>
   );
 };

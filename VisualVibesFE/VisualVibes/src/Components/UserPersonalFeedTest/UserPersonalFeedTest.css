@@ -5,99 +5,99 @@
     padding: 20px;
     width: 50%;
     box-sizing: border-box;
-}
-
-.userInfo {
+  }
+  
+  .userInfo {
     display: flex;
     align-items: center;
     margin-top: 20px;
     width: 100%;
     justify-content: center;
-}
-
-.feedPost {
+  }
+  
+  .feedPost {
     width: 100%;
     border-radius: 10px;
     -webkit-box-shadow: 0px 0px 16px -8px rgba(0, 0, 0, 0.68);
     box-shadow: 0px 0px 16px -8px rgba(0, 0, 0, 0.68);
     margin: 30px 0;
-}
-
-.feedPostWrapper {
+  }
+  
+  .feedPostWrapper {
     padding: 14px;
-}
-
-.feedPostTop {
+  }
+  
+  .feedPostTop {
     display: flex;
     align-items: center;
     justify-content: space-between;
-}
-
-.feedPostTopLeft {
+  }
+  
+  .feedPostTopLeft {
     display: flex;
     align-items: center;
-}
-
-.feedPostProfileImg {
+  }
+  
+  .feedPostProfileImg {
     width: 32px;
     height: 32px;
     border-radius: 50%;
     object-fit: cover;
-}
-
-.feedPostUsername {
+  }
+  
+  .feedPostUsername {
     font-size: 18px;
     font-weight: 500;
     margin: 0 10px;
-}
-
-.feedPostDate {
+  }
+  
+  .feedPostDate {
     font-size: 14px;
-}
-
-.feedPostCenter {
+  }
+  
+  .feedPostCenter {
     margin: 20px 0;
-}
-
-.feedPostImg {
+  }
+  
+  .feedPostImg {
     margin-top: 20px;
     width: 100%;
     max-height: 500px;
     object-fit: contain;
-}
-
-.feedPostBottom {
+  }
+  
+  .feedPostBottom {
     display: flex;
     align-items: center;
     justify-content: space-between;
-}
-
-.feedPostBottomLeft {
+  }
+  
+  .feedPostBottomLeft {
     display: flex;
     align-items: center;
-}
-
-.reactionIcon {
+  }
+  
+  .reactionIcon {
     width: 24px;
     height: 24px;
     margin-right: 5px;
     cursor: pointer;
-}
-
-.feedPostReactionCounter {
+  }
+  
+  .feedPostReactionCounter {
     font-size: 18px;
-}
-
-.feedPostCommentText {
+  }
+  
+  .feedPostCommentText {
     font-size: 18px;
-}
-
-.reactionButton {
+  }
+  
+  .reactionButton {
     position: relative;
     display: inline-block;
-}
+  }
   
-.reactionOptions {
+  .reactionOptions {
     display: flex;
     position: absolute;
     bottom: 100%;
@@ -108,24 +108,23 @@
     border-radius: 5px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     z-index: 10;
-}
-
-.reactionOpener {
-    font-size: 24px;
-}
+  }
   
-.reactionOptions span {
+  .reactionOpener {
+    font-size: 24px;
+  }
+  
+  .reactionOptions span {
     margin-right: 5px;
     cursor: pointer;
     font-size: 24px;
-}
+  }
   
-.reactionButton span {
+  .reactionButton span {
     cursor: pointer;
-}
-
-
-.modalContent {
+  }
+  
+  .modalContent {
     background: white;
     padding: 20px;
     border-radius: 10px;
@@ -136,20 +135,49 @@
     left: 50%;
     transform: translate(-50%, -50%);
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
+  }
   
-.reactionItem {
+  .modalContentLarge {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 80%;
+    height: 80%;
+    margin: auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+  }
+  
+  .reactionItem {
     display: flex;
     align-items: center;
     margin-bottom: 10px;
-}
+  }
   
-.feedPostReactionCounter {
+  .commentItem {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 10px;
+  }
+  
+  .addCommentContainer {
+    margin-bottom: 20px;
+  }
+  
+  .commentsContainer {
+    margin-top: 20px;
+  }
+  
+  .feedPostReactionCounter {
     cursor: pointer;
     transition: color 0.3s;
-}
-
-.paginationControls {
+  }
+  
+  .paginationControls {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -159,3 +187,4 @@
   .paginationControls Button {
     min-width: 70px;
   }
+  
