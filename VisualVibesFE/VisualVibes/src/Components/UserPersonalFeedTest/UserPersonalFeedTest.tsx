@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Avatar, Typography, Modal, Button, TextField } from '@mui/material';
+import { Avatar, Typography, Modal, Button } from '@mui/material';
 import { differenceInDays, differenceInHours, differenceInMinutes } from 'date-fns';
 import './UserPersonalFeedTest.css';
 import { User } from '../../Models/User';
@@ -7,7 +7,7 @@ import { getUserIdFromToken } from '../../Utils/auth';
 import { getUserById, getImageById as getUserImageById } from '../../Services/UserServiceApi';
 import { getPostsByUserId, getImageById as getPostImageById } from '../../Services/UserPostServiceApi';
 import { addReaction, getPostReactions } from '../../Services/ReactionServiceApi';
-import { getPostComments, addComment } from '../../Services/CommentServiceApi'; // Ensure addComment is imported
+import { getPostComments, addComment } from '../../Services/CommentServiceApi';
 import { ResponsePostModel } from '../../Models/ReponsePostModel';
 import { getReactionEmoji } from '../../Utils/getReactionEmoji';
 import { ResponseReaction } from '../../Models/ResponseReaction';
@@ -15,6 +15,7 @@ import { ReactionType } from '../../Models/ReactionType';
 import { ReactionWithEmoji } from '../../Models/ReactionWithEmoji';
 import { PaginationRequestDto, PaginationResponse } from '../../Models/PaginationResponse';
 import { ResponseComment, FormattedComment } from '../../Models/ResponseComment';
+import RichTextEditor from '../RichTextEditor/RichTextEditor';
 
 const MyUserProfile: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -220,25 +221,33 @@ const MyUserProfile: React.FC = () => {
         console.error('Token not found in localStorage');
         return;
       }
-  
+
       const commentData = await getPostComments(postId, token, pageIndex, pageSize);
-      const formattedComments: FormattedComment[] = await Promise.all(commentData.items.map(async (comment: ResponseComment) => {
-        const avatar = comment.imageId ? await getUserImageById(comment.imageId, token) : '';
-        return {
-          userName: comment.userName,
-          avatar,
-          text: comment.text,
-          createdAt: comment.createdAt
-        };
-      }));
-  
-      setComments(formattedComments);
+      
+      if (!commentData.items || commentData.items.length === 0) {
+        setComments([]);
+        setCommentTotalPages(1);
+      } else {
+        const formattedComments: FormattedComment[] = await Promise.all(commentData.items.map(async (comment: ResponseComment) => {
+          const avatar = comment.imageId ? await getUserImageById(comment.imageId, token) : '';
+          return {
+            userName: comment.userName,
+            avatar,
+            text: comment.text,
+            createdAt: comment.createdAt
+          };
+        }));
+        setComments(formattedComments);
+        setCommentTotalPages(commentData.totalPages);
+      }
       setCurrentPostId(postId);
       setCurrentCommentPageIndex(pageIndex);
-      setCommentTotalPages(commentData.totalPages);
       setOpenCommentModal(true);
     } catch (error) {
       console.error('Error fetching comments:', error);
+      setComments([]);
+      setCommentTotalPages(1);
+      setOpenCommentModal(true);
     }
   };
 
@@ -246,17 +255,32 @@ const MyUserProfile: React.FC = () => {
     try {
       const token = localStorage.getItem('token');
       if (!token || !currentPostId || !newComment) return;
+
       await addComment(currentPostId, newComment, token);
+
+      // Increment the comment count for the current post
+      setCommentsCount(prev => ({
+        ...prev,
+        [currentPostId]: (prev[currentPostId] || 0) + 1
+      }));
+
       setNewComment('');
-      fetchComments(currentPostId, currentCommentPageIndex);
+      fetchComments(currentPostId, currentCommentPageIndex); // Refresh the comments list
     } catch (error) {
       console.error('Error adding comment:', error);
     }
   };
 
+  const handleOpenComments = (postId: string) => {
+    setCurrentPostId(postId);
+    setComments([]); // Reset comments when opening the modal
+    fetchComments(postId);
+  };
+
   const handleClose = () => {
     setOpenReactionModal(false);
     setOpenCommentModal(false);
+    setCurrentPostId(null);
   };
 
   if (loading) {
@@ -329,7 +353,7 @@ const MyUserProfile: React.FC = () => {
               <div className="feedPostBottomRight">
                 <span 
                   className="feedPostCommentText" 
-                  onClick={() => fetchComments(post.id)}
+                  onClick={() => handleOpenComments(post.id)}
                   onMouseEnter={(e) => (e.currentTarget.style.color = 'blue')}
                   onMouseLeave={(e) => (e.currentTarget.style.color = 'black')}
                   style={{ cursor: 'pointer' }}
@@ -374,18 +398,10 @@ const MyUserProfile: React.FC = () => {
         </div>
       </Modal>
       <Modal open={openCommentModal} onClose={handleClose}>
-        <div className="modalContentLarge"> {/* Use new CSS class */}
+        <div className="modalContentLarge">
           <Typography variant="h6">Comments</Typography>
           <div className="addCommentContainer">
-            <TextField
-              label="Add a comment"
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-              fullWidth
-              multiline
-              rows={4}
-              variant="outlined"
-            />
+            <RichTextEditor content={newComment} setContent={setNewComment} />
             <Button
               variant="contained"
               color="primary"
@@ -395,16 +411,16 @@ const MyUserProfile: React.FC = () => {
               Submit
             </Button>
           </div>
-          <div className="commentsContainer"> {/* Adjusted class name */}
+          <div className="commentsContainer">
             {comments.length === 0 && (
               <Typography sx={{ mt: 2 }}>No comments yet.</Typography>
             )}
             {comments.length > 0 && comments.map((comment, index) => (
-              <div key={index} className="commentItem"> {/* Adjusted class name */}
+              <div key={index} className="commentItem">
                 <Avatar src={comment.avatar} alt={comment.userName} sx={{ margin: '0 10px' }} />
                 <div>
                   <Typography>{comment.userName}</Typography>
-                  <Typography sx={{ marginLeft: '10px' }}>{comment.text}</Typography>
+                  <Typography sx={{ marginLeft: '10px' }} dangerouslySetInnerHTML={{ __html: comment.text }}></Typography>
                 </div>
               </div>
             ))}

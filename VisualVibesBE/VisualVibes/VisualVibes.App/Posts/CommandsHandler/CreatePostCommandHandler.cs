@@ -10,7 +10,7 @@ using VisualVibes.Domain.Models.BaseEntity;
 
 namespace VisualVibes.App.Posts.CommandsHandler
 {
-    public class CreatePostCommandHandler : IRequestHandler<CreatePostCommand, ResponsePostDto>
+    public class CreatePostCommandHandler : IRequestHandler<CreatePostCommand, JoinedResponsePostDto>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<CreatePostCommandHandler> _logger;
@@ -21,7 +21,7 @@ namespace VisualVibes.App.Posts.CommandsHandler
             _logger = logger;
             _mapper = mapper;
         }
-        public async Task<ResponsePostDto> Handle(CreatePostCommand request, CancellationToken cancellationToken)
+        public async Task<JoinedResponsePostDto> Handle(CreatePostCommand request, CancellationToken cancellationToken)
         {
             //if (!IsValidImageFormat(request.createPostDto.Image.Type))
             //{
@@ -71,7 +71,7 @@ namespace VisualVibes.App.Posts.CommandsHandler
                 };
 
                 await _unitOfWork.ImageRepository.UploadImage(image);
-                await _unitOfWork.SaveAsync(); // Ensure the image is saved before referencing it
+                await _unitOfWork.SaveAsync();
             }
 
             var post = new Post()
@@ -91,7 +91,7 @@ namespace VisualVibes.App.Posts.CommandsHandler
 
             _logger.LogInformation("Post successfully created!");
 
-            return _mapper.Map<ResponsePostDto>(createdPost);
+            return _mapper.Map<JoinedResponsePostDto>(createdPost);
         }
 
         private bool IsValidImageFormat(string imageType)
