@@ -1,10 +1,9 @@
 import React from 'react'
 import "./Siderbar.css"
 
-const Sidebar = () => {
+const Sidebar: React.FC = () => {
   return (
     <div className="sidebar">
-        Sidebar Content
     </div>
   )
 }

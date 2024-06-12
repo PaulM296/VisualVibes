@@ -10,7 +10,7 @@ import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import EmailRoundedIcon from '@mui/icons-material/EmailRounded';
 import LockRoundedIcon from '@mui/icons-material/LockRounded';
-import usePasswordToggle from '../../Components/usePasswordToggle';
+import usePasswordToggle from '../../Hooks/usePasswordToggle';
 
 const validationSchemaStep1 = Yup.object().shape({
     email: Yup.string().email('Invalid email').required('Email is required'),

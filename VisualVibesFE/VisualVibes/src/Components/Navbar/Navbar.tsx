@@ -317,7 +317,7 @@ const Navbar = () => {
             {searchResults.length > 0 && (
               <UserSearch>
                 {searchResults.map(user => (
-                  <MenuItem key={user.id} onClick={() => navigate(`/profile/${user.id}`)}>
+                  <MenuItem key={user.id} onClick={() => navigate(`/user/${user.id}`)}>
                     <Avatar src={user.profilePicture || undefined} alt={`${user.userName}'s profile`}>
                       {user.userName.charAt(0)}
                     </Avatar>

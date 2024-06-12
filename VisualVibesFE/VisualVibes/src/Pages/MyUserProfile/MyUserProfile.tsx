@@ -16,13 +16,11 @@ const MyUserProfile: React.FC = () => {
           <Navbar />
         <div className="userProfileContent">
           <Sidebar />
-          {/* <UserPersonalFeed /> */}
           <UserPersonalFeedTest />
           <RightBarUserProfile />
         </div>
       </div>
-    </>
-    
+    </> 
   )
 }
 

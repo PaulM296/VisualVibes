@@ -1,0 +1,191 @@
+.otherUserPersonalFeedContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 60px;
+    width: 80%;
+    box-sizing: border-box;
+    margin: auto;
+  }
+  
+  .otherUserInfo {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .otherUserFeedPost {
+    width: 100%;
+    border-radius: 10px;
+    -webkit-box-shadow: 0px 0px 16px -8px rgba(0, 0, 0, 0.68);
+    box-shadow: 0px 0px 16px -8px rgba(0, 0, 0, 0.68);
+    margin: 30px 0;
+  }
+  
+  .otherUserFeedPostWrapper {
+    padding: 14px;
+  }
+  
+  .otherUserFeedPostTop {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .otherUserFeedPostTopLeft {
+    display: flex;
+    align-items: center;
+  }
+  
+  .otherUserFeedPostProfileImg {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  .otherUserFeedPostUsername {
+    font-size: 18px;
+    font-weight: 500;
+    margin: 0 10px;
+  }
+  
+  .otherUserFeedPostDate {
+    font-size: 14px;
+  }
+  
+  .otherUserFeedPostCenter {
+    margin: 20px 0;
+  }
+  
+  .otherUserFeedPostImg {
+    margin-top: 20px;
+    width: 100%;
+    max-height: 500px;
+    object-fit: contain;
+  }
+  
+  .otherUserFeedPostBottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .otherUserFeedPostBottomLeft {
+    display: flex;
+    align-items: center;
+  }
+  
+  .reactionIcon {
+    width: 24px;
+    height: 24px;
+    margin-right: 5px;
+    cursor: pointer;
+  }
+  
+  .otherUserFeedPostReactionCounter {
+    font-size: 18px;
+  }
+  
+  .otherUserFeedPostCommentText {
+    font-size: 18px;
+  }
+  
+  .otherUserReactionButton {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .reactionOptions {
+    display: flex;
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 5px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+  }
+  
+  .otherUserReactionOpener {
+    font-size: 24px;
+  }
+  
+  .reactionOptions span {
+    margin-right: 5px;
+    cursor: pointer;
+    font-size: 24px;
+  }
+  
+  .reactionButton span {
+    cursor: pointer;
+  }
+  
+  .modalContent {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 300px;
+    margin: auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .modalContentLarge {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 80%;
+    height: 80%;
+    margin: auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+  }
+  
+  .reactionItem {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .commentItem {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 10px;
+  }
+  
+  .addCommentContainer {
+    margin-bottom: 20px;
+  }
+  
+  .commentsContainer {
+    margin-top: 20px;
+  }
+  
+  .feedPostReactionCounter {
+    cursor: pointer;
+    transition: color 0.3s;
+  }
+  
+  .paginationControls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+  }
+  
+  .paginationControls Button {
+    min-width: 70px;
+  }
+  

@@ -239,8 +239,8 @@ const MyUserProfile: React.FC = () => {
         const formattedComments: FormattedComment[] = await Promise.all(commentData.items.map(async (comment: ResponseComment) => {
           const avatar = comment.imageId ? await getUserImageById(comment.imageId, token) : '';
           return {
-            id: comment.id,             // Add this line
-            userId: comment.userId,     // Add this line
+            id: comment.id,
+            userId: comment.userId,
             userName: comment.userName,
             avatar,
             text: comment.text,

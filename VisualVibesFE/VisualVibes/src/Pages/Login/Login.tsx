@@ -9,7 +9,7 @@ import { useFormik } from 'formik';
 import { Alert, Button, Snackbar, TextField } from '@mui/material';
 import EmailRoundedIcon from '@mui/icons-material/EmailRounded';
 import LockRoundedIcon from '@mui/icons-material/LockRounded';
-import usePasswordToggle from '../../Components/usePasswordToggle';
+import usePasswordToggle from '../../Hooks/usePasswordToggle';
 
 const Login: React.FC = () => {
     const [snackbarOpen, setSnackbarOpen] = useState(false);
