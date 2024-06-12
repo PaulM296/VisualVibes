@@ -37,4 +37,35 @@ const searchUsers = async (query: string, token: string): Promise<User[]> => {
     return response.data;
 }
 
-export { getUserById, getImageById, searchUsers };
+const checkIfFollowing = async (userId: string, token: string): Promise<boolean> => {
+    const response = await axios.get<boolean>(`${BASE_URL}/users/${userId}/is-following`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    });
+    return response.data;
+};
+
+const followUser = async (userId: string, token: string): Promise<void> => {
+    await axios.post(`${BASE_URL}/users/follow`, null, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        },
+        params: {
+            followingId: userId
+        }
+    });
+};
+
+const unfollowUser = async (userId: string, token: string): Promise<void> => {
+    await axios.post(`${BASE_URL}/users/unfollow`, null, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        },
+        params: {
+            followingId: userId
+        }
+    });
+};
+
+export { getUserById, getImageById, searchUsers, checkIfFollowing, followUser, unfollowUser };

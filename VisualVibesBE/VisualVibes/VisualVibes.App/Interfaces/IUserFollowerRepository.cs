@@ -9,5 +9,6 @@ namespace VisualVibes.App.Interfaces
         Task<IEnumerable<UserFollower>> GetFollowersByUserIdAsync(string userId);
         Task<IEnumerable<UserFollower>> GetFollowingByUserIdAsync(string userId);
         Task<IEnumerable<FeedPost>> GetFeedPostsByUserIdAsync(Guid feedId, string userId);
+        Task<bool> IsFollowingAsync(string followerId, string followingId);
     }
 }

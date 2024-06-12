@@ -14,7 +14,7 @@ import RichTextEditor from '../RichTextEditor/RichTextEditor';
 import { ReactionWithEmoji } from '../../Models/ReactionWithEmoji';
 import { FormattedComment, ResponseComment } from '../../Models/ResponseComment';
 import { ResponseReaction } from '../../Models/ResponseReaction';
-import { getImageById as getUserImageById } from '../../Services/UserServiceApi';
+import { getImageById as getUserImageById, checkIfFollowing, followUser, unfollowUser } from '../../Services/UserServiceApi';
 
 const formatPostDate = (date: Date | string) => {
     if (typeof date === 'string') {
@@ -53,6 +53,28 @@ const OtherUsersProfile: React.FC = () => {
     const [commentTotalPages, setCommentTotalPages] = useState(1);
     const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
     const [editCommentText, setEditCommentText] = useState<string>('');
+    const [isFollowing, setIsFollowing] = useState<boolean>(false);
+    const [isLoadingFollow, setIsLoadingFollow] = useState<boolean>(true);
+
+    useEffect(() => {
+        const fetchFollowingStatus = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    console.error('Token not found in localStorage');
+                    return;
+                }
+                const followingStatus = await checkIfFollowing(userId!, token);
+                setIsFollowing(followingStatus);
+            } catch (error) {
+                console.error('Error checking following status:', error);
+            } finally {
+                setIsLoadingFollow(false);
+            }
+        };
+
+        fetchFollowingStatus();
+    }, [userId]);
 
     useEffect(() => {
         if (!loading && user && posts.length > 0) {
@@ -243,7 +265,37 @@ const OtherUsersProfile: React.FC = () => {
         setCurrentPostId(null);
     };
 
-    if (loading) {
+    const handleFollow = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                console.error('Token not found in localStorage');
+                return;
+            }
+
+            await followUser(userId!, token);
+            setIsFollowing(true);
+        } catch (error) {
+            console.error('Error following user:', error);
+        }
+    };
+
+    const handleUnfollow = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                console.error('Token not found in localStorage');
+                return;
+            }
+
+            await unfollowUser(userId!, token);
+            setIsFollowing(false);
+        } catch (error) {
+            console.error('Error unfollowing user:', error);
+        }
+    };
+
+    if (loading || isLoadingFollow) {
         return <p>Loading...</p>;
     }
 
@@ -263,6 +315,14 @@ const OtherUsersProfile: React.FC = () => {
                     <Typography className="bio" style={{ marginTop: '10px', fontSize: '16px', textAlign: 'center', width: '100%' }}>
                         {user.bio}
                     </Typography>
+                    <Button
+                        variant="contained"
+                        color={isFollowing ? "secondary" : "primary"}
+                        onClick={isFollowing ? handleUnfollow : handleFollow}
+                        style={{ marginTop: '10px' }}
+                    >
+                        {isFollowing ? "Unfollow" : "Follow"}
+                    </Button>
                     {posts.map((post) => (
                         <div key={post.id} className="feedPost">
                             <div className="feedPostWrapper">

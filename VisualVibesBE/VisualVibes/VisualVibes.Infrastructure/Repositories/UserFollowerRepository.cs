@@ -74,5 +74,11 @@ namespace VisualVibes.Infrastructure.Repositories
             .Where(fp => fp.FeedId == feedId && fp.Post.UserId == userId)
             .ToListAsync();
         }
+
+        public async Task<bool> IsFollowingAsync(string followerId, string followingId)
+        {
+            return await _context.UserFollower
+                .AnyAsync(uf => uf.FollowerId == followerId && uf.FollowingId == followingId);
+        }
     }
 }

@@ -129,5 +129,14 @@ namespace VisualVibes.Api.Controllers
             return Ok(users);
         }
 
+        [HttpGet("{userId}/is-following")]
+        [Authorize]
+        public async Task<IActionResult> IsFollowingUser(string userId)
+        {
+            var followerId = HttpContext.GetUserIdClaimValue();
+            var isFollowing = await _mediator.Send(new IsFollowingUserQuery(followerId, userId));
+            return Ok(isFollowing);
+        }
+
     }
 }

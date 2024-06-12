@@ -26,15 +26,6 @@ const createPost = async (createPostDto: CreatePostModel, token: string): Promis
     return responseData;
   };
 
-//   const getPostsByUserId = async (userId: string, token: string): Promise<ResponsePostModel[]> => {
-//     const response = await axios.get<ResponsePostModel[]>(`${BASE_URL}/activityPosts/user/${userId}`, {
-//         headers: {
-//             'Authorization': `Bearer ${token}`
-//         }
-//     });
-//     return response.data;
-// };
-
 const getImageById = async (imageId: string, token: string): Promise<string> => {
   const response = await axios.get<{ imageSrc: string }>(`${BASE_URL}/image/${imageId}`, {
       headers: {
