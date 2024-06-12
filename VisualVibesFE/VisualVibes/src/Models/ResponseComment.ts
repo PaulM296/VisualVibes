@@ -11,6 +11,8 @@ export interface ResponseComment {
 }
 
 export interface FormattedComment {
+    id: string;
+    userId: string;
     userName: string;
     avatar: string;
     text: string;

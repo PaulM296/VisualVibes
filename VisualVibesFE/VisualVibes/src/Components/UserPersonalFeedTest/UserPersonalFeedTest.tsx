@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Avatar, Typography, Modal, Button } from '@mui/material';
+import { Avatar, Typography, Modal, Button, TextField } from '@mui/material';
 import { differenceInDays, differenceInHours, differenceInMinutes } from 'date-fns';
 import './UserPersonalFeedTest.css';
 import { User } from '../../Models/User';
@@ -7,7 +7,7 @@ import { getUserIdFromToken } from '../../Utils/auth';
 import { getUserById, getImageById as getUserImageById } from '../../Services/UserServiceApi';
 import { getPostsByUserId, getImageById as getPostImageById } from '../../Services/UserPostServiceApi';
 import { addReaction, getPostReactions } from '../../Services/ReactionServiceApi';
-import { getPostComments, addComment } from '../../Services/CommentServiceApi';
+import { getPostComments, addComment, updateComment, deleteComment } from '../../Services/CommentServiceApi';
 import { ResponsePostModel } from '../../Models/ReponsePostModel';
 import { getReactionEmoji } from '../../Utils/getReactionEmoji';
 import { ResponseReaction } from '../../Models/ResponseReaction';
@@ -37,6 +37,8 @@ const MyUserProfile: React.FC = () => {
   const [currentPostId, setCurrentPostId] = useState<string | null>(null);
   const [currentCommentPageIndex, setCurrentCommentPageIndex] = useState(1);
   const [commentTotalPages, setCommentTotalPages] = useState(1);
+  const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
+  const [editCommentText, setEditCommentText] = useState<string>('');
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -83,7 +85,6 @@ const MyUserProfile: React.FC = () => {
     const userPostsResponse: PaginationResponse<ResponsePostModel> = await getPostsByUserId(userId, paginationRequest, token);
     const userPosts = userPostsResponse.items;
     setPosts((prevPosts) => {
-      // Filter out any duplicates
       const newPosts = userPosts.filter(post => !prevPosts.some(prevPost => prevPost.id === post.id));
       return [...prevPosts, ...newPosts];
     });
@@ -238,6 +239,8 @@ const MyUserProfile: React.FC = () => {
         const formattedComments: FormattedComment[] = await Promise.all(commentData.items.map(async (comment: ResponseComment) => {
           const avatar = comment.imageId ? await getUserImageById(comment.imageId, token) : '';
           return {
+            id: comment.id,             // Add this line
+            userId: comment.userId,     // Add this line
             userName: comment.userName,
             avatar,
             text: comment.text,
@@ -274,6 +277,37 @@ const MyUserProfile: React.FC = () => {
       fetchComments(currentPostId, currentCommentPageIndex);
     } catch (error) {
       console.error('Error adding comment:', error);
+    }
+  };
+
+  const handleEditComment = (comment: FormattedComment) => {
+    setEditingCommentId(comment.id);
+    setEditCommentText(comment.text);
+  };
+  
+  const handleUpdateComment = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token || !editingCommentId || !editCommentText) return;
+  
+      await updateComment(editingCommentId, editCommentText, token);
+      setEditingCommentId(null);
+      setEditCommentText('');
+      fetchComments(currentPostId!, currentCommentPageIndex);
+    } catch (error) {
+      console.error('Error updating comment:', error);
+    }
+  };
+  
+  const handleDeleteComment = async (commentId: string) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+  
+      await deleteComment(commentId, token);
+      fetchComments(currentPostId!, currentCommentPageIndex);
+    } catch (error) {
+      console.error('Error deleting comment:', error);
     }
   };
 
@@ -441,8 +475,27 @@ const MyUserProfile: React.FC = () => {
                 <Avatar src={comment.avatar} alt={comment.userName} sx={{ margin: '0 10px' }} />
                 <div>
                   <Typography>{comment.userName}</Typography>
-                  <Typography sx={{ marginLeft: '10px' }} dangerouslySetInnerHTML={{ __html: comment.text }}></Typography>
+                  {editingCommentId === comment.id ? (
+                    <>
+                      <TextField
+                        value={editCommentText}
+                        onChange={(e) => setEditCommentText(e.target.value)}
+                        fullWidth
+                        multiline
+                      />
+                      <Button variant="contained" color="primary" onClick={handleUpdateComment}>Save</Button>
+                      <Button onClick={() => setEditingCommentId(null)}>Cancel</Button>
+                    </>
+                  ) : (
+                    <Typography sx={{ marginLeft: '10px' }} dangerouslySetInnerHTML={{ __html: comment.text }}></Typography>
+                  )}
                 </div>
+                {comment.userId === getUserIdFromToken() && (
+                  <div>
+                    <Button onClick={() => handleEditComment(comment)}>Edit</Button>
+                    <Button onClick={() => handleDeleteComment(comment.id)}>Delete</Button>
+                  </div>
+                )}
               </div>
             ))}
             <div className="paginationControls">

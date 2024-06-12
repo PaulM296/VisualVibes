@@ -3,7 +3,7 @@ import { BASE_URL } from '../Config/ApiConfig';
 import { ResponseComment } from '../Models/ResponseComment';
 import { PaginationResponse } from '../Models/PaginationResponse';
 
-export const getCommentsCountByPostId = async (postId: string, token: string) => {
+const getCommentsCountByPostId = async (postId: string, token: string) => {
   try {
     const response = await axios.get(`${BASE_URL}/comments/post/${postId}/comments/total`, {
       headers: {
@@ -17,7 +17,7 @@ export const getCommentsCountByPostId = async (postId: string, token: string) =>
   }
 };
 
-export const getPostComments = async (postId: string, token: string, pageIndex: number = 1, pageSize: number = 10): Promise<PaginationResponse<ResponseComment>> => {
+const getPostComments = async (postId: string, token: string, pageIndex: number = 1, pageSize: number = 10): Promise<PaginationResponse<ResponseComment>> => {
   try {
     const response = await axios.get(`${BASE_URL}/comments/post/${postId}`, {
       headers: {
@@ -35,7 +35,7 @@ export const getPostComments = async (postId: string, token: string, pageIndex: 
   }
 };
 
-export const addComment = async (postId: string, text: string, token: string) => {
+const addComment = async (postId: string, text: string, token: string) => {
   try {
     const response = await axios.post(`${BASE_URL}/comments`, {
       postId,
@@ -51,3 +51,33 @@ export const addComment = async (postId: string, text: string, token: string) =>
     throw error;
   }
 };
+
+const updateComment = async (commentId: string, text: string, token: string) => {
+  try {
+    const response = await axios.put(`${BASE_URL}/comments/${commentId}`, { text }, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Failed to update comment:', error);
+    throw error;
+  }
+};
+
+const deleteComment = async (commentId: string, token: string) => {
+  try {
+    const response = await axios.delete(`${BASE_URL}/comments/${commentId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Failed to delete comment:', error);
+    throw error;
+  }
+};
+
+export { getCommentsCountByPostId, getPostComments, addComment, updateComment, deleteComment };
