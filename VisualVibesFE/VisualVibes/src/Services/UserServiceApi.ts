@@ -1,6 +1,7 @@
 import axios from "axios";
 import { BASE_URL } from "../Config/ApiConfig";
 import { User } from "../Models/User";
+import { UserFollowerInterface } from "../Models/UserFollowerInterface";
 
 const getUserById = async (userId: string, token: string): Promise<User> => {
     const response = await axios.get<User>(`${BASE_URL}/users/${userId}`, {
@@ -68,4 +69,23 @@ const unfollowUser = async (userId: string, token: string): Promise<void> => {
     });
 };
 
-export { getUserById, getImageById, searchUsers, checkIfFollowing, followUser, unfollowUser };
+const getUserFollowers = async (userId: string, token: string): Promise<User[]> => {
+    const response = await axios.get<User[]>(`${BASE_URL}/users/${userId}/followers`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    });
+    return response.data;
+}
+
+const getUserFollowing = async (userId: string, token: string): Promise<UserFollowerInterface[]> => {
+    const response = await axios.get<UserFollowerInterface[]>(`${BASE_URL}/users/${userId}/following`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    return response.data;
+  };
+  
+
+export { getUserById, getImageById, searchUsers, checkIfFollowing, followUser, unfollowUser, getUserFollowers, getUserFollowing };

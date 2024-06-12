@@ -24,7 +24,15 @@ namespace VisualVibes.App.UserFollowers.QueriesHandler
         {
             var followers = await _unitOfWork.UserFollowerRepository.GetFollowersByUserIdAsync(request.UserId);
 
-            var followerDtos = _mapper.Map<IEnumerable<UserFollowerDto>>(followers);
+            var followerDtos = followers.Select(f => new UserFollowerDto
+            {
+                FollowerId = f.FollowerId,
+                FollowingId = f.FollowingId,
+                UserName = f.Follower.UserName,
+                FirstName = f.Follower.UserProfile.FirstName,
+                LastName = f.Follower.UserProfile.LastName,
+                ImageId = f.Follower.UserProfile.ImageId
+            });
 
             _logger.LogInformation("Followers successfully retrieved!");
 

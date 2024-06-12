@@ -11,5 +11,17 @@ namespace VisualVibes.App.DTOs.UserFollowerDtos
 
         [Required]
         public string FollowingId { get; set; }
+
+        [Required]
+        public string UserName { get; set; }
+
+        [Required]
+        public string FirstName { get; set; }
+
+        [Required]
+        public string LastName { get; set; }
+
+        [Required]
+        public Guid ImageId { get; set; }
     }
 }

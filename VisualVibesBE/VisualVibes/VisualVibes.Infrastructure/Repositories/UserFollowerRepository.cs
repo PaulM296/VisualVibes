@@ -55,6 +55,7 @@ namespace VisualVibes.Infrastructure.Repositories
         {
             return await _context.UserFollower
                 .Include(uf => uf.Follower)
+                    .ThenInclude(u => u.UserProfile)
                 .Where(uf => uf.FollowingId == userId)
                 .ToListAsync();
         }
@@ -63,10 +64,10 @@ namespace VisualVibes.Infrastructure.Repositories
         {
             return await _context.UserFollower
                 .Include(uf => uf.Following)
+                    .ThenInclude(u => u.UserProfile)
                 .Where(uf => uf.FollowerId == userId)
                 .ToListAsync();
         }
-
         public async Task<IEnumerable<FeedPost>> GetFeedPostsByUserIdAsync(Guid feedId, string userId)
         {
             return await _context.FeedPost
