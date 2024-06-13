@@ -18,11 +18,11 @@ const Sidebar: React.FC = () => {
       const token = localStorage.getItem('token');
       if (userId && token) {
         try {
-          const followingList = await getUserFollowing(userId, token);
+          const followingList = await getUserFollowing(userId);
           setFollowing(followingList);
 
           const avatarPromises = followingList.map(user =>
-            getImageById(user.imageId, token).then(imageSrc => ({ [user.imageId]: imageSrc }))
+            getImageById(user.imageId).then(imageSrc => ({ [user.imageId]: imageSrc }))
           );
           const avatarResults = await Promise.all(avatarPromises);
           const avatarMap = avatarResults.reduce((acc, curr) => ({ ...acc, ...curr }), {});

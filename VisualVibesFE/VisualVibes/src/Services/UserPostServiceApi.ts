@@ -1,20 +1,18 @@
-import axios from "axios";
+import apiClient from '../Config/AxiosInterceptor';
 import { CreatePostModel } from "../Models/CreatePostModel";
-import { BASE_URL } from "../Config/ApiConfig";
 import { ResponsePostModel } from "../Models/ReponsePostModel";
 import { PaginationRequestDto, PaginationResponse } from "../Models/PaginationResponse";
 
-const createPost = async (createPostDto: CreatePostModel, token: string): Promise<ResponsePostModel> => {
+const createPost = async (createPostDto: CreatePostModel): Promise<ResponsePostModel> => {
     const formData = new FormData();
     formData.append('caption', createPostDto.caption);
     if (createPostDto.image) {
       formData.append('image', createPostDto.image);
     }
   
-    const response = await axios.post<ResponsePostModel>(`${BASE_URL}/activityPosts`, formData, {
+    const response = await apiClient.post<ResponsePostModel>('/activityPosts', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
-        'Authorization': `Bearer ${token}`
       }
     });
   
@@ -26,20 +24,13 @@ const createPost = async (createPostDto: CreatePostModel, token: string): Promis
     return responseData;
   };
 
-const getImageById = async (imageId: string, token: string): Promise<string> => {
-  const response = await axios.get<{ imageSrc: string }>(`${BASE_URL}/image/${imageId}`, {
-      headers: {
-          'Authorization': `Bearer ${token}`
-      }
-  });
+const getImageById = async (imageId: string): Promise<string> => {
+  const response = await apiClient.get<{ imageSrc: string }>(`/image/${imageId}`);
   return response.data.imageSrc;
 };
 
-const getPostsByUserId = async (userId: string, paginationRequest: PaginationRequestDto, token: string): Promise<PaginationResponse<ResponsePostModel>> => {
-  const response = await axios.get<PaginationResponse<ResponsePostModel>>(`${BASE_URL}/activityPosts/user/${userId}`, {
-      headers: {
-          'Authorization': `Bearer ${token}`
-      },
+const getPostsByUserId = async (userId: string, paginationRequest: PaginationRequestDto): Promise<PaginationResponse<ResponsePostModel>> => {
+  const response = await apiClient.get<PaginationResponse<ResponsePostModel>>(`/activityPosts/user/${userId}`, {
       params: {
           pageIndex: paginationRequest.pageIndex,
           pageSize: paginationRequest.pageSize,
@@ -65,5 +56,4 @@ const getPostsByUserId = async (userId: string, paginationRequest: PaginationReq
   };
 };
   
-
 export { createPost, getPostsByUserId, getImageById };

@@ -52,7 +52,7 @@ const HomeFeed: React.FC = () => {
         return;
       }
 
-      const data: PaginationResponse<UserFeed> = await getUserFeed(token, pageIndex, 10);
+      const data: PaginationResponse<UserFeed> = await getUserFeed(pageIndex, 10);
       const newPosts = data.items[0].posts;
 
       setPosts((prevPosts) => (pageIndex === 1 ? newPosts : [...prevPosts, ...newPosts]));
@@ -61,10 +61,10 @@ const HomeFeed: React.FC = () => {
 
       const imagesPromises = newPosts.map(async (post) => {
         const postImagePromise = post.postImageId
-          ? getPostImageById(post.postImageId, token)
+          ? getPostImageById(post.postImageId)
           : Promise.resolve('');
         const profileImagePromise = post.userProfileImageId
-          ? getUserImageById(post.userProfileImageId, token)
+          ? getUserImageById(post.userProfileImageId)
           : Promise.resolve('');
 
         const [postImageSrc, profileImageSrc] = await Promise.all([postImagePromise, profileImagePromise]);
@@ -166,7 +166,7 @@ const HomeFeed: React.FC = () => {
         return;
       }
 
-      await addReaction(postId, reactionTypeId, token);
+      await addReaction(postId, reactionTypeId);
 
       setReactionsCount((prev) => {
         const newReactionsCount = prev[postId] ? prev[postId] + 1 : 1;
@@ -187,10 +187,10 @@ const HomeFeed: React.FC = () => {
         return;
       }
 
-      const reactionData = await getPostReactions(postId, token, pageIndex);
+      const reactionData = await getPostReactions(postId, pageIndex);
       const formattedReactions: ReactionWithEmoji[] = await Promise.all(
         reactionData.items.map(async (reaction: ResponseReaction) => {
-          const avatar = reaction.imageId ? await getUserImageById(reaction.imageId, token) : '';
+          const avatar = reaction.imageId ? await getUserImageById(reaction.imageId) : '';
           return {
             userName: reaction.userName,
             avatar,
@@ -217,7 +217,7 @@ const HomeFeed: React.FC = () => {
         return;
       }
 
-      const commentData = await getPostComments(postId, token, pageIndex, pageSize);
+      const commentData = await getPostComments(postId, pageIndex, pageSize);
 
       if (!commentData.items || commentData.items.length === 0) {
         setComments([]);
@@ -225,7 +225,7 @@ const HomeFeed: React.FC = () => {
       } else {
         const formattedComments: FormattedComment[] = await Promise.all(
           commentData.items.map(async (comment: ResponseComment) => {
-            const avatar = comment.imageId ? await getUserImageById(comment.imageId, token) : '';
+            const avatar = comment.imageId ? await getUserImageById(comment.imageId) : '';
             return {
               id: comment.id,
               userId: comment.userId,
@@ -255,7 +255,7 @@ const HomeFeed: React.FC = () => {
       const token = localStorage.getItem('token');
       if (!token || !currentPostId || !newComment) return;
 
-      await addComment(currentPostId, newComment, token);
+      await addComment(currentPostId, newComment);
 
       setCommentsCount((prev) => ({
         ...prev,
@@ -279,7 +279,7 @@ const HomeFeed: React.FC = () => {
       const token = localStorage.getItem('token');
       if (!token || !editingCommentId || !editCommentText) return;
 
-      await updateComment(editingCommentId, editCommentText, token);
+      await updateComment(editingCommentId, editCommentText);
       setEditingCommentId(null);
       setEditCommentText('');
       fetchComments(currentPostId!, currentCommentPageIndex);
@@ -293,7 +293,7 @@ const HomeFeed: React.FC = () => {
       const token = localStorage.getItem('token');
       if (!token) return;
 
-      await deleteComment(commentId, token);
+      await deleteComment(commentId);
       fetchComments(currentPostId!, currentCommentPageIndex);
     } catch (error) {
       console.error('Error deleting comment:', error);

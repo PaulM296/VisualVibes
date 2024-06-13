@@ -1,15 +1,10 @@
-import axios from 'axios';
-import { BASE_URL } from '../Config/ApiConfig';
+import apiClient from '../Config/AxiosInterceptor';
 import { ResponseComment } from '../Models/ResponseComment';
 import { PaginationResponse } from '../Models/PaginationResponse';
 
-const getCommentsCountByPostId = async (postId: string, token: string) => {
+const getCommentsCountByPostId = async (postId: string) => {
   try {
-    const response = await axios.get(`${BASE_URL}/comments/post/${postId}/comments/total`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
+    const response = await apiClient.get(`/comments/post/${postId}/comments/total`);
     return response.data;
   } catch (error) {
     console.error('Failed to fetch comments count:', error);
@@ -17,12 +12,9 @@ const getCommentsCountByPostId = async (postId: string, token: string) => {
   }
 };
 
-const getPostComments = async (postId: string, token: string, pageIndex: number = 1, pageSize: number = 10): Promise<PaginationResponse<ResponseComment>> => {
+const getPostComments = async (postId: string, pageIndex: number = 1, pageSize: number = 10): Promise<PaginationResponse<ResponseComment>> => {
   try {
-    const response = await axios.get(`${BASE_URL}/comments/post/${postId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      },
+    const response = await apiClient.get(`/comments/post/${postId}`, {
       params: {
         PageIndex: pageIndex,
         PageSize: pageSize
@@ -35,15 +27,11 @@ const getPostComments = async (postId: string, token: string, pageIndex: number 
   }
 };
 
-const addComment = async (postId: string, text: string, token: string) => {
+const addComment = async (postId: string, text: string) => {
   try {
-    const response = await axios.post(`${BASE_URL}/comments`, {
+    const response = await apiClient.post('/comments', {
       postId,
       text
-    }, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
     });
     return response.data;
   } catch (error) {
@@ -52,13 +40,9 @@ const addComment = async (postId: string, text: string, token: string) => {
   }
 };
 
-const updateComment = async (commentId: string, text: string, token: string) => {
+const updateComment = async (commentId: string, text: string) => {
   try {
-    const response = await axios.put(`${BASE_URL}/comments/${commentId}`, { text }, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
+    const response = await apiClient.put(`/comments/${commentId}`, { text });
     return response.data;
   } catch (error) {
     console.error('Failed to update comment:', error);
@@ -66,13 +50,9 @@ const updateComment = async (commentId: string, text: string, token: string) => 
   }
 };
 
-const deleteComment = async (commentId: string, token: string) => {
+const deleteComment = async (commentId: string) => {
   try {
-    const response = await axios.delete(`${BASE_URL}/comments/${commentId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
+    const response = await apiClient.delete(`/comments/${commentId}`);
     return response.data;
   } catch (error) {
     console.error('Failed to delete comment:', error);

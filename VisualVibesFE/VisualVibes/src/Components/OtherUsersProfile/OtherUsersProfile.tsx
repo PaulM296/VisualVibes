@@ -15,6 +15,7 @@ import { ReactionWithEmoji } from '../../Models/ReactionWithEmoji';
 import { FormattedComment, ResponseComment } from '../../Models/ResponseComment';
 import { ResponseReaction } from '../../Models/ResponseReaction';
 import { getImageById as getUserImageById, checkIfFollowing, followUser, unfollowUser } from '../../Services/UserServiceApi';
+import UserFollowModal from '../UserFollowModal/UserFollowModal';
 
 const formatPostDate = (date: Date | string) => {
     if (typeof date === 'string') {
@@ -55,6 +56,8 @@ const OtherUsersProfile: React.FC = () => {
     const [editCommentText, setEditCommentText] = useState<string>('');
     const [isFollowing, setIsFollowing] = useState<boolean>(false);
     const [isLoadingFollow, setIsLoadingFollow] = useState<boolean>(true);
+    const [openFollowingModal, setOpenFollowingModal] = useState<boolean>(false);
+    const [openFollowersModal, setOpenFollowersModal] = useState<boolean>(false);
 
     useEffect(() => {
         const fetchFollowingStatus = async () => {
@@ -64,7 +67,7 @@ const OtherUsersProfile: React.FC = () => {
                     console.error('Token not found in localStorage');
                     return;
                 }
-                const followingStatus = await checkIfFollowing(userId!, token);
+                const followingStatus = await checkIfFollowing(userId!);
                 setIsFollowing(followingStatus);
             } catch (error) {
                 console.error('Error checking following status:', error);
@@ -124,7 +127,7 @@ const OtherUsersProfile: React.FC = () => {
                 return;
             }
 
-            await addReaction(postId, reactionTypeId, token);
+            await addReaction(postId, reactionTypeId);
 
             setReactionsCount((prev) => {
                 const newReactionsCount = prev[postId] ? prev[postId] + 1 : 1;
@@ -146,9 +149,9 @@ const OtherUsersProfile: React.FC = () => {
                 return;
             }
 
-            const reactionData = await getPostReactions(postId, token, pageIndex);
+            const reactionData = await getPostReactions(postId, pageIndex);
             const formattedReactions: ReactionWithEmoji[] = await Promise.all(reactionData.items.map(async (reaction: ResponseReaction) => {
-                const avatar = reaction.imageId ? await getUserImageById(reaction.imageId, token) : '';
+                const avatar = reaction.imageId ? await getUserImageById(reaction.imageId) : '';
                 return {
                     userName: reaction.userName,
                     avatar: avatar || '',
@@ -172,14 +175,14 @@ const OtherUsersProfile: React.FC = () => {
                 return;
             }
 
-            const commentData = await getPostComments(postId, token, pageIndex, pageSize);
+            const commentData = await getPostComments(postId, pageIndex, pageSize);
 
             if (!commentData.items || commentData.items.length === 0) {
                 setComments([]);
                 setCommentTotalPages(1);
             } else {
                 const formattedComments: FormattedComment[] = await Promise.all(commentData.items.map(async (comment: ResponseComment) => {
-                    const avatar = comment.imageId ? await getUserImageById(comment.imageId, token) : '';
+                    const avatar = comment.imageId ? await getUserImageById(comment.imageId) : '';
                     return {
                         id: comment.id,
                         userId: comment.userId,
@@ -208,7 +211,7 @@ const OtherUsersProfile: React.FC = () => {
             const token = localStorage.getItem('token');
             if (!token || !currentPostId || !newComment) return;
 
-            await addComment(currentPostId, newComment, token);
+            await addComment(currentPostId, newComment);
 
             setCommentsCount(prev => ({
                 ...prev,
@@ -232,7 +235,7 @@ const OtherUsersProfile: React.FC = () => {
             const token = localStorage.getItem('token');
             if (!token || !editingCommentId || !editCommentText) return;
 
-            await updateComment(editingCommentId, editCommentText, token);
+            await updateComment(editingCommentId, editCommentText);
             setEditingCommentId(null);
             setEditCommentText('');
             fetchComments(currentPostId!, currentCommentPageIndex);
@@ -246,7 +249,7 @@ const OtherUsersProfile: React.FC = () => {
             const token = localStorage.getItem('token');
             if (!token) return;
 
-            await deleteComment(commentId, token);
+            await deleteComment(commentId);
             fetchComments(currentPostId!, currentCommentPageIndex);
         } catch (error) {
             console.error('Error deleting comment:', error);
@@ -273,7 +276,7 @@ const OtherUsersProfile: React.FC = () => {
                 return;
             }
 
-            await followUser(userId!, token);
+            await followUser(userId!);
             setIsFollowing(true);
         } catch (error) {
             console.error('Error following user:', error);
@@ -288,7 +291,7 @@ const OtherUsersProfile: React.FC = () => {
                 return;
             }
 
-            await unfollowUser(userId!, token);
+            await unfollowUser(userId!);
             setIsFollowing(false);
         } catch (error) {
             console.error('Error unfollowing user:', error);
@@ -315,14 +318,31 @@ const OtherUsersProfile: React.FC = () => {
                     <Typography className="bio" style={{ marginTop: '10px', fontSize: '16px', textAlign: 'center', width: '100%' }}>
                         {user.bio}
                     </Typography>
-                    <Button
-                        variant="contained"
-                        color={isFollowing ? "secondary" : "primary"}
-                        onClick={isFollowing ? handleUnfollow : handleFollow}
-                        style={{ marginTop: '10px' }}
-                    >
-                        {isFollowing ? "Unfollow" : "Follow"}
-                    </Button>
+                    <div className="userProfileButtons">
+                        <Button
+                            variant="contained"
+                            color={isFollowing ? "secondary" : "primary"}
+                            onClick={isFollowing ? handleUnfollow : handleFollow}
+                            style={{ marginRight: '10px' }}
+                        >
+                            {isFollowing ? "Unfollow" : "Follow"}
+                        </Button>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={() => setOpenFollowingModal(true)}
+                            style={{ marginRight: '10px' }}
+                        >
+                            Following
+                        </Button>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={() => setOpenFollowersModal(true)}
+                        >
+                            Followers
+                        </Button>
+                    </div>
                     {posts.map((post) => (
                         <div key={post.id} className="feedPost">
                             <div className="feedPostWrapper">
@@ -493,6 +513,18 @@ const OtherUsersProfile: React.FC = () => {
                     </div>
                 </div>
             </Modal>
+            <UserFollowModal
+                userId={userId!}
+                type="following"
+                open={openFollowingModal}
+                onClose={() => setOpenFollowingModal(false)}
+            />
+            <UserFollowModal
+                userId={userId!}
+                type="followers"
+                open={openFollowersModal}
+                onClose={() => setOpenFollowersModal(false)}
+            />
         </div>
     );
 };

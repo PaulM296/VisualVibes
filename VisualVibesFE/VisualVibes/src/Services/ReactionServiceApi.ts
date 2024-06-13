@@ -1,16 +1,11 @@
-import axios from 'axios';
-import { BASE_URL } from '../Config/ApiConfig';
+import apiClient from '../Config/AxiosInterceptor';
 import { ReactionType } from '../Models/ReactionType';
 import { PaginationResponse } from '../Models/PaginationResponse';
 import { ResponseReaction } from '../Models/ResponseReaction';
 
-const getReactionsCountByPostId = async (postId: string, token: string) => {
+const getReactionsCountByPostId = async (postId: string) => {
   try {
-    const response = await axios.get(`${BASE_URL}/reactions/post/${postId}/reactions/total`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
+    const response = await apiClient.get(`/reactions/post/${postId}/reactions/total`);
     return response.data;
   } catch (error) {
     console.error('Failed to fetch reactions count:', error);
@@ -18,7 +13,7 @@ const getReactionsCountByPostId = async (postId: string, token: string) => {
   }
 };
 
-const addReaction = async (postId: string, reactionType: number, token: string) => {
+const addReaction = async (postId: string, reactionType: number) => {
   try {
     const payload = {
       postId,
@@ -28,15 +23,7 @@ const addReaction = async (postId: string, reactionType: number, token: string) 
 
     console.log('Payload being sent:', payload);
 
-    const response = await axios.post(
-      `${BASE_URL}/reactions`,
-      payload,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await apiClient.post('/reactions', payload);
     return response.data;
   } catch (error) {
     console.error('Failed to add reaction:', error);
@@ -44,12 +31,9 @@ const addReaction = async (postId: string, reactionType: number, token: string) 
   }
 };
 
-const getPostReactions = async (postId: string, token: string, pageIndex: number = 1, pageSize: number = 10): Promise<PaginationResponse<ResponseReaction>> => {
+const getPostReactions = async (postId: string, pageIndex: number = 1, pageSize: number = 10): Promise<PaginationResponse<ResponseReaction>> => {
   try {
-    const response = await axios.get<PaginationResponse<ResponseReaction>>(`${BASE_URL}/reactions/post/users/${postId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      },
+    const response = await apiClient.get(`/reactions/post/users/${postId}`, {
       params: {
         PageIndex: pageIndex,
         PageSize: pageSize
@@ -62,20 +46,16 @@ const getPostReactions = async (postId: string, token: string, pageIndex: number
   }
 };
 
-
-const getUserReactionByPostId = async (postId: string, userId: string, token: string): Promise<ReactionType | null> => {
+const getUserReactionByPostId = async (postId: string, userId: string): Promise<ReactionType | null> => {
   try {
-    const response = await axios.get<PaginationResponse<ResponseReaction>>(`${BASE_URL}/reactions/post/users/${postId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      },
+    const response = await apiClient.get<{ items: ResponseReaction[] }>(`/reactions/post/users/${postId}`, {
       params: {
         PageIndex: 1,
         PageSize: 10
       }
     });
 
-    const userReaction = response.data.items.find(reaction => reaction.userId === userId);
+    const userReaction = response.data.items.find((reaction: ResponseReaction) => reaction.userId === userId);
     return userReaction ? userReaction.reactionType : null;
   } catch (error) {
     console.error('Failed to fetch user reaction:', error);
@@ -83,17 +63,9 @@ const getUserReactionByPostId = async (postId: string, userId: string, token: st
   }
 };
 
-const updateReaction = async (reactionId: string, reactionType: number, token: string) => {
+const updateReaction = async (reactionId: string, reactionType: number) => {
   try {
-    const response = await axios.put(
-      `${BASE_URL}/reactions/${reactionId}`,
-      { reactionType },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await apiClient.put(`/reactions/${reactionId}`, { reactionType });
     return response.data;
   } catch (error) {
     console.error('Failed to update reaction:', error);
@@ -101,13 +73,9 @@ const updateReaction = async (reactionId: string, reactionType: number, token: s
   }
 };
 
-const deleteReaction = async (reactionId: string, token: string) => {
+const deleteReaction = async (reactionId: string) => {
   try {
-    const response = await axios.delete(`${BASE_URL}/reactions/${reactionId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await apiClient.delete(`/reactions/${reactionId}`);
     return response.data;
   } catch (error) {
     console.error('Failed to delete reaction:', error);
@@ -115,4 +83,4 @@ const deleteReaction = async (reactionId: string, token: string) => {
   }
 };
 
-export { getReactionsCountByPostId, addReaction, getPostReactions, getUserReactionByPostId, updateReaction, deleteReaction }
+export { getReactionsCountByPostId, addReaction, getPostReactions, getUserReactionByPostId, updateReaction, deleteReaction };

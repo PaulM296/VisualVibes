@@ -1,24 +1,15 @@
-import axios from "axios";
-import { BASE_URL } from "../Config/ApiConfig";
+import apiClient from '../Config/AxiosInterceptor';
 import { User } from "../Models/User";
 import { UserFollowerInterface } from "../Models/UserFollowerInterface";
 
-const getUserById = async (userId: string, token: string): Promise<User> => {
-    const response = await axios.get<User>(`${BASE_URL}/users/${userId}`, {
-        headers: {
-            'Authorization': `Bearer ${token}`
-        }
-    });
+const getUserById = async (userId: string): Promise<User> => {
+    const response = await apiClient.get<User>(`/users/${userId}`);
     return response.data;
 };
 
-const getImageById = async (imageId: string, token: string): Promise<string> => {
+const getImageById = async (imageId: string): Promise<string> => {
     try {
-        const response = await axios.get<{ imageSrc: string }>(`${BASE_URL}/image/${imageId}`, {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
+        const response = await apiClient.get<{ imageSrc: string }>(`/image/${imageId}`);
         return response.data.imageSrc;
     } catch (error) {
         console.error(`Error fetching image with ID ${imageId}:`, error);
@@ -26,66 +17,44 @@ const getImageById = async (imageId: string, token: string): Promise<string> => 
     }
 };
 
-const searchUsers = async (query: string, token: string): Promise<User[]> => {
-    const response = await axios.get<User[]>(`${BASE_URL}/users/search`, {
-        headers: {
-            'Authorization': `Bearer ${token}`
-        },
+const searchUsers = async (query: string): Promise<User[]> => {
+    const response = await apiClient.get<User[]>('/users/search', {
         params: {
             query
         }
     });
     return response.data;
-}
+};
 
-const checkIfFollowing = async (userId: string, token: string): Promise<boolean> => {
-    const response = await axios.get<boolean>(`${BASE_URL}/users/${userId}/is-following`, {
-        headers: {
-            'Authorization': `Bearer ${token}`
-        }
-    });
+const checkIfFollowing = async (userId: string): Promise<boolean> => {
+    const response = await apiClient.get<boolean>(`/users/${userId}/is-following`);
     return response.data;
 };
 
-const followUser = async (userId: string, token: string): Promise<void> => {
-    await axios.post(`${BASE_URL}/users/follow`, null, {
-        headers: {
-            'Authorization': `Bearer ${token}`
-        },
+const followUser = async (userId: string): Promise<void> => {
+    await apiClient.post('/users/follow', null, {
         params: {
             followingId: userId
         }
     });
 };
 
-const unfollowUser = async (userId: string, token: string): Promise<void> => {
-    await axios.post(`${BASE_URL}/users/unfollow`, null, {
-        headers: {
-            'Authorization': `Bearer ${token}`
-        },
+const unfollowUser = async (userId: string): Promise<void> => {
+    await apiClient.post('/users/unfollow', null, {
         params: {
             followingId: userId
         }
     });
 };
 
-const getUserFollowers = async (userId: string, token: string): Promise<User[]> => {
-    const response = await axios.get<User[]>(`${BASE_URL}/users/${userId}/followers`, {
-        headers: {
-            'Authorization': `Bearer ${token}`
-        }
-    });
+const getUserFollowers = async (userId: string): Promise<User[]> => {
+    const response = await apiClient.get<User[]>(`/users/${userId}/followers`);
     return response.data;
-}
+};
 
-const getUserFollowing = async (userId: string, token: string): Promise<UserFollowerInterface[]> => {
-    const response = await axios.get<UserFollowerInterface[]>(`${BASE_URL}/users/${userId}/following`, {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    });
+const getUserFollowing = async (userId: string): Promise<UserFollowerInterface[]> => {
+    const response = await apiClient.get<UserFollowerInterface[]>(`/users/${userId}/following`);
     return response.data;
-  };
-  
+};
 
 export { getUserById, getImageById, searchUsers, checkIfFollowing, followUser, unfollowUser, getUserFollowers, getUserFollowing };

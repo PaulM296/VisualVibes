@@ -24,15 +24,15 @@ export const useUserProfile = (userId: string) => {
             return;
           }
   
-          const userData = await getUserById(userId, token);
+          const userData = await getUserById(userId);
           setUser(userData);
   
           if (userData.imageId) {
-            const imageSrc = await getUserImageById(userData.imageId, token);
+            const imageSrc = await getUserImageById(userData.imageId);
             setProfilePicture(imageSrc);
           }
   
-          await fetchPosts(userId, 1, token);
+          await fetchPosts(userId, 1);
         } catch (error) {
           console.error('Error fetching user data:', error);
         } finally {
@@ -43,13 +43,13 @@ export const useUserProfile = (userId: string) => {
       fetchUserData();
     }, [userId]);
   
-    const fetchPosts = async (userId: string, pageIndex: number, token: string) => {
+    const fetchPosts = async (userId: string, pageIndex: number) => {
       const paginationRequest: PaginationRequestDto = {
         pageIndex: pageIndex,
         pageSize: 10
       };
   
-      const userPostsResponse: PaginationResponse<ResponsePostModel> = await getPostsByUserId(userId, paginationRequest, token);
+      const userPostsResponse: PaginationResponse<ResponsePostModel> = await getPostsByUserId(userId, paginationRequest);
       const userPosts = userPostsResponse.items;
       setPosts((prevPosts) => {
         const newPosts = userPosts.filter((post: ResponsePostModel) => !prevPosts.some(prevPost => prevPost.id === post.id));
@@ -61,7 +61,7 @@ export const useUserProfile = (userId: string) => {
       const imagesPromises = userPosts.map(async (post: ResponsePostModel) => {
         if (post.imageId) {
           try {
-            const imageSrc = await getPostImageById(post.imageId, token);
+            const imageSrc = await getPostImageById(post.imageId);
             return { postId: post.id, imageSrc };
           } catch (error) {
             console.error(`Failed to fetch image for post ${post.id}:`, error);
@@ -86,7 +86,7 @@ export const useUserProfile = (userId: string) => {
       try {
         const token = localStorage.getItem('token');
         if (!token || !user) return;
-        await fetchPosts(user.id, pageIndex + 1, token);
+        await fetchPosts(user.id, pageIndex + 1);
       } catch (error) {
         console.error('Error loading more posts:', error);
       }

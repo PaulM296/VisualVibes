@@ -1,9 +1,8 @@
-import axios from "axios";
-import { BASE_URL } from "../Config/ApiConfig";
+import apiClient from '../Config/AxiosInterceptor';
 import { UserLoginModel } from "../Models/UserLoginModel";
 
 const registerUser = async (userData: FormData) => {
-    return await axios.post(`${BASE_URL}/users/register`, userData, {
+    return await apiClient.post('/users/register', userData, {
         headers: {
             'Content-Type': 'multipart/form-data'
         }
@@ -11,7 +10,7 @@ const registerUser = async (userData: FormData) => {
 };
 
 const loginUser = async (userData: UserLoginModel) => {
-    const response = await axios.post(`${BASE_URL}/users/login`, userData);
+    const response = await apiClient.post('/users/login', userData);
     localStorage.setItem('token', response.data.token);
     return response;
 };

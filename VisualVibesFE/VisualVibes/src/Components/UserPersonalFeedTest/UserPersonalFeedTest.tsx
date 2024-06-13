@@ -57,15 +57,15 @@ const MyUserProfile: React.FC = () => {
           return;
         }
 
-        const userData = await getUserById(userId, token);
+        const userData = await getUserById(userId);
         setUser(userData);
 
         if (userData.imageId) {
-          const imageSrc = await getUserImageById(userData.imageId, token);
+          const imageSrc = await getUserImageById(userData.imageId);
           setProfilePicture(imageSrc);
         }
 
-        await fetchPosts(userId, 1, token);
+        await fetchPosts(userId, 1);
       } catch (error) {
         console.error('Error fetching user data:', error);
       } finally {
@@ -76,13 +76,13 @@ const MyUserProfile: React.FC = () => {
     fetchUserData();
   }, []);
 
-  const fetchPosts = async (userId: string, pageIndex: number, token: string) => {
+  const fetchPosts = async (userId: string, pageIndex: number) => {
     const paginationRequest: PaginationRequestDto = {
       pageIndex: pageIndex,
       pageSize: 10
     };
 
-    const userPostsResponse: PaginationResponse<ResponsePostModel> = await getPostsByUserId(userId, paginationRequest, token);
+    const userPostsResponse: PaginationResponse<ResponsePostModel> = await getPostsByUserId(userId, paginationRequest);
     const userPosts = userPostsResponse.items;
     setPosts((prevPosts) => {
       const newPosts = userPosts.filter(post => !prevPosts.some(prevPost => prevPost.id === post.id));
@@ -94,7 +94,7 @@ const MyUserProfile: React.FC = () => {
     const imagesPromises = userPosts.map(async (post) => {
       if (post.imageId) {
         try {
-          const imageSrc = await getPostImageById(post.imageId, token);
+          const imageSrc = await getPostImageById(post.imageId);
           return { postId: post.id, imageSrc };
         } catch (error) {
           console.error(`Failed to fetch image for post ${post.id}:`, error);
@@ -159,7 +159,7 @@ const MyUserProfile: React.FC = () => {
         return;
       }
 
-      await addReaction(postId, reactionTypeId, token);
+      await addReaction(postId, reactionTypeId);
 
       setReactionsCount((prev) => {
         const newReactionsCount = prev[postId] ? prev[postId] + 1 : 1;
@@ -202,9 +202,9 @@ const MyUserProfile: React.FC = () => {
         return;
       }
 
-      const reactionData = await getPostReactions(postId, token, pageIndex);
+      const reactionData = await getPostReactions(postId, pageIndex);
       const formattedReactions: ReactionWithEmoji[] = await Promise.all(reactionData.items.map(async (reaction: ResponseReaction) => {
-        const avatar = reaction.imageId ? await getUserImageById(reaction.imageId, token) : '';
+        const avatar = reaction.imageId ? await getUserImageById(reaction.imageId, ) : '';
         return {
           userName: reaction.userName,
           avatar,
@@ -230,14 +230,14 @@ const MyUserProfile: React.FC = () => {
         return;
       }
 
-      const commentData = await getPostComments(postId, token, pageIndex, pageSize);
+      const commentData = await getPostComments(postId, pageIndex, pageSize);
       
       if (!commentData.items || commentData.items.length === 0) {
         setComments([]);
         setCommentTotalPages(1);
       } else {
         const formattedComments: FormattedComment[] = await Promise.all(commentData.items.map(async (comment: ResponseComment) => {
-          const avatar = comment.imageId ? await getUserImageById(comment.imageId, token) : '';
+          const avatar = comment.imageId ? await getUserImageById(comment.imageId) : '';
           return {
             id: comment.id,
             userId: comment.userId,
@@ -266,7 +266,7 @@ const MyUserProfile: React.FC = () => {
       const token = localStorage.getItem('token');
       if (!token || !currentPostId || !newComment) return;
 
-      await addComment(currentPostId, newComment, token);
+      await addComment(currentPostId, newComment);
 
       setCommentsCount(prev => ({
         ...prev,
@@ -290,7 +290,7 @@ const MyUserProfile: React.FC = () => {
       const token = localStorage.getItem('token');
       if (!token || !editingCommentId || !editCommentText) return;
   
-      await updateComment(editingCommentId, editCommentText, token);
+      await updateComment(editingCommentId, editCommentText);
       setEditingCommentId(null);
       setEditCommentText('');
       fetchComments(currentPostId!, currentCommentPageIndex);
@@ -304,7 +304,7 @@ const MyUserProfile: React.FC = () => {
       const token = localStorage.getItem('token');
       if (!token) return;
   
-      await deleteComment(commentId, token);
+      await deleteComment(commentId);
       fetchComments(currentPostId!, currentCommentPageIndex);
     } catch (error) {
       console.error('Error deleting comment:', error);
@@ -327,7 +327,7 @@ const MyUserProfile: React.FC = () => {
     try {
       const token = localStorage.getItem('token');
       if (!token || !user) return;
-      await fetchPosts(user.id, pageIndex + 1, token);
+      await fetchPosts(user.id, pageIndex + 1);
     } catch (error) {
       console.error('Error loading more posts:', error);
     }

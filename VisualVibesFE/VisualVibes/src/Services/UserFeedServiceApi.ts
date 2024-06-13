@@ -1,15 +1,10 @@
-import axios from 'axios';
-import { BASE_URL } from '../Config/ApiConfig';
+import apiClient from '../Config/AxiosInterceptor';
 import { UserFeed } from '../Models/FeedPostInterface';
 import { PaginationResponse } from '../Models/PaginationResponse';
 
-
-const getUserFeed = async (token: string, pageIndex: number = 1, pageSize: number = 10): Promise<PaginationResponse<UserFeed>> => {
+const getUserFeed = async (pageIndex: number = 1, pageSize: number = 10): Promise<PaginationResponse<UserFeed>> => {
     try {
-      const response = await axios.get<PaginationResponse<UserFeed>>(`${BASE_URL}/feeds/user`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      const response = await apiClient.get('/feeds/user', {
         params: {
             PageIndex: pageIndex,
             PageSize: pageSize
