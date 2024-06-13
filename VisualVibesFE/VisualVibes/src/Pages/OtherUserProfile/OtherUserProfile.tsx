@@ -4,7 +4,7 @@ import { Helmet } from 'react-helmet-async';
 import RightBarUserProfile from '../../Components/RightBarUserProfile/RightBarUserProfile';
 import Navbar from '../../Components/Navbar/Navbar';
 import OtherUsersProfile from '../../Components/OtherUsersProfile/OtherUsersProfile';
-import OtherUserSidebar from '../../Components/OtherUserSidebar/OtherUserSideBar';
+import OtherUserSidebar from '../../Components/OtherUserSidebar/OtherUserSidebar';
 
 const OtherUserProfile: React.FC = () => {
   return (

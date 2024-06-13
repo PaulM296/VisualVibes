@@ -1,21 +1,15 @@
-import React from 'react'
-import "./Feed.css"
-import ActivityPost from '../ActivityPost/ActivityPost'
-import FeedPost from '../FeedPost/FeedPost'
+import React from 'react';
+import './Feed.css';
+import HomeFeed from '../HomeFeed/HomeFeed';
 
-const Feed = () => {
+const Feed: React.FC = () => {
   return (
     <div className="feed">
-        <div className="feedWrapper">
-          <ActivityPost />
-          <FeedPost />
-          <FeedPost />
-          <FeedPost />
-          <FeedPost />
-          <FeedPost />
-        </div>
+      <div className="feedWrapper">
+        <HomeFeed />
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default Feed
+export default Feed;

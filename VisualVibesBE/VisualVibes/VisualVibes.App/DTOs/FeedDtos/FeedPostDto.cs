@@ -1,4 +1,7 @@
-﻿namespace VisualVibes.App.DTOs.FeedDtos
+﻿using VisualVibes.App.DTOs.CommentDtos;
+using VisualVibes.App.DTOs.ReactionDtos;
+
+namespace VisualVibes.App.DTOs.FeedDtos
 {
     public class FeedPostDto
     {
@@ -10,5 +13,9 @@
         public DateTime CreatedAt { get; set; }
         public int ReactionCount {  get; set; }
         public int CommentCount { get; set; }
+        public Guid PostImageId { get; set; }
+        public Guid UserProfileImageId { get; set; }
+        public ICollection<ResponseCommentDto> Comments { get; set; }
+        public ICollection<ResponseReactionDto> Reactions { get; set; }
     }
 }

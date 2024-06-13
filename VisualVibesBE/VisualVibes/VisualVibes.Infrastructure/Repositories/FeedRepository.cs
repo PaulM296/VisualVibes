@@ -28,12 +28,15 @@ namespace VisualVibes.Infrastructure.Repositories
                 .Include(f => f.FeedPosts)
                     .ThenInclude(fp => fp.Post)
                         .ThenInclude(p => p.User)
+                            .ThenInclude(u => u.UserProfile)
                 .Include(f => f.FeedPosts)
                     .ThenInclude(fp => fp.Post)
                         .ThenInclude(p => p.Reactions)
+                            .ThenInclude(r => r.User)
                 .Include(f => f.FeedPosts)
                     .ThenInclude(fp => fp.Post)
                         .ThenInclude(p => p.Comments)
+                            .ThenInclude(c => c.User)
                 .FirstOrDefaultAsync(f => f.UserID == userId);
 
             if (feed != null)
