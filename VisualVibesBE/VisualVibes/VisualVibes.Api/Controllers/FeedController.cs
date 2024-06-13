@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VisualVibes.Api.Extensions;
 using VisualVibes.App.DTOs.FeedDtos;
+using VisualVibes.App.DTOs.PaginationDtos;
 using VisualVibes.App.Feeds.Commands;
 using VisualVibes.App.Feeds.Queries;
 
@@ -29,11 +30,11 @@ namespace VisualVibes.Api.Controllers
         }
 
         [HttpGet("user")]
-        public async Task<IActionResult> GetUserFeed()
+        public async Task<IActionResult> GetUserFeed([FromQuery] PaginationRequestDto paginationRequestDto)
         {
             var userId = HttpContext.GetUserIdClaimValue();
 
-            var query = new GetUserFeedByUserIdQuery(userId);
+            var query = new GetUserFeedByUserIdQuery(userId, paginationRequestDto);
             var responseFeedDto = await _mediator.Send(query);
 
             if (responseFeedDto == null)

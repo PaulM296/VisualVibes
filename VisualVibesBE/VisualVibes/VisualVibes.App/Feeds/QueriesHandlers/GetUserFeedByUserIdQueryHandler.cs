@@ -2,12 +2,13 @@
 using MediatR;
 using Microsoft.Extensions.Logging;
 using VisualVibes.App.DTOs.FeedDtos;
+using VisualVibes.App.DTOs.PaginationDtos;
 using VisualVibes.App.Feeds.Queries;
 using VisualVibes.App.Interfaces;
 
 namespace VisualVibes.App.Feeds.QueriesHandlers
 {
-    public class GetUserFeedByUserIdQueryHandler : IRequestHandler<GetUserFeedByUserIdQuery, ResponseFeedDto>
+    public class GetUserFeedByUserIdQueryHandler : IRequestHandler<GetUserFeedByUserIdQuery, PaginationResponseDto<ResponseFeedDto>>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<GetUserFeedByUserIdQueryHandler> _logger;
@@ -20,23 +21,31 @@ namespace VisualVibes.App.Feeds.QueriesHandlers
             _mapper = mapper;
         }
 
-        public async Task<ResponseFeedDto> Handle(GetUserFeedByUserIdQuery request, CancellationToken cancellationToken)
+        public async Task<PaginationResponseDto<ResponseFeedDto>> Handle(GetUserFeedByUserIdQuery request, CancellationToken cancellationToken)
         {
-            var feed = await _unitOfWork.FeedRepository.GetFeedPostsByUserIdAsync(request.userId);
+            var pagedFeedPosts = await _unitOfWork.FeedRepository.GetPagedFeedPostsByUserIdAsync(
+                request.userId, request.paginationRequestDto.PageIndex, request.paginationRequestDto.PageSize);
 
-            if(feed == null)
+            if (pagedFeedPosts.Items == null || pagedFeedPosts.Items.Count == 0)
             {
-                return null;
+                return new PaginationResponseDto<ResponseFeedDto>(new List<ResponseFeedDto>(), request.paginationRequestDto.PageIndex, pagedFeedPosts.TotalPages);
             }
 
             var responseFeedDto = new ResponseFeedDto
             {
                 UserID = request.userId,
-                Posts = feed.Select(fp => _mapper.Map<FeedPostDto>(fp.Post)).ToList()
+                Posts = pagedFeedPosts.Items.Select(fp => _mapper.Map<FeedPostDto>(fp)).ToList()
             };
 
+            var responsePaginationDto = new PaginationResponseDto<ResponseFeedDto>(
+                new List<ResponseFeedDto> { responseFeedDto },
+                pagedFeedPosts.PageIndex,
+                pagedFeedPosts.TotalPages
+            );
+
             _logger.LogInformation($"Feed for user {request.userId} retrieved successfully.");
-            return responseFeedDto;
+
+            return responsePaginationDto;
         }
     }
 }

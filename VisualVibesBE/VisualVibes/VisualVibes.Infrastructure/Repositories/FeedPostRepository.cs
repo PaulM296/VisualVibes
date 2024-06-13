@@ -36,7 +36,6 @@ namespace VisualVibes.Infrastructure.Repositories
                     Console.WriteLine($"Feed created for follower {follower.FollowerId}");
                 }
 
-                // Check if the FeedPost already exists
                 var feedPostExists = await _context.FeedPost.AnyAsync(fp => fp.FeedId == feed.Id && fp.PostId == postId);
                 if (!feedPostExists)
                 {

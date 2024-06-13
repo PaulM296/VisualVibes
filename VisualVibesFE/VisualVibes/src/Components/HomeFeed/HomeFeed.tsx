@@ -6,7 +6,7 @@ import { getImageById as getUserImageById } from '../../Services/UserServiceApi'
 import { getImageById as getPostImageById } from '../../Services/UserPostServiceApi';
 import { addReaction, getPostReactions } from '../../Services/ReactionServiceApi';
 import { getPostComments, addComment, updateComment, deleteComment } from '../../Services/CommentServiceApi';
-import { UserFeed } from '../../Models/FeedPostInterface';
+import { FeedPost, UserFeed } from '../../Models/FeedPostInterface';
 import { getReactionEmoji } from '../../Utils/getReactionEmoji';
 import { ResponseReaction } from '../../Models/ResponseReaction';
 import { ReactionType } from '../../Models/ReactionType';
@@ -15,9 +15,10 @@ import { ResponseComment, FormattedComment } from '../../Models/ResponseComment'
 import RichTextEditor from '../RichTextEditor/RichTextEditor';
 import './HomeFeed.css';
 import { getUserIdFromToken } from '../../Utils/auth';
+import { PaginationResponse } from '../../Models/PaginationResponse';
 
 const HomeFeed: React.FC = () => {
-  const [userFeed, setUserFeed] = useState<UserFeed | null>(null);
+  const [posts, setPosts] = useState<FeedPost[]>([]);
   const [postImages, setPostImages] = useState<{ [key: string]: string }>({});
   const [profileImages, setProfileImages] = useState<{ [key: string]: string }>({});
   const [comments, setComments] = useState<FormattedComment[]>([]);
@@ -39,83 +40,89 @@ const HomeFeed: React.FC = () => {
   const [editCommentText, setEditCommentText] = useState<string>('');
 
   useEffect(() => {
-    const fetchFeedData = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          console.error('Token not found in localStorage');
-          setLoading(false);
-          return;
-        }
-
-        const data = await getUserFeed(token);
-        setUserFeed(data);
-
-        const imagesPromises = data.posts.map(async (post) => {
-          const postImagePromise = post.postImageId ? getPostImageById(post.postImageId, token) : Promise.resolve('');
-          const profileImagePromise = post.userProfileImageId ? getUserImageById(post.userProfileImageId, token) : Promise.resolve('');
-
-          const [postImageSrc, profileImageSrc] = await Promise.all([postImagePromise, profileImagePromise]);
-
-          return {
-            postId: post.postId,
-            postImageSrc,
-            userProfileImageId: post.userProfileImageId,
-            profileImageSrc
-          };
-        });
-
-        const images = await Promise.all(imagesPromises);
-
-        const postImagesMap = images.reduce((acc, { postId, postImageSrc }) => {
-          if (postImageSrc) {
-            acc[postId] = postImageSrc;
-          }
-          return acc;
-        }, {} as { [key: string]: string });
-
-        const profileImagesMap = images.reduce((acc, { userProfileImageId, profileImageSrc }) => {
-          if (userProfileImageId && profileImageSrc) {
-            acc[userProfileImageId] = profileImageSrc;
-          }
-          return acc;
-        }, {} as { [key: string]: string });
-
-        setPostImages(postImagesMap);
-        setProfileImages(profileImagesMap);
-
-        const reactionsMap = data.posts.reduce((acc, post) => {
-          acc[post.postId] = post.reactions.length;
-          return acc;
-        }, {} as { [key: string]: number });
-
-        const commentsMap = data.posts.reduce((acc, post) => {
-          acc[post.postId] = post.comments.length;
-          return acc;
-        }, {} as { [key: string]: number });
-
-        const userReactionsMap = data.posts.reduce((acc, post) => {
-          const userReaction = post.reactions.find(r => r.userId === post.userId);
-          if (userReaction) {
-            acc[post.postId] = ReactionType[userReaction.reactionType];
-          }
-          return acc;
-        }, {} as { [key: string]: string });
-
-        setReactionsCount(reactionsMap);
-        setCommentsCount(commentsMap);
-        setUserReactions(userReactionsMap);
-
-      } catch (error) {
-        console.error('Error fetching feed data:', error);
-        setLoading(false);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchFeedData();
+    fetchFeedData(1);
   }, []);
+
+  const fetchFeedData = async (pageIndex: number) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.error('Token not found in localStorage');
+        setLoading(false);
+        return;
+      }
+
+      const data: PaginationResponse<UserFeed> = await getUserFeed(token, pageIndex, 10);
+      const newPosts = data.items[0].posts;
+
+      setPosts((prevPosts) => (pageIndex === 1 ? newPosts : [...prevPosts, ...newPosts]));
+      setPageIndex(data.pageIndex);
+      setTotalPages(data.totalPages);
+
+      const imagesPromises = newPosts.map(async (post) => {
+        const postImagePromise = post.postImageId
+          ? getPostImageById(post.postImageId, token)
+          : Promise.resolve('');
+        const profileImagePromise = post.userProfileImageId
+          ? getUserImageById(post.userProfileImageId, token)
+          : Promise.resolve('');
+
+        const [postImageSrc, profileImageSrc] = await Promise.all([postImagePromise, profileImagePromise]);
+
+        return {
+          postId: post.postId,
+          postImageSrc,
+          userProfileImageId: post.userProfileImageId,
+          profileImageSrc,
+        };
+      });
+
+      const images = await Promise.all(imagesPromises);
+
+      const postImagesMap = images.reduce((acc, { postId, postImageSrc }) => {
+        if (postImageSrc) {
+          acc[postId] = postImageSrc;
+        }
+        return acc;
+      }, {} as { [key: string]: string });
+
+      const profileImagesMap = images.reduce((acc, { userProfileImageId, profileImageSrc }) => {
+        if (userProfileImageId && profileImageSrc) {
+          acc[userProfileImageId] = profileImageSrc;
+        }
+        return acc;
+      }, {} as { [key: string]: string });
+
+      setPostImages((prevImages) => ({ ...prevImages, ...postImagesMap }));
+      setProfileImages((prevImages) => ({ ...prevImages, ...profileImagesMap }));
+
+      const reactionsMap = newPosts.reduce((acc, post) => {
+        acc[post.postId] = post.reactions.length;
+        return acc;
+      }, {} as { [key: string]: number });
+
+      const commentsMap = newPosts.reduce((acc, post) => {
+        acc[post.postId] = post.comments.length;
+        return acc;
+      }, {} as { [key: string]: number });
+
+      const userReactionsMap = newPosts.reduce((acc, post) => {
+        const userReaction = post.reactions.find((r) => r.userId === post.userId);
+        if (userReaction) {
+          acc[post.postId] = ReactionType[userReaction.reactionType];
+        }
+        return acc;
+      }, {} as { [key: string]: string });
+
+      setReactionsCount((prev) => ({ ...prev, ...reactionsMap }));
+      setCommentsCount((prev) => ({ ...prev, ...commentsMap }));
+      setUserReactions((prev) => ({ ...prev, ...userReactionsMap }));
+    } catch (error) {
+      console.error('Error fetching feed data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const formatPostDate = (date: Date | string) => {
     if (typeof date === 'string') {
@@ -138,11 +145,11 @@ const HomeFeed: React.FC = () => {
   };
 
   const reactionTypes: { [key: string]: number } = {
-    'Like': ReactionType.Like,
-    'Love': ReactionType.Love,
-    'Laugh': ReactionType.Laugh,
-    'Cry': ReactionType.Cry,
-    'Anger': ReactionType.Anger
+    Like: ReactionType.Like,
+    Love: ReactionType.Love,
+    Laugh: ReactionType.Laugh,
+    Cry: ReactionType.Cry,
+    Anger: ReactionType.Anger,
   };
 
   const handleReaction = async (postId: string, reactionType: string) => {
@@ -167,7 +174,6 @@ const HomeFeed: React.FC = () => {
       });
 
       setUserReactions((prev) => ({ ...prev, [postId]: reactionType }));
-
     } catch (error) {
       console.error('Error adding reaction:', error);
     }
@@ -182,15 +188,17 @@ const HomeFeed: React.FC = () => {
       }
 
       const reactionData = await getPostReactions(postId, token, pageIndex);
-      const formattedReactions: ReactionWithEmoji[] = await Promise.all(reactionData.items.map(async (reaction: ResponseReaction) => {
-        const avatar = reaction.imageId ? await getUserImageById(reaction.imageId, token) : '';
-        return {
-          userName: reaction.userName,
-          avatar,
-          reactionType: ReactionType[reaction.reactionType],
-          reactionEmoji: getReactionEmoji(ReactionType[reaction.reactionType])
-        };
-      }));
+      const formattedReactions: ReactionWithEmoji[] = await Promise.all(
+        reactionData.items.map(async (reaction: ResponseReaction) => {
+          const avatar = reaction.imageId ? await getUserImageById(reaction.imageId, token) : '';
+          return {
+            userName: reaction.userName,
+            avatar,
+            reactionType: ReactionType[reaction.reactionType],
+            reactionEmoji: getReactionEmoji(ReactionType[reaction.reactionType]),
+          };
+        })
+      );
       setReactions(formattedReactions);
       setCurrentPostId(postId);
       setPageIndex(pageIndex);
@@ -215,17 +223,19 @@ const HomeFeed: React.FC = () => {
         setComments([]);
         setCommentTotalPages(1);
       } else {
-        const formattedComments: FormattedComment[] = await Promise.all(commentData.items.map(async (comment: ResponseComment) => {
-          const avatar = comment.imageId ? await getUserImageById(comment.imageId, token) : '';
-          return {
-            id: comment.id,
-            userId: comment.userId,
-            userName: comment.userName,
-            avatar,
-            text: comment.text,
-            createdAt: comment.createdAt
-          };
-        }));
+        const formattedComments: FormattedComment[] = await Promise.all(
+          commentData.items.map(async (comment: ResponseComment) => {
+            const avatar = comment.imageId ? await getUserImageById(comment.imageId, token) : '';
+            return {
+              id: comment.id,
+              userId: comment.userId,
+              userName: comment.userName,
+              avatar,
+              text: comment.text,
+              createdAt: comment.createdAt,
+            };
+          })
+        );
         setComments(formattedComments);
         setCommentTotalPages(commentData.totalPages);
       }
@@ -247,9 +257,9 @@ const HomeFeed: React.FC = () => {
 
       await addComment(currentPostId, newComment, token);
 
-      setCommentsCount(prev => ({
+      setCommentsCount((prev) => ({
         ...prev,
-        [currentPostId]: (prev[currentPostId] || 0) + 1
+        [currentPostId]: (prev[currentPostId] || 0) + 1,
       }));
 
       setNewComment('');
@@ -305,8 +315,8 @@ const HomeFeed: React.FC = () => {
   const loadMorePosts = async () => {
     try {
       const token = localStorage.getItem('token');
-      if (!token || !userFeed) return;
-      // Logic to fetch more posts goes here
+      if (!token) return;
+      await fetchFeedData(pageIndex + 1);
     } catch (error) {
       console.error('Error loading more posts:', error);
     }
@@ -316,19 +326,23 @@ const HomeFeed: React.FC = () => {
     return <p>Loading...</p>;
   }
 
-  if (!userFeed) {
+  if (!posts.length) {
     return <p>No feed data available</p>;
   }
 
   return (
     <div className="feed">
       <div className="feedWrapper">
-        {userFeed.posts.map((post) => (
+        {posts.map((post) => (
           <div key={post.postId} className="feedPost">
             <div className="feedPostWrapper">
               <div className="feedPostTop">
                 <div className="feedPostTopLeft">
-                  <Avatar alt={post.userName} src={profileImages[post.userProfileImageId] || 'defaultProfilePicture.jpg'} className="feedPostProfileImg" />
+                  <Avatar
+                    alt={post.userName}
+                    src={profileImages[post.userProfileImageId] || 'defaultProfilePicture.jpg'}
+                    className="feedPostProfileImg"
+                  />
                   <span className="feedPostUsername">{post.userName}</span>
                 </div>
                 <div className="feedPostTopRight">
@@ -349,21 +363,35 @@ const HomeFeed: React.FC = () => {
                     onMouseLeave={() => setShowReactions((prev) => ({ ...prev, [post.postId]: false }))}
                   >
                     {userReactions[post.postId] ? (
-                      <span className="reactionOpener" role="img" aria-label={userReactions[post.postId]}>{getReactionEmoji(userReactions[post.postId])}</span>
+                      <span className="reactionOpener" role="img" aria-label={userReactions[post.postId]}>
+                        {getReactionEmoji(userReactions[post.postId])}
+                      </span>
                     ) : (
-                      <span className="reactionOpener" role="img" aria-label="thumbs up">👍</span>
+                      <span className="reactionOpener" role="img" aria-label="thumbs up">
+                        👍
+                      </span>
                     )}
                     {showReactions[post.postId] && (
                       <div className="reactionOptions">
-                        <span role="img" aria-label="thumbs up" onClick={() => handleReaction(post.postId, 'Like')}>👍</span>
-                        <span role="img" aria-label="heart" onClick={() => handleReaction(post.postId, 'Love')}>❤️</span>
-                        <span role="img" aria-label="laughing" onClick={() => handleReaction(post.postId, 'Laugh')}>😂</span>
-                        <span role="img" aria-label="crying" onClick={() => handleReaction(post.postId, 'Cry')}>😢</span>
-                        <span role="img" aria-label="angry" onClick={() => handleReaction(post.postId, 'Anger')}>😠</span>
+                        <span role="img" aria-label="thumbs up" onClick={() => handleReaction(post.postId, 'Like')}>
+                          👍
+                        </span>
+                        <span role="img" aria-label="heart" onClick={() => handleReaction(post.postId, 'Love')}>
+                          ❤️
+                        </span>
+                        <span role="img" aria-label="laughing" onClick={() => handleReaction(post.postId, 'Laugh')}>
+                          😂
+                        </span>
+                        <span role="img" aria-label="crying" onClick={() => handleReaction(post.postId, 'Cry')}>
+                          😢
+                        </span>
+                        <span role="img" aria-label="angry" onClick={() => handleReaction(post.postId, 'Anger')}>
+                          😠
+                        </span>
                       </div>
                     )}
-                    <span 
-                      className="feedPostReactionCounter" 
+                    <span
+                      className="feedPostReactionCounter"
                       onClick={() => fetchReactions(post.postId)}
                       onMouseEnter={(e) => (e.currentTarget.style.color = 'blue')}
                       onMouseLeave={(e) => (e.currentTarget.style.color = 'black')}
@@ -374,8 +402,8 @@ const HomeFeed: React.FC = () => {
                   </div>
                 </div>
                 <div className="feedPostBottomRight">
-                  <span 
-                    className="feedPostCommentText" 
+                  <span
+                    className="feedPostCommentText"
                     onClick={() => handleOpenComments(post.postId)}
                     onMouseEnter={(e) => (e.currentTarget.style.color = 'blue')}
                     onMouseLeave={(e) => (e.currentTarget.style.color = 'black')}
@@ -389,24 +417,25 @@ const HomeFeed: React.FC = () => {
           </div>
         ))}
         {pageIndex < totalPages && (
-          <Button onClick={loadMorePosts} variant="contained" color="primary" style={{ marginTop: '10px' }}>
-            Load More
-          </Button>
+          <div className="centerButton">
+            <Button onClick={loadMorePosts} variant="contained" color="primary" style={{ margin: 'auto', display: 'block' }}>
+              Load More
+            </Button>
+          </div>
         )}
       </div>
       <Modal open={openReactionModal} onClose={handleClose}>
         <div className="modalContent">
           <Typography variant="h6">Reactions</Typography>
-          {reactions.length === 0 && (
-            <Typography sx={{ mt: 2 }}>No reactions yet.</Typography>
-          )}
-          {reactions.length > 0 && reactions.map((reaction, index) => (
-            <div key={index} className="reactionItem">
-              <span>{reaction.reactionEmoji}</span>
-              <Avatar src={reaction.avatar} alt={reaction.userName} sx={{ margin: '0 10px' }} />
-              <Typography>{reaction.userName}</Typography>
-            </div>
-          ))}
+          {reactions.length === 0 && <Typography sx={{ mt: 2 }}>No reactions yet.</Typography>}
+          {reactions.length > 0 &&
+            reactions.map((reaction, index) => (
+              <div key={index} className="reactionItem">
+                <span>{reaction.reactionEmoji}</span>
+                <Avatar src={reaction.avatar} alt={reaction.userName} sx={{ margin: '0 10px' }} />
+                <Typography>{reaction.userName}</Typography>
+              </div>
+            ))}
           <div className="paginationControls">
             <Button
               disabled={pageIndex === 1}
@@ -431,47 +460,43 @@ const HomeFeed: React.FC = () => {
           <Typography variant="h6">Comments</Typography>
           <div className="addCommentContainer">
             <RichTextEditor content={newComment} setContent={setNewComment} />
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleAddComment}
-              style={{ marginTop: '10px' }}
-            >
+            <Button variant="contained" color="primary" onClick={handleAddComment} style={{ marginTop: '10px' }}>
               Submit
             </Button>
           </div>
           <div className="commentsContainer">
-            {comments.length === 0 && (
-              <Typography sx={{ mt: 2 }}>No comments yet.</Typography>
-            )}
-            {comments.length > 0 && comments.map((comment, index) => (
-              <div key={index} className="commentItem">
-                <Avatar src={comment.avatar} alt={comment.userName} sx={{ margin: '0 10px' }} />
-                <div>
-                  <Typography>{comment.userName}</Typography>
-                  {editingCommentId === comment.id ? (
-                    <>
-                      <TextField
-                        value={editCommentText}
-                        onChange={(e) => setEditCommentText(e.target.value)}
-                        fullWidth
-                        multiline
-                      />
-                      <Button variant="contained" color="primary" onClick={handleUpdateComment}>Save</Button>
-                      <Button onClick={() => setEditingCommentId(null)}>Cancel</Button>
-                    </>
-                  ) : (
-                    <Typography sx={{ marginLeft: '10px' }} dangerouslySetInnerHTML={{ __html: comment.text }}></Typography>
+            {comments.length === 0 && <Typography sx={{ mt: 2 }}>No comments yet.</Typography>}
+            {comments.length > 0 &&
+              comments.map((comment, index) => (
+                <div key={index} className="commentItem">
+                  <Avatar src={comment.avatar} alt={comment.userName} sx={{ margin: '0 10px' }} />
+                  <div>
+                    <Typography>{comment.userName}</Typography>
+                    {editingCommentId === comment.id ? (
+                      <>
+                        <TextField
+                          value={editCommentText}
+                          onChange={(e) => setEditCommentText(e.target.value)}
+                          fullWidth
+                          multiline
+                        />
+                        <Button variant="contained" color="primary" onClick={handleUpdateComment}>
+                          Save
+                        </Button>
+                        <Button onClick={() => setEditingCommentId(null)}>Cancel</Button>
+                      </>
+                    ) : (
+                      <Typography sx={{ marginLeft: '10px' }} dangerouslySetInnerHTML={{ __html: comment.text }}></Typography>
+                    )}
+                  </div>
+                  {comment.userId === getUserIdFromToken() && (
+                    <div>
+                      <Button onClick={() => handleEditComment(comment)}>Edit</Button>
+                      <Button onClick={() => handleDeleteComment(comment.id)}>Delete</Button>
+                    </div>
                   )}
                 </div>
-                {comment.userId === getUserIdFromToken() && (
-                  <div>
-                    <Button onClick={() => handleEditComment(comment)}>Edit</Button>
-                    <Button onClick={() => handleDeleteComment(comment.id)}>Delete</Button>
-                  </div>
-                )}
-              </div>
-            ))}
+              ))}
             <div className="paginationControls">
               <Button
                 disabled={currentCommentPageIndex === 1}
