@@ -5,8 +5,8 @@ import './UserPersonalFeedTest.css';
 import { User } from '../../Models/User';
 import { getUserIdFromToken } from '../../Utils/auth';
 import { getUserById, getImageById as getUserImageById } from '../../Services/UserServiceApi';
-import { getPostsByUserId, getImageById as getPostImageById } from '../../Services/UserPostServiceApi';
-import { addReaction, getPostReactions } from '../../Services/ReactionServiceApi';
+import { getPostsByUserId, getImageById as getPostImageById, updatePost, removePost } from '../../Services/UserPostServiceApi';
+import { addReaction, deleteReaction, getPostReactions, updateReaction } from '../../Services/ReactionServiceApi';
 import { getPostComments, addComment, updateComment, deleteComment } from '../../Services/CommentServiceApi';
 import { ResponsePostModel } from '../../Models/ReponsePostModel';
 import { getReactionEmoji } from '../../Utils/getReactionEmoji';
@@ -16,6 +16,7 @@ import { ReactionWithEmoji } from '../../Models/ReactionWithEmoji';
 import { PaginationRequestDto, PaginationResponse } from '../../Models/PaginationResponse';
 import { ResponseComment, FormattedComment } from '../../Models/ResponseComment';
 import RichTextEditor from '../RichTextEditor/RichTextEditor';
+import MoreVertMenu from '../MoreVerMenu';
 
 const MyUserProfile: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -39,6 +40,8 @@ const MyUserProfile: React.FC = () => {
   const [commentTotalPages, setCommentTotalPages] = useState(1);
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [editCommentText, setEditCommentText] = useState<string>('');
+  const [editingPostId, setEditingPostId] = useState<string | null>(null);
+const [editPostCaption, setEditPostCaption] = useState<string>('');
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -49,29 +52,29 @@ const MyUserProfile: React.FC = () => {
           setLoading(false);
           return;
         }
-
+    
         const userId = getUserIdFromToken();
         if (!userId) {
           console.error('User ID not found in token');
           setLoading(false);
           return;
         }
-
+    
         const userData = await getUserById(userId);
         setUser(userData);
-
+    
         if (userData.imageId) {
           const imageSrc = await getUserImageById(userData.imageId);
           setProfilePicture(imageSrc);
         }
-
+    
         await fetchPosts(userId, 1);
       } catch (error) {
         console.error('Error fetching user data:', error);
       } finally {
         setLoading(false);
       }
-    };
+    };    
 
     fetchUserData();
   }, []);
@@ -152,24 +155,52 @@ const MyUserProfile: React.FC = () => {
         console.error('Token not found in localStorage');
         return;
       }
-
+  
+      const currentUserReactionType = userReactions[postId];
       const reactionTypeId = reactionTypes[reactionType];
-      if (reactionTypeId === undefined) {
-        console.error('Invalid reaction type:', reactionType);
-        return;
+      const postIndex = posts.findIndex(post => post.id === postId);
+      const reaction = posts[postIndex]?.reactions.find(r => r.userId === user?.id);
+  
+      if (currentUserReactionType) {
+        if (currentUserReactionType === reactionType) {
+          if (reaction) {
+            await deleteReaction(reaction.id);
+            setReactionsCount(prev => ({ ...prev, [postId]: prev[postId] - 1 }));
+            setUserReactions(prev => {
+              const newUserReactions = { ...prev };
+              delete newUserReactions[postId];
+              return newUserReactions;
+            });
+            setPosts(prevPosts => {
+              const updatedPosts = [...prevPosts];
+              updatedPosts[postIndex].reactions = updatedPosts[postIndex].reactions.filter(r => r.id !== reaction.id);
+              return updatedPosts;
+            });
+          }
+        } else {
+          if (reaction) {
+            await updateReaction(reaction.id, reactionTypeId);
+            setUserReactions(prev => ({ ...prev, [postId]: reactionType }));
+            setPosts(prevPosts => {
+              const updatedPosts = [...prevPosts];
+              const reactionIndex = updatedPosts[postIndex].reactions.findIndex(r => r.id === reaction.id);
+              updatedPosts[postIndex].reactions[reactionIndex].reactionType = reactionTypeId;
+              return updatedPosts;
+            });
+          }
+        }
+      } else {
+        const newReaction = await addReaction(postId, reactionTypeId);
+        setReactionsCount(prev => ({ ...prev, [postId]: (prev[postId] || 0) + 1 }));
+        setUserReactions(prev => ({ ...prev, [postId]: reactionType }));
+        setPosts(prevPosts => {
+          const updatedPosts = [...prevPosts];
+          updatedPosts[postIndex].reactions.push(newReaction);
+          return updatedPosts;
+        });
       }
-
-      await addReaction(postId, reactionTypeId);
-
-      setReactionsCount((prev) => {
-        const newReactionsCount = prev[postId] ? prev[postId] + 1 : 1;
-        return { ...prev, [postId]: newReactionsCount };
-      });
-
-      setUserReactions((prev) => ({ ...prev, [postId]: reactionType }));
-
     } catch (error) {
-      console.error('Error adding reaction:', error);
+      console.error('Error handling reaction:', error);
     }
   };
 
@@ -333,6 +364,40 @@ const MyUserProfile: React.FC = () => {
     }
   };
 
+  const handleEditPost = (postId: string, currentCaption: string) => {
+    setEditingPostId(postId);
+    setEditPostCaption(currentCaption);
+  };
+
+  const handleSavePost = async (postId: string) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      await updatePost(postId, { caption: editPostCaption });
+      setEditingPostId(null);
+      setPosts(prevPosts => {
+        const updatedPosts = [...prevPosts];
+        const postIndex = updatedPosts.findIndex(post => post.id === postId);
+        if (postIndex !== -1) {
+          updatedPosts[postIndex].caption = editPostCaption;
+        }
+        return updatedPosts;
+      });
+    } catch (error) {
+      console.error('Error saving post:', error);
+    }
+  };
+
+  const handleDeletePost = async (postId: string) => {
+    try {
+      await removePost(postId);
+      setPosts(prevPosts => prevPosts.filter(post => post.id !== postId));
+    } catch (error) {
+      console.error('Error deleting post:', error);
+    }
+  };
+
   if (loading) {
     return <p>Loading...</p>;
   }
@@ -356,49 +421,68 @@ const MyUserProfile: React.FC = () => {
             <div className="feedPostTop">
               <div className="feedPostTopLeft">
                 <Avatar alt={user.userName} src={profilePicture} className="feedPostProfileImg" />
-                <span className="feedPostUsername"> {user.userName}</span>
+                <div>
+                  <span className="feedPostUsername"> {user.userName}</span>
+                  <span className="feedPostDate">{formatPostDate(post.createdAt)}</span>
+                </div>
               </div>
               <div className="feedPostTopRight">
-                <span className="feedPostDate">{formatPostDate(post.createdAt)}</span>
+              <MoreVertMenu
+                postId={post.id}
+                onPostUpdated={() => handleEditPost(post.id, post.caption)}
+                onPostDeleted={() => handleDeletePost(post.id)}
+                onEdit={() => handleEditPost(post.id, post.caption)}
+              />
               </div>
             </div>
             <div className="feedPostCenter">
-              <span className="feedPostText" dangerouslySetInnerHTML={{ __html: post.caption }}></span>
+              {editingPostId === post.id ? (
+                <>
+                  <TextField
+                    value={editPostCaption}
+                    onChange={(e) => setEditPostCaption(e.target.value)}
+                    fullWidth
+                    multiline
+                  />
+                  <Button variant="contained" color="primary" onClick={() => handleSavePost(post.id)}>Save</Button>
+                  <Button onClick={() => setEditingPostId(null)}>Cancel</Button>
+                </>
+              ) : (
+                <span className="feedPostText" dangerouslySetInnerHTML={{ __html: post.caption }}></span>
+              )}
               {post.imageId && postImages[post.id] && (
                 <img className="feedPostImg" src={postImages[post.id]} alt="Post image" />
               )}
             </div>
             <div className="feedPostBottom">
               <div className="feedPostBottomLeft">
-                <div
-                  className="reactionButton"
-                  onMouseEnter={() => setShowReactions((prev) => ({ ...prev, [post.id]: true }))}
-                  onMouseLeave={() => setShowReactions((prev) => ({ ...prev, [post.id]: false }))}
-                >
+                <div className="reactionButton"
+                  onMouseEnter={() => setShowReactions(prev => ({ ...prev, [post.id]: true }))}
+                  onMouseLeave={() => setShowReactions(prev => ({ ...prev, [post.id]: false }))}>
                   {userReactions[post.id] ? (
-                    <span className="reactionOpener" role="img" aria-label={userReactions[post.id]}>{getReactionEmoji(userReactions[post.id])}</span>
+                    <span className="reactionOpener selected" role="img" aria-label={userReactions[post.id]}>
+                      {getReactionEmoji(userReactions[post.id])}
+                    </span>
                   ) : (
                     <span className="reactionOpener" role="img" aria-label="thumbs up">👍</span>
                   )}
                   {showReactions[post.id] && (
                     <div className="reactionOptions">
-                      <span role="img" aria-label="thumbs up" onClick={() => handleReaction(post.id, 'Like')}>👍</span>
-                      <span role="img" aria-label="heart" onClick={() => handleReaction(post.id, 'Love')}>❤️</span>
-                      <span role="img" aria-label="laughing" onClick={() => handleReaction(post.id, 'Laugh')}>😂</span>
-                      <span role="img" aria-label="crying" onClick={() => handleReaction(post.id, 'Cry')}>😢</span>
-                      <span role="img" aria-label="angry" onClick={() => handleReaction(post.id, 'Anger')}>😠</span>
+                      {Object.keys(reactionTypes).map(type => (
+                        <span key={type}
+                              className={userReactions[post.id] === type ? 'selected' : ''}
+                              role="img"
+                              aria-label={type}
+                              onClick={() => handleReaction(post.id, type)}>
+                          {getReactionEmoji(type)}
+                        </span>
+                      ))}
                     </div>
                   )}
-                  <span 
-                    className="feedPostReactionCounter" 
-                    onClick={() => fetchReactions(post.id)}
-                    onMouseEnter={(e) => (e.currentTarget.style.color = 'blue')}
-                    onMouseLeave={(e) => (e.currentTarget.style.color = 'black')}
-                    style={{ cursor: 'pointer' }}
-                  >
-                    {reactionsCount[post.id] || 0} people reacted
-                  </span>
-                </div>
+                <span className="feedPostReactionCounter" onClick={() => fetchReactions(post.id)}>
+                  {reactionsCount[post.id] || 0} people reacted
+                </span>
+              </div>
               </div>
               <div className="feedPostBottomRight">
                 <span 

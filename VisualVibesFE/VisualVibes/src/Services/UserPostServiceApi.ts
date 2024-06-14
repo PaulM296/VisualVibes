@@ -55,5 +55,19 @@ const getPostsByUserId = async (userId: string, paginationRequest: PaginationReq
       items: posts,
   };
 };
+
+const updatePost = async (postId: string, updatePostDto: { caption: string }): Promise<void> => {
+  await apiClient.put(`/activityPosts/${postId}`, updatePostDto);
+};
+
+const removePost = async (postId: string): Promise<void> => {
+  try {
+    await apiClient.delete(`/activityPosts/${postId}`);
+  } catch (error) {
+    console.error('Error deleting post:', error);
+    throw error;
+  }
+};
+
   
-export { createPost, getPostsByUserId, getImageById };
+export { createPost, getPostsByUserId, getImageById, updatePost , removePost };

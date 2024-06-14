@@ -11,3 +11,7 @@ export interface ResponsePostModel {
   comments: ResponseComment[];
   reactions: ResponseReaction[];
 }
+
+export interface UpdatePostModel {
+  caption: string;
+}

@@ -31,7 +31,6 @@ namespace VisualVibes.App.Posts.CommandsHandler
             }
 
             getPost.Caption = request.updatePostDto.Caption;
-            getPost.Pictures = request.updatePostDto.Pictures;
             
 
             var updatedPost = await _unitOfWork.PostRepository.UpdateAsync(getPost);
