@@ -57,4 +57,24 @@ const getUserFollowing = async (userId: string): Promise<UserFollowerInterface[]
     return response.data;
 };
 
-export { getUserById, getImageById, searchUsers, checkIfFollowing, followUser, unfollowUser, getUserFollowers, getUserFollowing };
+const getLoggedUserById = async (): Promise<User> => {
+    const response = await apiClient.get<User>('/users/logged-user');
+    return response.data;
+};
+
+const updateUser = async (userId: string, formData: FormData): Promise<User> => {
+    const response = await apiClient.put(`/users/${userId}`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  };
+
+  const deleteUser = async (userId: string) => {
+    const response = await apiClient.delete(`/users/${userId}`);
+    return response.data;
+  };
+
+export { getUserById, getImageById, searchUsers, checkIfFollowing, followUser, unfollowUser, 
+    getUserFollowers, getUserFollowing, getLoggedUserById, updateUser, deleteUser };

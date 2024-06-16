@@ -8,5 +8,6 @@ namespace VisualVibes.App.Interfaces
         Task<ICollection<Reaction>> GetAllAsync(Guid PostId);
         Task<int> GetPostTotalReactionNumber(Guid postId);
         Task<PaginationResponseDto<Reaction>> GetAllPagedReactionsAsync(Guid postId, int pageIndex, int pageSize);
+        Task<ICollection<Reaction>> GetReactionsByUserIdAsync(string userId);
     }
 }

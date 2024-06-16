@@ -10,3 +10,8 @@ export interface User {
     profilePicture: string | null;
     imageId: string;
 }
+
+export interface UserContextType {
+    user: User | undefined;
+    setUser: React.Dispatch<React.SetStateAction<User | undefined>>;
+}

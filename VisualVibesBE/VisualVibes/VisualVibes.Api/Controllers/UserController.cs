@@ -72,7 +72,7 @@ namespace VisualVibes.Api.Controllers
         }
 
 
-        [HttpPut]
+        [HttpPut("{userId}")]
         [Authorize]
         public async Task<IActionResult> UpdateUser([FromForm] UpdateUserDto updateUserDto)
         {
@@ -83,7 +83,7 @@ namespace VisualVibes.Api.Controllers
             return Ok(updatedUser);
         }
 
-        [HttpDelete]
+        [HttpDelete("{userId}")]
         [Authorize]
         public async Task<IActionResult> RemoveUser()
         {
@@ -92,6 +92,17 @@ namespace VisualVibes.Api.Controllers
             var response = await _mediator.Send(new RemoveUserCommand(userId));
 
             return Ok(response);
+        }
+
+        [HttpGet("logged-user")]
+        [Authorize]
+        public async Task<IActionResult> GetLoggedUserById()
+        {
+            var userId = HttpContext.GetUserIdClaimValue();
+
+            var users = await _mediator.Send(new GetUserByIdQuery(userId));
+
+            return Ok(users);
         }
 
         [HttpGet("{id}")]

@@ -38,9 +38,14 @@ namespace VisualVibes.Infrastructure.Repositories
 
         public async Task<int> GetPostTotalCommentNumber(Guid postId)
         {
-            var reactionsForPost = await _context.Comments.CountAsync(r => r.PostId == postId);
+            var commentsForPost = await _context.Comments.CountAsync(r => r.PostId == postId);
 
-            return reactionsForPost;
+            return commentsForPost;
+        }
+
+        public async Task<ICollection<Comment>> GetAllCommentsByUserIdAsync(string userId)
+        {
+            return await _context.Comments.Where(c => c.UserId == userId).ToListAsync();
         }
     }
 }

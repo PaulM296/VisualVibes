@@ -10,5 +10,7 @@ namespace VisualVibes.App.Interfaces
         Task<PaginationResponseDto<Comment>> GetAllPagedCommentsAsync(Guid postId, int pageIndex, int pageSize);
 
         Task<int> GetPostTotalCommentNumber(Guid postId);
+
+        Task<ICollection<Comment>> GetAllCommentsByUserIdAsync(string userId);
     }
 }

@@ -16,7 +16,7 @@ import { ReactionWithEmoji } from '../../Models/ReactionWithEmoji';
 import { PaginationRequestDto, PaginationResponse } from '../../Models/PaginationResponse';
 import { ResponseComment, FormattedComment } from '../../Models/ResponseComment';
 import RichTextEditor from '../RichTextEditor/RichTextEditor';
-import MoreVertMenu from '../MoreVerMenu';
+import MoreVertMenu from '../MoreVertMenu';
 
 const MyUserProfile: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);

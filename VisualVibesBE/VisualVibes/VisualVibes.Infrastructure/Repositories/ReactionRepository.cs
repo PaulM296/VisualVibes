@@ -42,5 +42,10 @@ namespace VisualVibes.Infrastructure.Repositories
 
             return new PaginationResponseDto<Reaction>(reactionsForPost, pageIndex, totalPages);
         }
+
+        public async Task<ICollection<Reaction>> GetReactionsByUserIdAsync(string userId)
+        {
+            return await _context.Reactions.Where(r => r.UserId == userId).ToListAsync();
+        }
     }
 }

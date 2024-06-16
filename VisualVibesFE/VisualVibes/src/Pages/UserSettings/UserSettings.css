@@ -1,0 +1,19 @@
+.user-settings {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+  
+  .user-settings h2 {
+    margin-bottom: 20px;
+  }
+  
+  .user-settings .MuiTextField-root {
+    margin-bottom: 15px;
+  }
+  
+  .user-settings .MuiButton-root {
+    margin-top: 10px;
+  }
+  

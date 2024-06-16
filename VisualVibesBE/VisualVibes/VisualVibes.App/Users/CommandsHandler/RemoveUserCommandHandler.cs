@@ -43,6 +43,12 @@ namespace VisualVibes.App.Users.CommandsHandler
                     await _unitOfWork.ReactionRepository.RemoveAsync(reaction);
                 }
 
+                var feedPosts = await _unitOfWork.FeedPostRepository.GetByPostIdAsync(post.Id);
+                foreach (var feedPost in feedPosts)
+                {
+                    await _unitOfWork.FeedPostRepository.RemoveAsync(feedPost);
+                }
+
                 await _unitOfWork.PostRepository.RemoveAsync(post);
             }
 
@@ -81,6 +87,18 @@ namespace VisualVibes.App.Users.CommandsHandler
                 }
 
                 await _unitOfWork.FeedRepository.RemoveAsync(feed);
+            }
+
+            var userComments = await _unitOfWork.CommentRepository.GetAllCommentsByUserIdAsync(request.Id);
+            foreach (var comment in userComments)
+            {
+                await _unitOfWork.CommentRepository.RemoveAsync(comment);
+            }
+
+            var userReactions = await _unitOfWork.ReactionRepository.GetReactionsByUserIdAsync(request.Id);
+            foreach (var reaction in userReactions)
+            {
+                await _unitOfWork.ReactionRepository.RemoveAsync(reaction);
             }
 
             await _unitOfWork.UserRepository.RemoveUserAsync(userToRemove);
