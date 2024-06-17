@@ -12,6 +12,21 @@ import CreatePost from "./Pages/CreatePost/CreatePost";
 import MyUserProfile from "./Pages/MyUserProfile/MyUserProfile";
 import OtherUserProfile from "./Pages/OtherUserProfile/OtherUserProfile";
 import { UserProvider } from "./Hooks/userContext";
+import { createTheme, ThemeProvider } from "@mui/material";
+
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#0C7075'
+    },
+    secondary: {
+      main: '#072E33',
+    },
+  },
+  typography: {
+    fontFamily: "sans-serif"
+  }
+});
 
 const UserProviderWrapper: React.FC = () => (
   <UserProvider>
@@ -21,7 +36,8 @@ const UserProviderWrapper: React.FC = () => (
 
 const App: React.FC = () => {
   return (
-    <HelmetProvider>
+    <ThemeProvider theme={theme}>
+      <HelmetProvider>
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
@@ -37,6 +53,7 @@ const App: React.FC = () => {
         <Route path="*" element={<NotFound />} />
       </Routes>
     </HelmetProvider>
+    </ThemeProvider>
   );
 }
 

@@ -8,7 +8,7 @@ import UserPersonalFeedTest from '../../Components/UserPersonalFeedTest/UserPers
 
 const MyUserProfile: React.FC = () => {
   return (
-    <>
+    <div className="userProfile">
         <Helmet>
           <title>MyProfile</title>
         </Helmet>
@@ -20,7 +20,7 @@ const MyUserProfile: React.FC = () => {
           <RightBarUserProfile />
         </div>
       </div>
-    </> 
+    </div> 
   )
 }
 

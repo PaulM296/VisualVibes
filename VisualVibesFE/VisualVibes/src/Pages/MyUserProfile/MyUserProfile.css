@@ -1,11 +1,12 @@
 .userProfileContainer {
     height: auto;
+    background-color: #D2E7E7;
 }
 
 .userProfileContent {
     display: flex;
     height: 100vh;
-    padding-top: 60px;
+    padding-top: 0px;
     -ms-overflow-style: none;
     scrollbar-width: none;
     overflow: auto;

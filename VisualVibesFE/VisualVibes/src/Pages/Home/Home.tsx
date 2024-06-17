@@ -9,33 +9,33 @@ import { Alert, Snackbar } from '@mui/material'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 const Home: React.FC = () => {
-    const location = useLocation();
-    const navigate = useNavigate();
-    const [snackbarOpen, setSnackbarOpen] = useState(false);
-    const [snackbarMessage, setSnackbarMessage] = useState('');
-    const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
 
-    useEffect(() => {
-      if (location.state && location.state.message) {
-          setSnackbarMessage(location.state.message);
-          setSnackbarSeverity(location.state.severity || 'success');
-          setSnackbarOpen(true);
+  useEffect(() => {
+    if (location.state && location.state.message) {
+      setSnackbarMessage(location.state.message);
+      setSnackbarSeverity(location.state.severity || 'success');
+      setSnackbarOpen(true);
 
-          navigate(location.pathname, { replace: true });
+      navigate(location.pathname, { replace: true });
 
-          const timer = setTimeout(() => {
-              setSnackbarOpen(false);
-          }, 3000);
-          return () => clearTimeout(timer);
-      }
+      const timer = setTimeout(() => {
+        setSnackbarOpen(false);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
   }, [location.state, navigate, location.pathname]);
 
-    const handleCloseSnackbar = () => {
-        setSnackbarOpen(false);
-    };
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
+  };
 
-    return (
-    <>
+  return (
+    <div className="home">
       <Helmet>
         <title>Homepage</title>
       </Helmet>
@@ -52,14 +52,13 @@ const Home: React.FC = () => {
         autoHideDuration={3000}
         onClose={handleCloseSnackbar}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-    >
+      >
         <Alert onClose={handleCloseSnackbar} severity={snackbarSeverity}>
-            {snackbarMessage}
+          {snackbarMessage}
         </Alert>
       </Snackbar>
-    </>
-    )
+    </div>
+  );
+};
 
-}
-
-export default Home
+export default Home;

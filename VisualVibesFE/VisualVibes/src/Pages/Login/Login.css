@@ -26,14 +26,16 @@
 }
 
 .loginLogo {
-    font-size: 50px;
+    font-size: 60px;
     font-weight: 800;
-    color: blue;
+    color: #0C7075;
     margin-bottom: 14px;
 }
 
 .loginDescription{
     font-size: 22px;
+    color: #072E33;
+    margin-left: 44px;
 }
 
 .loginBox {
@@ -83,15 +85,15 @@
     align-self: center;
     height: 50px;
     border-radius: 10px;
-    background-color: green;
     color: white;
     font-size: 18px;
     font-weight: 500;
     cursor: pointer;
+
 }
 
 .signupLink {
-    color: blue;
+    color: #0C7075;
     text-decoration: none;
     font-weight: 500;
 }
@@ -113,10 +115,13 @@
 
 .loginRegistration {
     text-align: center;
+    color: #072E33;
 }
 
 .loginRight h2 {
     margin-bottom: 20px;
     text-align: center;
     width: 100%;
+    color: #072E33;
+    font-size: 2.5rem;
 }

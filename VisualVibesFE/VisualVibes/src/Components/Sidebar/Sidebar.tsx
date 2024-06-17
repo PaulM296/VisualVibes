@@ -49,7 +49,7 @@ const Sidebar: React.FC = () => {
   return (
     <div className="sidebar">
       <h3>Following</h3>
-      {following.length === 0 && <p>You are not following anyone.</p>}
+      {following.length === 0 && <p className="no-following-message">You are not following anyone.</p>}
       <List>
         {following.map((user) => (
           <ListItem key={user.followingId} button onClick={() => handleUserClick(user.followingId)}>

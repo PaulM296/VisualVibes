@@ -331,7 +331,7 @@ const HomeFeed: React.FC = () => {
   }
 
   return (
-    <div className="feed">
+    <div className="feed" color='#6DA5C0'>
       <div className="feedWrapper">
         {posts.map((post) => (
           <div key={post.postId} className="feedPost">

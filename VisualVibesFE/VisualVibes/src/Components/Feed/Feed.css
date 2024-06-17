@@ -1,9 +1,12 @@
 .feed {
   flex: 50%;
+  border-radius: 10px;
 }
 
 .feedWrapper {
   padding: 14px;
+  background-color: #D2E7E7;
+  border-radius: 10px;
 }
 
 .feedPost {
@@ -15,6 +18,9 @@
 
 .feedPostWrapper {
   padding: 14px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0px 0px 16px -8px rgba(0, 0, 0, 0.68);
 }
 
 .feedPostTop {

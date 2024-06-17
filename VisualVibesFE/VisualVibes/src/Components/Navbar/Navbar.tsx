@@ -107,9 +107,9 @@ const Navbar = () => {
           return;
         }
 
-        const userData = await getUserById(userId, token);
+        const userData = await getUserById(userId);
         if (userData.imageId) {
-          const imageSrc = await getImageById(userData.imageId, token);
+          const imageSrc = await getImageById(userData.imageId);
           setProfilePicture(imageSrc);
         }
       } catch (error) {
@@ -166,9 +166,9 @@ const Navbar = () => {
         if (!token) {
           throw new Error('User not authenticated');
         }
-        const searchResults = await searchUsers(query, token);
+        const searchResults = await searchUsers(query);
         const usersWithImages = await Promise.all(searchResults.map(async (user) => {
-          const imageSrc = await getImageById(user.imageId, token);
+          const imageSrc = await getImageById(user.imageId);
           return { ...user, profilePicture: imageSrc };
         }));
         setSearchResults(usersWithImages);
