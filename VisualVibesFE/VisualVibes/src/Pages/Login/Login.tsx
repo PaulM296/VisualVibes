@@ -7,10 +7,10 @@ import { loginUser } from "../../Services/AuthenticationServiceApi";
 import { UserLoginModel } from "../../Models/UserLoginModel";
 import { useFormik } from "formik";
 import { Button, TextField } from "@mui/material";
-import EmailRoundedIcon from "@mui/icons-material/EmailRounded";
-import LockRoundedIcon from "@mui/icons-material/LockRounded";
 import usePasswordToggle from "../../Hooks/usePasswordToggle";
 import CustomSnackbar from "../../Components/CustomSnackbar";
+import { formLabelPassword, formLabelEmail } from "../../Utils/const/labels";
+
 
 const Login: React.FC = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -20,24 +20,6 @@ const Login: React.FC = () => {
   );
   const navigate = useNavigate();
   const passwordInputProps = usePasswordToggle();
-
-  const formLabelEmail = () => {
-    return (
-      <div style={{ display: "flex", alignItems: "center" }}>
-        <EmailRoundedIcon style={{ marginRight: 5 }} />
-        Email Address
-      </div>
-    );
-  };
-
-  const formLabel = () => {
-    return (
-      <div style={{ display: "flex", alignItems: "center" }}>
-        <LockRoundedIcon style={{ marginRight: 5 }} />
-        Password
-      </div>
-    );
-  };
 
   const formik = useFormik<UserLoginModel>({
     initialValues: {
@@ -102,7 +84,7 @@ const Login: React.FC = () => {
                 />
                 <TextField
                   id="outlined-password"
-                  label={formLabel()}
+                  label={formLabelPassword()}
                   variant="outlined"
                   name="password"
                   placeholder="Password"
