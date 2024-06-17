@@ -4,7 +4,7 @@ import { differenceInDays, differenceInHours, differenceInMinutes } from 'date-f
 import { getUserFeed } from '../../Services/UserFeedServiceApi';
 import { getImageById as getUserImageById } from '../../Services/UserServiceApi';
 import { getImageById as getPostImageById } from '../../Services/UserPostServiceApi';
-import { addReaction, getPostReactions } from '../../Services/ReactionServiceApi';
+import { addReaction, deleteReaction, getPostReactions, updateReaction } from '../../Services/ReactionServiceApi';
 import { getPostComments, addComment, updateComment, deleteComment } from '../../Services/CommentServiceApi';
 import { FeedPost, UserFeed } from '../../Models/FeedPostInterface';
 import { getReactionEmoji } from '../../Utils/getReactionEmoji';
@@ -51,14 +51,14 @@ const HomeFeed: React.FC = () => {
         setLoading(false);
         return;
       }
-
+  
       const data: PaginationResponse<UserFeed> = await getUserFeed(pageIndex, 10);
       const newPosts = data.items[0].posts;
-
+  
       setPosts((prevPosts) => (pageIndex === 1 ? newPosts : [...prevPosts, ...newPosts]));
       setPageIndex(data.pageIndex);
       setTotalPages(data.totalPages);
-
+  
       const imagesPromises = newPosts.map(async (post) => {
         const postImagePromise = post.postImageId
           ? getPostImageById(post.postImageId)
@@ -66,9 +66,9 @@ const HomeFeed: React.FC = () => {
         const profileImagePromise = post.userProfileImageId
           ? getUserImageById(post.userProfileImageId)
           : Promise.resolve('');
-
+  
         const [postImageSrc, profileImageSrc] = await Promise.all([postImagePromise, profileImagePromise]);
-
+  
         return {
           postId: post.postId,
           postImageSrc,
@@ -76,44 +76,44 @@ const HomeFeed: React.FC = () => {
           profileImageSrc,
         };
       });
-
+  
       const images = await Promise.all(imagesPromises);
-
+  
       const postImagesMap = images.reduce((acc, { postId, postImageSrc }) => {
         if (postImageSrc) {
           acc[postId] = postImageSrc;
         }
         return acc;
       }, {} as { [key: string]: string });
-
+  
       const profileImagesMap = images.reduce((acc, { userProfileImageId, profileImageSrc }) => {
         if (userProfileImageId && profileImageSrc) {
           acc[userProfileImageId] = profileImageSrc;
         }
         return acc;
       }, {} as { [key: string]: string });
-
+  
       setPostImages((prevImages) => ({ ...prevImages, ...postImagesMap }));
       setProfileImages((prevImages) => ({ ...prevImages, ...profileImagesMap }));
-
+  
       const reactionsMap = newPosts.reduce((acc, post) => {
         acc[post.postId] = post.reactions.length;
         return acc;
       }, {} as { [key: string]: number });
-
+  
       const commentsMap = newPosts.reduce((acc, post) => {
         acc[post.postId] = post.comments.length;
         return acc;
       }, {} as { [key: string]: number });
-
+  
       const userReactionsMap = newPosts.reduce((acc, post) => {
-        const userReaction = post.reactions.find((r) => r.userId === post.userId);
+        const userReaction = post.reactions.find((r) => r.userId === getUserIdFromToken());
         if (userReaction) {
           acc[post.postId] = ReactionType[userReaction.reactionType];
         }
         return acc;
       }, {} as { [key: string]: string });
-
+  
       setReactionsCount((prev) => ({ ...prev, ...reactionsMap }));
       setCommentsCount((prev) => ({ ...prev, ...commentsMap }));
       setUserReactions((prev) => ({ ...prev, ...userReactionsMap }));
@@ -122,7 +122,7 @@ const HomeFeed: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  };  
 
   const formatPostDate = (date: Date | string) => {
     if (typeof date === 'string') {
@@ -145,12 +145,13 @@ const HomeFeed: React.FC = () => {
   };
 
   const reactionTypes: { [key: string]: number } = {
-    Like: ReactionType.Like,
-    Love: ReactionType.Love,
-    Laugh: ReactionType.Laugh,
-    Cry: ReactionType.Cry,
-    Anger: ReactionType.Anger,
-  };
+    'Like': ReactionType.Like,
+    'Love': ReactionType.Love,
+    'Laugh': ReactionType.Laugh,
+    'Cry': ReactionType.Cry,
+    'Anger': ReactionType.Anger
+};
+
 
   const handleReaction = async (postId: string, reactionType: string) => {
     try {
@@ -160,24 +161,54 @@ const HomeFeed: React.FC = () => {
         return;
       }
 
+      const currentUserReactionType = userReactions[postId];
       const reactionTypeId = reactionTypes[reactionType];
-      if (reactionTypeId === undefined) {
-        console.error('Invalid reaction type:', reactionType);
-        return;
+      const postIndex = posts.findIndex(post => post.postId === postId);
+      const reaction = posts[postIndex]?.reactions.find(r => r.userId === getUserIdFromToken());
+
+      if (currentUserReactionType) {
+        if (currentUserReactionType === reactionType) {
+          if (reaction) {
+            await deleteReaction(reaction.id);
+            setReactionsCount(prev => ({ ...prev, [postId]: prev[postId] - 1 }));
+            setUserReactions(prev => {
+              const newUserReactions = { ...prev };
+              delete newUserReactions[postId];
+              return newUserReactions;
+            });
+            setPosts(prevPosts => {
+              const updatedPosts = [...prevPosts];
+              updatedPosts[postIndex].reactions = updatedPosts[postIndex].reactions.filter(r => r.id !== reaction.id);
+              return updatedPosts;
+            });
+          }
+        } else {
+          if (reaction) {
+            await updateReaction(reaction.id, reactionTypeId);
+            setUserReactions(prev => ({ ...prev, [postId]: reactionType }));
+            setPosts(prevPosts => {
+              const updatedPosts = [...prevPosts];
+              const reactionIndex = updatedPosts[postIndex].reactions.findIndex(r => r.id === reaction.id);
+              updatedPosts[postIndex].reactions[reactionIndex].reactionType = reactionTypeId;
+              return updatedPosts;
+            });
+          }
+        }
+      } else {
+        const newReaction = await addReaction(postId, reactionTypeId);
+        setReactionsCount(prev => ({ ...prev, [postId]: (prev[postId] || 0) + 1 }));
+        setUserReactions(prev => ({ ...prev, [postId]: reactionType }));
+        setPosts(prevPosts => {
+          const updatedPosts = [...prevPosts];
+          updatedPosts[postIndex].reactions.push(newReaction);
+          return updatedPosts;
+        });
       }
-
-      await addReaction(postId, reactionTypeId);
-
-      setReactionsCount((prev) => {
-        const newReactionsCount = prev[postId] ? prev[postId] + 1 : 1;
-        return { ...prev, [postId]: newReactionsCount };
-      });
-
-      setUserReactions((prev) => ({ ...prev, [postId]: reactionType }));
     } catch (error) {
-      console.error('Error adding reaction:', error);
+      console.error('Error handling reaction:', error);
     }
   };
+
 
   const fetchReactions = async (postId: string, pageIndex: number = 1) => {
     try {
@@ -331,7 +362,7 @@ const HomeFeed: React.FC = () => {
   }
 
   return (
-    <div className="feed" color='#6DA5C0'>
+    <div className="feed">
       <div className="feedWrapper">
         {posts.map((post) => (
           <div key={post.postId} className="feedPost">
@@ -357,53 +388,37 @@ const HomeFeed: React.FC = () => {
               </div>
               <div className="feedPostBottom">
                 <div className="feedPostBottomLeft">
-                  <div
-                    className="reactionButton"
-                    onMouseEnter={() => setShowReactions((prev) => ({ ...prev, [post.postId]: true }))}
-                    onMouseLeave={() => setShowReactions((prev) => ({ ...prev, [post.postId]: false }))}
-                  >
+                  <div className="reactionButton"
+                    onMouseEnter={() => setShowReactions(prev => ({ ...prev, [post.postId]: true }))}
+                    onMouseLeave={() => setShowReactions(prev => ({ ...prev, [post.postId]: false }))}>
                     {userReactions[post.postId] ? (
-                      <span className="reactionOpener" role="img" aria-label={userReactions[post.postId]}>
+                      <span className="reactionOpener selected" role="img" aria-label={userReactions[post.postId]}>
                         {getReactionEmoji(userReactions[post.postId])}
                       </span>
                     ) : (
-                      <span className="reactionOpener" role="img" aria-label="thumbs up">
-                        👍
-                      </span>
+                      <span className="reactionOpener" role="img" aria-label="thumbs up">👍</span>
                     )}
                     {showReactions[post.postId] && (
                       <div className="reactionOptions">
-                        <span role="img" aria-label="thumbs up" onClick={() => handleReaction(post.postId, 'Like')}>
-                          👍
-                        </span>
-                        <span role="img" aria-label="heart" onClick={() => handleReaction(post.postId, 'Love')}>
-                          ❤️
-                        </span>
-                        <span role="img" aria-label="laughing" onClick={() => handleReaction(post.postId, 'Laugh')}>
-                          😂
-                        </span>
-                        <span role="img" aria-label="crying" onClick={() => handleReaction(post.postId, 'Cry')}>
-                          😢
-                        </span>
-                        <span role="img" aria-label="angry" onClick={() => handleReaction(post.postId, 'Anger')}>
-                          😠
-                        </span>
+                        {Object.keys(reactionTypes).map(type => (
+                          <span key={type}
+                                className={userReactions[post.postId] === type ? 'selected' : ''}
+                                role="img"
+                                aria-label={type}
+                                onClick={() => handleReaction(post.postId, type)}>
+                            {getReactionEmoji(type)}
+                          </span>
+                        ))}
                       </div>
                     )}
-                    <span
-                      className="feedPostReactionCounter"
-                      onClick={() => fetchReactions(post.postId)}
-                      onMouseEnter={(e) => (e.currentTarget.style.color = 'blue')}
-                      onMouseLeave={(e) => (e.currentTarget.style.color = 'black')}
-                      style={{ cursor: 'pointer' }}
-                    >
-                      {reactionsCount[post.postId] || 0} people reacted
-                    </span>
-                  </div>
+                  <span className="feedPostReactionCounter" onClick={() => fetchReactions(post.postId)}>
+                    {reactionsCount[post.postId] || 0} people reacted
+                  </span>
+                </div>
                 </div>
                 <div className="feedPostBottomRight">
-                  <span
-                    className="feedPostCommentText"
+                  <span 
+                    className="feedPostCommentText" 
                     onClick={() => handleOpenComments(post.postId)}
                     onMouseEnter={(e) => (e.currentTarget.style.color = 'blue')}
                     onMouseLeave={(e) => (e.currentTarget.style.color = 'black')}

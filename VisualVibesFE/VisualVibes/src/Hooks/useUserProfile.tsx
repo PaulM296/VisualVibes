@@ -92,5 +92,5 @@ export const useUserProfile = (userId: string) => {
       }
     };
   
-    return { user, posts, postImages, profilePicture, loading, pageIndex, totalPages, fetchPosts, loadMorePosts };
+    return { user, posts, postImages, profilePicture, loading, pageIndex, totalPages, fetchPosts, loadMorePosts, setPosts };
   };
