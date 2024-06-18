@@ -119,7 +119,6 @@ const Feed: React.FC = () => {
   };  
 
  
-
   const handleReaction = async (postId: string, reactionType: string) => {
     try {
       const currentUserReactionType = userReactions[postId];
