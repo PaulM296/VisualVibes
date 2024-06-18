@@ -9,6 +9,7 @@ import './CreatePost.css';
 import Navbar from '../../Components/Navbar/Navbar';
 import { ResponsePostModel } from '../../Models/ReponsePostModel';
 import { createPost } from '../../Services/UserPostServiceApi';
+import { getLoggedUserById, getImageById } from '../../Services/UserServiceApi';
 import { CreatePostModel } from '../../Models/CreatePostModel';
 import { useNavigate } from 'react-router-dom';
 import AddPhotoAlternateRoundedIcon from '@mui/icons-material/AddPhotoAlternateRounded';
@@ -24,8 +25,22 @@ const CreatePost: React.FC = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
+  const [userAvatar, setUserAvatar] = useState<string | null>(null);
 
   const [activeCommand, setActiveCommand] = useState({ bold: false, italic: false, underline: false });
+
+  useEffect(() => {
+    const fetchUserAvatar = async () => {
+      try {
+        const user = await getLoggedUserById();
+        const avatarSrc = user.imageId ? await getImageById(user.imageId) : '/default-avatar.png';
+        setUserAvatar(avatarSrc);
+      } catch (error) {
+        console.error('Error fetching user avatar:', error);
+      }
+    };
+    fetchUserAvatar();
+  }, []);
 
   const handleCloseSnackbar = () => {
     setSnackbarOpen(false);
@@ -75,7 +90,7 @@ const CreatePost: React.FC = () => {
     };
 
     try {
-      const response: ResponsePostModel = await createPost(createPostModel, token);
+      const response: ResponsePostModel = await createPost(createPostModel);
       console.log('Post created:', response);
       setSnackbarSeverity('success');
       setSnackbarMessage('Post created successfully');
@@ -130,7 +145,7 @@ const CreatePost: React.FC = () => {
         <Card className="card">
           <CardContent className="cardContent">
             <Box className="postHeader">
-              <Avatar src="/path/to/avatar.jpg" alt="User Avatar" />
+              <Avatar src={userAvatar || '/default-avatar.png'} alt="User Avatar" />
               <Typography variant="h6" className="postHeaderText" style={{ marginLeft: '16px' }}>
                 Share your vibes!
               </Typography>

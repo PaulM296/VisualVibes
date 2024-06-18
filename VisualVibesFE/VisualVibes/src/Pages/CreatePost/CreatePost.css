@@ -1,13 +1,14 @@
 .createPostContainer {
     display: flex;
     flex-direction: column;
-    height: 92vh;
+    height: 100vh;
     flex: 2;
     justify-content: center;
     align-items: center;
     text-align: center;
     padding: 20px;
     overflow: visible;
+    background-color: #D2E7E7;
 }
 
 .card {

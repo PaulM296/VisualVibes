@@ -6,6 +6,7 @@ import { useUser } from '../../Hooks/userContext';
 import { updateUser, deleteUser, getImageById as getUserImageById } from '../../Services/UserServiceApi';
 import ConfirmationDialog from '../../Components/ConfirmationDialog';
 import './UserSettings.css';
+import Navbar from '../../Components/Navbar/Navbar';
 
 const UserSettings: React.FC = () => {
   const { user, setUser, isAdmin } = useUser();
@@ -111,137 +112,146 @@ const UserSettings: React.FC = () => {
       <Helmet>
         <title>User Settings</title>
       </Helmet>
-      <Container className="user-settings">
-        <Box display="flex" alignItems="center" justifyContent="space-between" width="100%">
-          <Box position="relative">
-            <Avatar
-              src={profilePicture || '/default-profile.png'}
-              sx={{ width: 100, height: 100 }}
+      <Navbar />
+      background-color: #D2E7E7;
+      <div className="userSettingsContainer">
+        <Container className="user-settings">
+          <Box display="flex" alignItems="center" justifyContent="space-between" width="100%">
+            <Box position="relative">
+              <Avatar
+                src={profilePicture || '/default-profile.png'}
+                sx={{ width: 100, height: 100 }}
+              />
+              {editable && (
+                <>
+                  <IconButton
+                    color="primary"
+                    aria-label="upload picture"
+                    component="label"
+                    style={{ position: 'absolute', top: 0, right: 0 }}
+                  >
+                    <input hidden accept="image/*" type="file" onChange={handlePhotoChange} />
+                    <AddPhotoAlternate />
+                  </IconButton>
+                  <IconButton
+                    color="secondary"
+                    aria-label="delete picture"
+                    onClick={handleDeletePhoto}
+                    style={{ position: 'absolute', top: 0, left: 0 }}
+                  >
+                    <Delete />
+                  </IconButton>
+                </>
+              )}
+            </Box>
+            <Typography variant="h4" style={{ marginLeft: '20px', flexGrow: 1 }}>
+              My Settings
+            </Typography>
+          </Box>
+          <Box mt={2} width="80%">
+            <TextField
+              label="First name"
+              name="firstName"
+              value={localUser.firstName}
+              onChange={handleInputChange}
+              fullWidth
+              margin="normal"
+              InputProps={{
+                readOnly: !editable,
+                classes: { input: 'text-field-small' },
+              }}
+              style={{ width: '80%' }}
             />
-            {editable && (
-              <>
-                <IconButton
-                  color="primary"
-                  aria-label="upload picture"
-                  component="label"
-                  style={{ position: 'absolute', top: 0, right: 0 }}
-                >
-                  <input hidden accept="image/*" type="file" onChange={handlePhotoChange} />
-                  <AddPhotoAlternate />
-                </IconButton>
-                <IconButton
-                  color="secondary"
-                  aria-label="delete picture"
-                  onClick={handleDeletePhoto}
-                  style={{ position: 'absolute', top: 0, left: 0 }}
-                >
-                  <Delete />
-                </IconButton>
-              </>
-            )}
+            <TextField
+              label="Last name"
+              name="lastName"
+              value={localUser.lastName}
+              onChange={handleInputChange}
+              fullWidth
+              margin="normal"
+              InputProps={{
+                readOnly: !editable,
+                classes: { input: 'text-field-small' },
+              }}
+              style={{ width: '80%' }}
+            />
+            <TextField
+              label="Email"
+              name="email"
+              value={localUser.email}
+              onChange={handleInputChange}
+              fullWidth
+              margin="normal"
+              InputProps={{
+                readOnly: !editable,
+                classes: { input: 'text-field-small' },
+              }}
+              style={{ width: '80%' }}
+            />
+            <TextField
+              label="Username"
+              name="userName"
+              value={localUser.userName}
+              onChange={handleInputChange}
+              fullWidth
+              margin="normal"
+              InputProps={{
+                readOnly: !editable,
+                classes: { input: 'text-field-small' },
+              }}
+              style={{ width: '80%' }}
+            />
+            <TextField
+              label="Bio"
+              name="bio"
+              value={localUser.bio || ''}
+              onChange={handleInputChange}
+              fullWidth
+              margin="normal"
+              multiline
+              rows={2}
+              InputProps={{
+                readOnly: !editable,
+                classes: { input: 'text-field-small' },
+              }}
+              style={{ width: '80%' }}
+            />
+            <Box display="flex" flexDirection="row" mt={2}>
+              {editable ? (
+                <>
+                  <Button variant="contained" color="primary" onClick={handleSave}>
+                    Save
+                  </Button>
+                  <Button onClick={() => setEditable(false)} style={{ marginLeft: '8px' }}>
+                    Cancel
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button variant="contained" color="primary" onClick={() => setEditable(true)}>
+                    Edit
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={handleOpenDeleteDialog}
+                    style={{ marginLeft: '8px' }}
+                  >
+                    Delete Account
+                  </Button>
+                </>
+              )}
+            </Box>
           </Box>
-          <Typography variant="h4" style={{ marginLeft: '20px', flexGrow: 1 }}>
-            My Settings
-          </Typography>
-        </Box>
-        <Box mt={2} width="80%">
-          <TextField
-            label="First name"
-            name="firstName"
-            value={localUser.firstName}
-            onChange={handleInputChange}
-            fullWidth
-            margin="normal"
-            InputProps={{
-              readOnly: !editable,
-            }}
-            style={{ width: '80%' }}
+          <ConfirmationDialog
+            open={openDeleteDialog}
+            title="Delete Account"
+            message="Are you sure you want to delete your account? This action is permanent and cannot be undone."
+            onConfirm={handleDeleteUser}
+            onClose={handleCloseDeleteDialog}
           />
-          <TextField
-            label="Last name"
-            name="lastName"
-            value={localUser.lastName}
-            onChange={handleInputChange}
-            fullWidth
-            margin="normal"
-            InputProps={{
-              readOnly: !editable,
-            }}
-            style={{ width: '80%' }}
-          />
-          <TextField
-            label="Email"
-            name="email"
-            value={localUser.email}
-            onChange={handleInputChange}
-            fullWidth
-            margin="normal"
-            InputProps={{
-              readOnly: !editable,
-            }}
-            style={{ width: '80%' }}
-          />
-          <TextField
-            label="Username"
-            name="userName"
-            value={localUser.userName}
-            onChange={handleInputChange}
-            fullWidth
-            margin="normal"
-            InputProps={{
-              readOnly: !editable,
-            }}
-            style={{ width: '80%' }}
-          />
-          <TextField
-            label="Bio"
-            name="bio"
-            value={localUser.bio || ''}
-            onChange={handleInputChange}
-            fullWidth
-            margin="normal"
-            multiline
-            rows={4}
-            InputProps={{
-              readOnly: !editable,
-            }}
-            style={{ width: '80%' }}
-          />
-          <Box display="flex" flexDirection="row" mt={2}>
-            {editable ? (
-              <>
-                <Button variant="contained" color="primary" onClick={handleSave}>
-                  Save
-                </Button>
-                <Button onClick={() => setEditable(false)} style={{ marginLeft: '8px' }}>
-                  Cancel
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button variant="contained" color="primary" onClick={() => setEditable(true)}>
-                  Edit
-                </Button>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={handleOpenDeleteDialog}
-                  style={{ marginLeft: '8px' }}
-                >
-                  Delete Account
-                </Button>
-              </>
-            )}
-          </Box>
-        </Box>
-        <ConfirmationDialog
-          open={openDeleteDialog}
-          title="Delete Account"
-          message="Are you sure you want to delete your account? This action is permanent and cannot be undone."
-          onConfirm={handleDeleteUser}
-          onClose={handleCloseDeleteDialog}
-        />
-      </Container>
+        </Container>
+      </div>
     </>
   );
 };
