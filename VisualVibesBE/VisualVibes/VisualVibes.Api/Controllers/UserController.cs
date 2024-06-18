@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VisualVibes.Api.Extensions;
 using VisualVibes.Api.Models;
+using VisualVibes.App.DTOs.PaginationDtos;
 using VisualVibes.App.DTOs.UserDtos;
+using VisualVibes.App.Posts.Queries;
 using VisualVibes.App.UserFollowers.Commands;
 using VisualVibes.App.UserFollowers.Queries;
 using VisualVibes.App.Users.Commands;
@@ -162,6 +164,14 @@ namespace VisualVibes.Api.Controllers
             var followerId = HttpContext.GetUserIdClaimValue();
             var isFollowing = await _mediator.Send(new IsFollowingUserQuery(followerId, userId));
             return Ok(isFollowing);
+        }
+
+        [HttpGet("adminPage")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetPaginatedUsers([FromQuery] PaginationRequestDto paginationRequest)
+        {
+            var response = await _mediator.Send(new GetPaginatedUsersByIdQuery(paginationRequest));
+            return Ok(response);
         }
 
     }

@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using VisualVibes.App.DTOs.PaginationDtos;
 using VisualVibes.Domain.Models;
 using VisualVibes.Domain.Models.BaseEntity;
 
@@ -12,5 +13,6 @@ namespace VisualVibes.App.Interfaces
         Task<AppUser> RemoveUserAsync(AppUser user);
         Task<AppUser> UpdateUserAsync(AppUser updatedUser);
         Task<IEnumerable<AppUser>> FindAsync(Expression<Func<AppUser, bool>> predicate);
+        Task<PaginationResponseDto<AppUser>> GetPaginatedUsersByIdAsync(int pageIndex, int pageSize);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
+using VisualVibes.App.DTOs.PaginationDtos;
 using VisualVibes.App.Interfaces;
 using VisualVibes.Domain.Models;
 using VisualVibes.Domain.Models.BaseEntity;
@@ -33,6 +34,7 @@ namespace VisualVibes.Infrastructure.Repositories
                     .ThenInclude(f => f.Follower)
                 .Include(u => u.Following)
                     .ThenInclude(f => f.Following)
+                .OrderBy(u => u.UserName)
                 .FirstOrDefaultAsync(u => u.Id == id);
 
             if (user == null)
@@ -78,6 +80,26 @@ namespace VisualVibes.Infrastructure.Repositories
                 .Include(u => u.UserProfile)
                 .Where(predicate)
                 .ToListAsync();
+        }
+
+        public async Task<PaginationResponseDto<AppUser>> GetPaginatedUsersByIdAsync(int pageIndex, int pageSize)
+        {
+            var user = await _context.Users
+                .Include(u => u.UserProfile)
+                    .ThenInclude(i => i.Image)
+                .Include(u => u.Followers)
+                    .ThenInclude(f => f.Follower)
+                .Include(u => u.Following)
+                    .ThenInclude(f => f.Following)
+                .OrderBy(u => u.UserName)
+                .Skip((pageIndex - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            var count = await _context.Users.CountAsync();
+            var totalPages = (int)Math.Ceiling(count / (double)pageSize);
+
+            return new PaginationResponseDto<AppUser>(user, pageIndex, totalPages);
         }
 
     }
