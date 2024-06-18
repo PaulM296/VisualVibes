@@ -12,18 +12,20 @@
 }
 
 .notFoundContent h1 {
-    font-size: 96px;
+    font-size: 116px;
     margin: 0;
+    color: #072E33;
 }
 
 .notFoundContent p {
-    font-size: 24px;
+    font-size: 44px;
     margin: 10px 0;
+    color: #072E33;
 }
 
 .notFoundContent span {
     display: block;
     margin: 20px 0;
-    font-size: 16px;
-    color: #666;
+    font-size: 18px;
+    color: #072E33;
 }

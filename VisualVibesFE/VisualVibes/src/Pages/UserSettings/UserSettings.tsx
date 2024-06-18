@@ -8,12 +8,14 @@ import ConfirmationDialog from '../../Components/ConfirmationDialog';
 import './UserSettings.css';
 
 const UserSettings: React.FC = () => {
-  const { user, setUser } = useUser();
+  const { user, setUser, isAdmin } = useUser();
   const [editable, setEditable] = useState(false);
   const [formData, setFormData] = useState<FormData | null>(null);
   const [localUser, setLocalUser] = useState(user);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [profilePicture, setProfilePicture] = useState<string>('');
+
+  console.log(user, isAdmin);
 
   useEffect(() => {
     if (user) {
@@ -46,7 +48,6 @@ const UserSettings: React.FC = () => {
       newFormData.append('ProfilePicture', file);
       setFormData(newFormData);
 
-      // Create a preview URL for the selected file
       const previewUrl = URL.createObjectURL(file);
       setProfilePicture(previewUrl);
     }
@@ -84,10 +85,9 @@ const UserSettings: React.FC = () => {
     if (localUser) {
       try {
         await deleteUser(localUser.id);
-        // Clear user context and redirect to login or home page
         setUser(undefined);
         localStorage.removeItem('token');
-        window.location.href = '/login'; // Adjust this path as needed
+        window.location.href = '/login';
       } catch (error) {
         console.error('Failed to delete user:', error);
       }

@@ -13,6 +13,8 @@ import MyUserProfile from "./Pages/MyUserProfile/MyUserProfile";
 import OtherUserProfile from "./Pages/OtherUserProfile/OtherUserProfile";
 import { UserProvider } from "./Hooks/userContext";
 import { createTheme, ThemeProvider } from "@mui/material";
+import AdminPage from "./Pages/AdminPage/AdminPage";
+import UserBlocked from "./Pages/UserBlocked/UserBlocked";
 
 const theme = createTheme({
   palette: {
@@ -38,21 +40,23 @@ const App: React.FC = () => {
   return (
     <ThemeProvider theme={theme}>
       <HelmetProvider>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route element={<UserProviderWrapper />}>
-          <Route path="/" element={<Home />} />
-          <Route path="/userSettings" element={<UserSettings />} />
-          <Route path="/createPost" element={<CreatePost />} />
-          <Route path="/conversations" element={<Conversations />} />
-          <Route path="/messages" element={<Messages />} />
-          <Route path="/myUserProfile" element={<MyUserProfile />} />
-          <Route path="/user/:userId" element={<OtherUserProfile />} />
-        </Route>
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </HelmetProvider>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route element={<UserProviderWrapper />}>
+            <Route path="/" element={<Home />} />
+            <Route path="/userSettings" element={<UserSettings />} />
+            <Route path="/createPost" element={<CreatePost />} />
+            <Route path="/conversations" element={<Conversations />} />
+            <Route path="/messages" element={<Messages />} />
+            <Route path="/myUserProfile" element={<MyUserProfile />} />
+            <Route path="/user/:userId" element={<OtherUserProfile />} />
+            <Route path="/admin" element={<AdminPage />} />
+          </Route>
+          <Route path="*" element={<NotFound />} />
+          <Route path="/blocked" element={<UserBlocked />}/>
+        </Routes>
+      </HelmetProvider>
     </ThemeProvider>
   );
 }

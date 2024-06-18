@@ -5,17 +5,23 @@ import { getLoggedUserById } from '../Services/UserServiceApi';
 
 export const userContext = createContext<UserContextType | undefined>(undefined);
 
-export const UserProvider = ({ children } : { children: ReactNode }) => {
+export const UserProvider = ({ children }: { children: ReactNode }) => {
+  const [isBlocked, setIsBlocked] = useState<boolean>(false)
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [user, setUser] = useState<User | undefined>(undefined);
   const isToken = localStorage.getItem('token') ?? false;
   const isLoggedIn = user ?? isToken;
 
   const fetchUser = useCallback(async () => {
     try {
-        const response = await getLoggedUserById();
-        setUser(response);
+      const response = await getLoggedUserById();
+      setIsBlocked(response.isBlocked)
+      if (response.role === 0) {
+        setIsAdmin(true);
+      }
+      setUser(response);
     } catch (error) {
-        console.log(error);
+      console.log(error);
     }
   }, []);
 
@@ -23,18 +29,23 @@ export const UserProvider = ({ children } : { children: ReactNode }) => {
     fetchUser();
   }, []);
 
-  return (isLoggedIn ? 
-    <userContext.Provider value={{ user, setUser }}>
+  console.log(isLoggedIn);
+
+  return (isLoggedIn ? (
+    isBlocked ? (
+    <Navigate to="/blocked" />
+    ) : <userContext.Provider value={{ user, setUser, isAdmin }}>
       {children}
-    </userContext.Provider>
-    : <Navigate to="/login" />
-  );
+    </userContext.Provider>) : (
+      <Navigate to="/blocked" />
+    ));
 };
 
 export const useUser = (): UserContextType => {
-    const context = useContext(userContext);
-    if (!context) {
-      throw new Error('useUser must be used within a UserProvider');
-    }
-    return context;
-  };
+  const context = useContext(userContext);
+  console.log(context);
+  if (!context) {
+    throw new Error('useUser must be used within a UserProvider');
+  }
+  return context;
+};

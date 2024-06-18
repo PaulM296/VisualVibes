@@ -1,0 +1,43 @@
+.userBlockedContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f8f8f8;
+}
+
+.userBlockedContent {
+    text-align: center;
+    font-family: Arial, sans-serif;
+}
+
+.userBlockedContent h1 {
+    font-size: 96px;
+    margin: 0;
+    color: #072E33;
+}
+
+.userBlockedContent p {
+    font-size: 24px;
+    margin: 10px 0;
+    color: #072E33;
+}
+
+.userBlockedContent span {
+    display: block;
+    margin: 20px 0;
+    font-size: 16px;
+    color: #072E33;
+}
+
+.userLoginLink {
+    color: #0C7075;
+    text-decoration: none;
+    font-weight: 500;
+    margin-left: 5px;
+    font-size: 18px;
+}
+
+.userLoginLink:hover {
+    text-decoration: underline;
+}
