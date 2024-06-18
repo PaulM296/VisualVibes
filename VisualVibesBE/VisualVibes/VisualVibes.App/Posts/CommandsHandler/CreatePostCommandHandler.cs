@@ -23,31 +23,10 @@ namespace VisualVibes.App.Posts.CommandsHandler
         }
         public async Task<JoinedResponsePostDto> Handle(CreatePostCommand request, CancellationToken cancellationToken)
         {
-            //if (!IsValidImageFormat(request.createPostDto.Image.Type))
-            //{
-            //    throw new InvalidImageFormatException("Unsupported image format. Only PNG, JPEG, and JPG are supported.");
-            //}
-
-            //byte[] imageData;
-            //using (var memoryStream = new MemoryStream())
-            //{
-            //    await request.createPostDto.Image.Data.CopyToAsync(memoryStream);
-            //    imageData = memoryStream.ToArray();
-            //}
-
-            //var image = new Image
-            //{
-            //    Name = request.createPostDto.Image.Name,
-            //    Type = request.createPostDto.Image.Type,
-            //    Data = imageData
-            //};
-
-            //await _unitOfWork.ImageRepository.UploadImage(image);
 
             Image image = null;
             if (request.createPostDto.Image != null)
             {
-                // Validate image format
                 var allowedFormats = new[] { ".png", ".jpg", ".jpeg" };
                 var fileExtension = Path.GetExtension(request.createPostDto.Image.FileName).ToLower();
                 if (!allowedFormats.Contains(fileExtension))
@@ -55,7 +34,6 @@ namespace VisualVibes.App.Posts.CommandsHandler
                     throw new InvalidImageFormatException("Invalid image format. Only .png, .jpg, and .jpeg are allowed.");
                 }
 
-                // Convert image to binary format
                 byte[] imageData;
                 using (var memoryStream = new MemoryStream())
                 {

@@ -11,5 +11,6 @@ namespace VisualVibes.App.DTOs.CommentDtos
         public DateTime CreatedAt { get; set; }
         public string UserName { get; set; }
         public Guid ImageId { get; set; }
+        public bool isModerated { get; set; }
     }
 }

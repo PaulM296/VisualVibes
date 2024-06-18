@@ -22,5 +22,6 @@ namespace VisualVibes.Domain.Models.BaseEntity
         public DateTime CreatedAt { get; set; }
         public Guid ImageId { get; set; }
         public Image Image { get; set; }
+        public bool isModerated { get; set; }
     }
 }

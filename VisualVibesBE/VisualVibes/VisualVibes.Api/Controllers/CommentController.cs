@@ -7,6 +7,7 @@ using VisualVibes.App.Comments.Commands;
 using VisualVibes.App.Comments.Queries;
 using VisualVibes.App.DTOs.CommentDtos;
 using VisualVibes.App.DTOs.PaginationDtos;
+using VisualVibes.App.Posts.Commands;
 using VisualVibes.App.Reactions.Queries;
 
 namespace VisualVibes.Api.Controllers
@@ -51,6 +52,22 @@ namespace VisualVibes.Api.Controllers
             var updateComment = await _mediator.Send(new UpdateCommentCommand(userId, id, updateCommentDto));
 
             return Ok(updateComment);
+        }
+
+        [HttpPut("{commentId}/moderate")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> ModerateComment(Guid commentId)
+        {
+            var response = await _mediator.Send(new ModerateCommentCommand(commentId));
+            return Ok(response);
+        }
+
+        [HttpPut("{commentId}/unmoderate")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UnmoderateComment(Guid commentId)
+        {
+            var response = await _mediator.Send(new UnmoderateCommentCommand(commentId));
+            return Ok(response);
         }
 
         [HttpGet("post/{id}")]

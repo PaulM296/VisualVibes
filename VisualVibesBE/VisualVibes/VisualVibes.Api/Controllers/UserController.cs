@@ -71,6 +71,21 @@ namespace VisualVibes.Api.Controllers
             return Ok(response);
         }
 
+        [HttpPut("{userId}/block")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> BlockUser(string userId)
+        {
+            var response = await _mediator.Send(new BlockUserCommand(userId));
+            return Ok(response);
+        }
+
+        [HttpPut("{userId}/unblock")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UnblockUser(string userId)
+        {
+            var response = await _mediator.Send(new UnblockUserCommand(userId));
+            return Ok(response);
+        }
 
         [HttpPut("{userId}")]
         [Authorize]

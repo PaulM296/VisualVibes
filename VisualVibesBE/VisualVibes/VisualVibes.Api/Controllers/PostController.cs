@@ -39,14 +39,6 @@ namespace VisualVibes.Api.Controllers
             return Ok(response);
         }
 
-        //[HttpGet("user/{userId}")]
-        //public async Task<IActionResult> GetPostsByUserId(string userId)
-        //{
-        //    var response = await _mediator.Send(new GetPostsByUserIdQuery(userId));
-
-        //    return Ok(response);
-        //}
-
         [HttpGet("user/{userId}")]
         public async Task<IActionResult> GetPostsByUserId(string userId, [FromQuery] PaginationRequestDto paginationRequest)
         {
@@ -62,6 +54,22 @@ namespace VisualVibes.Api.Controllers
             var updatedPost = await _mediator.Send(new UpdatePostCommand(userId, id, updatePostDto));
 
             return Ok(updatedPost);
+        }
+
+        [HttpPut("{postId}/moderate")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> ModeratePost(Guid postId)
+        {
+            var response = await _mediator.Send(new ModeratePostCommand(postId));
+            return Ok(response);
+        }
+
+        [HttpPut("{postId}/unmoderate")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UnmoderatePost(Guid postId)
+        {
+            var response = await _mediator.Send(new UnmoderatePostCommand(postId));
+            return Ok(response);
         }
 
         [HttpDelete("{id}")]

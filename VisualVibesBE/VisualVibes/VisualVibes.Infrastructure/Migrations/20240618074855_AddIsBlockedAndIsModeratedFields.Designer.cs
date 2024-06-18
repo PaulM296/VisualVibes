@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VisualVibes.Infrastructure;
 
@@ -11,9 +12,11 @@ using VisualVibes.Infrastructure;
 namespace VisualVibes.Infrastructure.Migrations
 {
     [DbContext(typeof(VisualVibesDbContext))]
-    partial class VisualVibesDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240618074855_AddIsBlockedAndIsModeratedFields")]
+    partial class AddIsBlockedAndIsModeratedFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

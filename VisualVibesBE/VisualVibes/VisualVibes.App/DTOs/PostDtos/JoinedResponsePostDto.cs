@@ -11,6 +11,7 @@ namespace VisualVibes.App.DTOs.PostDtos
         public string Pictures { get; set; }
         public DateTime CreatedAt { get; set; }
         public Guid ImageId { get; set; }
+        public bool isModerated { get; set; }
         public ICollection<ResponseCommentDto> Comments { get; set; }
         public ICollection<ResponseReactionDto> Reactions { get; set; }
     }

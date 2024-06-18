@@ -14,5 +14,6 @@
         public string? Bio { get; set; }
         public string? ProfilePicture { get; set; }
         public Guid ImageId { get; set; }
+        public bool isBlocked { get; set; }
     }
 }

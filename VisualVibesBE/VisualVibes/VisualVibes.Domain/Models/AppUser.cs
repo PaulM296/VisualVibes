@@ -25,5 +25,6 @@ namespace VisualVibes.Domain.Models
         public ICollection<Comment> Comments { get; set; }
 
         public ICollection<Message> Messages { get; set; }
+        public bool isBlocked { get; set; }
     }
 }
