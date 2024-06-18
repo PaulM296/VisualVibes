@@ -226,46 +226,43 @@ const OtherUsersProfile: React.FC = () => {
             const postIndex = posts.findIndex(post => post.id === postId);
             const reaction = posts[postIndex]?.reactions.find(r => r.userId === getUserIdFromToken());
     
+            console.log('Current User Reaction Type:', currentUserReactionType);
+            console.log('Reaction Type:', reactionType);
+    
+            const newReactionsCount = { ...reactionsCount };
+            const newUserReactions = { ...userReactions };
+            const updatedPosts = [...posts];
+    
             if (currentUserReactionType) {
                 if (currentUserReactionType === reactionType) {
                     if (reaction) {
                         await deleteReaction(reaction.id);
-                        setReactionsCount(prev => ({ ...prev, [postId]: prev[prev[postId] ? postId : 0] - 1 }));
-                        setUserReactions(prev => {
-                            const newUserReactions = { ...prev };
-                            delete newUserReactions[postId];
-                            return newUserReactions;
-                        });
-                        setPosts(prevPosts => {
-                            const updatedPosts = [...prevPosts];
-                            updatedPosts[postIndex].reactions = updatedPosts[postIndex].reactions.filter(r => r.id !== reaction.id);
-                            return updatedPosts;
-                        });
+                        newReactionsCount[postId] = (newReactionsCount[postId] || 0) - 1;
+                        delete newUserReactions[postId];
+                        updatedPosts[postIndex].reactions = updatedPosts[postIndex].reactions.filter(r => r.id !== reaction.id);
                     }
                 } else {
                     if (reaction) {
                         await updateReaction(reaction.id, reactionTypeId);
-                        setUserReactions(prev => ({ ...prev, [postId]: reactionType }));
-                        setPosts(prevPosts => {
-                            const updatedPosts = [...prevPosts];
-                            const reactionIndex = updatedPosts[postIndex].reactions.findIndex(r => r.id === reaction.id);
-                            updatedPosts[postIndex].reactions[reactionIndex].reactionType = reactionTypeId;
-                            return updatedPosts;
-                        });
+                        newUserReactions[postId] = reactionType;
+                        const reactionIndex = updatedPosts[postIndex].reactions.findIndex(r => r.id === reaction.id);
+                        updatedPosts[postIndex].reactions[reactionIndex].reactionType = reactionTypeId;
                     }
                 }
             } else {
                 const newReaction = await addReaction(postId, reactionTypeId);
-                console.log(newReaction);
-                setReactionsCount(prev => ({ ...prev, [postId]: (prev[postId] || 0) + 1 }));
-                setUserReactions(prev => ({ ...prev, [postId]: reactionType }));
-                setPosts(prevPosts => {
-                    const updatedPosts = [...prevPosts];
-                    updatedPosts[postIndex].reactions.push(newReaction);
-                    console.log(updatedPosts[postIndex].reactions);
-                    return updatedPosts;
-                });
+                newReactionsCount[postId] = (newReactionsCount[postId] || 0) + 1;
+                newUserReactions[postId] = reactionType;
+                updatedPosts[postIndex].reactions.push(newReaction);
             }
+    
+            setReactionsCount(newReactionsCount);
+            setUserReactions(newUserReactions);
+            setPosts(updatedPosts);
+    
+            console.log('Updated Reactions Count:', newReactionsCount);
+            console.log('Updated User Reactions:', newUserReactions);
+    
         } catch (error) {
             console.error('Error handling reaction:', error);
         }
