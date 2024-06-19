@@ -1,0 +1,13 @@
+.feedPostUserDetails {
+  display: flex;
+  flex-direction: column;
+}
+
+.feedPostUsername {
+  color: #072E33;
+}
+
+.feedPostDate {
+  color: #072E33;
+  margin-left: 10px;
+}

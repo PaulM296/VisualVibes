@@ -2,7 +2,8 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 60px;
+    padding-top: 60px;
+    height: 100vh;
     width: 100%;
     box-sizing: border-box;
   }
@@ -16,7 +17,7 @@
   }
   
   .otherUserFeedPost {
-    width: 100%;
+    width: 80%;
     border-radius: 10px;
     -webkit-box-shadow: 0px 0px 16px -8px rgba(0, 0, 0, 0.68);
     box-shadow: 0px 0px 16px -8px rgba(0, 0, 0, 0.68);
@@ -25,6 +26,8 @@
   
   .otherUserFeedPostWrapper {
     padding: 14px;
+    background-color: white;
+    border-radius: 10px;
   }
   
   .otherUserFeedPostTop {
@@ -53,6 +56,7 @@
   
   .otherUserFeedPostDate {
     font-size: 14px;
+    margin-left: 10px;
   }
   
   .otherUserFeedPostCenter {
@@ -76,8 +80,15 @@
     display: flex;
     align-items: center;
   }
+
+  .otherUserFeedPostStats {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
   
-  .reactionIcon {
+  .otherUserReactionIcon {
     width: 24px;
     height: 24px;
     margin-right: 5px;
@@ -97,7 +108,7 @@
     display: inline-block;
   }
   
-  .reactionOptions {
+  .otherUserReactionOptions {
     display: flex;
     position: absolute;
     bottom: 100%;
@@ -109,22 +120,27 @@
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     z-index: 10;
   }
+
+  .otherUserReactionOptions .selected {
+    background-color: #0C7075;
+    border-radius: 50%;
+  }
   
   .otherUserReactionOpener {
     font-size: 24px;
   }
   
-  .reactionOptions span {
+  .otherUserReactionOptions span {
     margin-right: 5px;
     cursor: pointer;
     font-size: 24px;
   }
   
-  .reactionButton span {
+  .otherUserReactionButton span {
     cursor: pointer;
   }
   
-  .modalContent {
+  .otherUserModalContent {
     background: white;
     padding: 20px;
     border-radius: 10px;
@@ -137,7 +153,7 @@
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   }
   
-  .modalContentLarge {
+  .otherUserModalContentLarge {
     background: white;
     padding: 20px;
     border-radius: 10px;
@@ -152,39 +168,43 @@
     overflow-y: auto;
   }
   
-  .reactionItem {
+  .otherUserReactionItem {
     display: flex;
     align-items: center;
     margin-bottom: 10px;
   }
   
-  .commentItem {
+  .otherUserCommentItem {
     display: flex;
     align-items: flex-start;
     margin-bottom: 10px;
   }
   
-  .addCommentContainer {
+  .otherUserAddCommentContainer {
     margin-bottom: 20px;
   }
   
-  .commentsContainer {
+  .otherUserCommentsContainer {
     margin-top: 20px;
   }
   
-  .feedPostReactionCounter {
+  .otherUserFeedPostReactionCounter {
     cursor: pointer;
     transition: color 0.3s;
   }
   
-  .paginationControls {
+  .otherUserPaginationControls {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-top: 10px;
   }
   
-  .paginationControls Button {
+  .otherUserPaginationControls Button {
     min-width: 70px;
   }
   
+  .otherUserFeedPostUserInfo {
+    display: flex;
+    flex-direction: column;
+}

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Avatar, Typography, Modal, Button, TextField } from '@mui/material';
-import { differenceInDays, differenceInHours, differenceInMinutes } from 'date-fns';
+import { Button } from '@mui/material';
 import './UserPersonalFeedTest.css';
 import { User } from '../../Models/User';
 import { getUserIdFromToken } from '../../Utils/auth';
@@ -15,8 +14,11 @@ import { ReactionType } from '../../Models/ReactionType';
 import { ReactionWithEmoji } from '../../Models/ReactionWithEmoji';
 import { PaginationRequestDto, PaginationResponse } from '../../Models/PaginationResponse';
 import { ResponseComment, FormattedComment } from '../../Models/ResponseComment';
-import RichTextEditor from '../RichTextEditor/RichTextEditor';
-import MoreVertMenu from '../MoreVertMenu';
+import UserProfileInfo from '../UserProfileInfo';
+import Post from '../Post/Post';
+import ReactionModal from '../ReactionModal';
+import CommentModal from '../CommentModal';
+import { reactionTypes } from '../../Utils/const/reactionTypes';
 
 const MyUserProfile: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -41,7 +43,7 @@ const MyUserProfile: React.FC = () => {
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [editCommentText, setEditCommentText] = useState<string>('');
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
-const [editPostCaption, setEditPostCaption] = useState<string>('');
+  const [editPostCaption, setEditPostCaption] = useState<string>('');
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -67,7 +69,6 @@ const [editPostCaption, setEditPostCaption] = useState<string>('');
           const imageSrc = await getUserImageById(userData.imageId);
           setProfilePicture(imageSrc);
         }
-    
         await fetchPosts(userId, 1);
       } catch (error) {
         console.error('Error fetching user data:', error);
@@ -140,14 +141,6 @@ const [editPostCaption, setEditPostCaption] = useState<string>('');
     setUserReactions(userReactionsMap);
   };
 
-  const reactionTypes: { [key: string]: number } = {
-    'Like': ReactionType.Like,
-    'Love': ReactionType.Love,
-    'Laugh': ReactionType.Laugh,
-    'Cry': ReactionType.Cry,
-    'Anger': ReactionType.Anger
-  };
-
   const handleReaction = async (postId: string, reactionType: string) => {
     try {
       const token = localStorage.getItem('token');
@@ -204,24 +197,37 @@ const [editPostCaption, setEditPostCaption] = useState<string>('');
     }
   };
 
-  const formatPostDate = (date: Date | string) => {
-    if (typeof date === 'string') {
-      date = new Date(date);
+  const handleEditPost = (postId: string, currentCaption: string) => {
+    setEditingPostId(postId);
+    setEditPostCaption(currentCaption);
+  };
+
+  const handleSavePost = async (postId: string) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      await updatePost(postId, { caption: editPostCaption });
+      setEditingPostId(null);
+      setPosts(prevPosts => {
+        const updatedPosts = [...prevPosts];
+        const postIndex = updatedPosts.findIndex(post => post.id === postId);
+        if (postIndex !== -1) {
+          updatedPosts[postIndex].caption = editPostCaption;
+        }
+        return updatedPosts;
+      });
+    } catch (error) {
+      console.error('Error saving post:', error);
     }
-    const now = new Date();
+  };
 
-    const adjustedDate = new Date(date.getTime() + 3 * 60 * 60 * 1000);
-
-    const minutesDifference = differenceInMinutes(now, adjustedDate);
-    const hoursDifference = differenceInHours(now, adjustedDate);
-    const daysDifference = differenceInDays(now, adjustedDate);
-
-    if (minutesDifference < 60) {
-      return `Created ${minutesDifference} minutes ago`;
-    } else if (hoursDifference < 24) {
-      return `Created ${hoursDifference} hours ago`;
-    } else {
-      return `Created ${daysDifference} days ago`;
+  const handleDeletePost = async (postId: string) => {
+    try {
+      await removePost(postId);
+      setPosts(prevPosts => prevPosts.filter(post => post.id !== postId));
+    } catch (error) {
+      console.error('Error deleting post:', error);
     }
   };
 
@@ -235,7 +241,7 @@ const [editPostCaption, setEditPostCaption] = useState<string>('');
 
       const reactionData = await getPostReactions(postId, pageIndex);
       const formattedReactions: ReactionWithEmoji[] = await Promise.all(reactionData.items.map(async (reaction: ResponseReaction) => {
-        const avatar = reaction.imageId ? await getUserImageById(reaction.imageId, ) : '';
+        const avatar = reaction.imageId ? await getUserImageById(reaction.imageId) : '';
         return {
           userName: reaction.userName,
           avatar,
@@ -311,11 +317,6 @@ const [editPostCaption, setEditPostCaption] = useState<string>('');
     }
   };
 
-  const handleEditComment = (comment: FormattedComment) => {
-    setEditingCommentId(comment.id);
-    setEditCommentText(comment.text);
-  };
-  
   const handleUpdateComment = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -364,40 +365,6 @@ const [editPostCaption, setEditPostCaption] = useState<string>('');
     }
   };
 
-  const handleEditPost = (postId: string, currentCaption: string) => {
-    setEditingPostId(postId);
-    setEditPostCaption(currentCaption);
-  };
-
-  const handleSavePost = async (postId: string) => {
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) return;
-
-      await updatePost(postId, { caption: editPostCaption });
-      setEditingPostId(null);
-      setPosts(prevPosts => {
-        const updatedPosts = [...prevPosts];
-        const postIndex = updatedPosts.findIndex(post => post.id === postId);
-        if (postIndex !== -1) {
-          updatedPosts[postIndex].caption = editPostCaption;
-        }
-        return updatedPosts;
-      });
-    } catch (error) {
-      console.error('Error saving post:', error);
-    }
-  };
-
-  const handleDeletePost = async (postId: string) => {
-    try {
-      await removePost(postId);
-      setPosts(prevPosts => prevPosts.filter(post => post.id !== postId));
-    } catch (error) {
-      console.error('Error deleting post:', error);
-    }
-  };
-
   if (loading) {
     return <p>Loading...</p>;
   }
@@ -408,200 +375,61 @@ const [editPostCaption, setEditPostCaption] = useState<string>('');
 
   return (
     <div className="userPersonalFeedContainer">
-      <div className="userInfo">
-        <Avatar alt={user.userName} src={profilePicture} className="avatar" style={{ width: '150px', height: '150px' }} />
-        <Typography className="username" style={{ marginLeft: '20px', fontSize: '24px', fontWeight: 'bold' }}>{user.userName}</Typography>
-      </div>
-      <Typography className="bio" style={{ marginTop: '10px', fontSize: '16px', textAlign: 'center', width: '100%' }}>
-        {user.bio}
-      </Typography>
+      <UserProfileInfo profilePicture={profilePicture} username={user.userName} bio={user.bio} />
       {posts.map((post) => (
-        <div key={post.id} className="feedPost">
-          <div className="feedPostWrapper">
-            <div className="feedPostTop">
-              <div className="feedPostTopLeft">
-                <Avatar alt={user.userName} src={profilePicture} className="feedPostProfileImg" />
-                <div>
-                  <span className="feedPostUsername"> {user.userName}</span>
-                  <span className="feedPostDate">{formatPostDate(post.createdAt)}</span>
-                </div>
-              </div>
-              <div className="feedPostTopRight">
-              <MoreVertMenu
-                postId={post.id}
-                onPostUpdated={() => handleEditPost(post.id, post.caption)}
-                onPostDeleted={() => handleDeletePost(post.id)}
-                onEdit={() => handleEditPost(post.id, post.caption)}
-              />
-              </div>
-            </div>
-            <div className="feedPostCenter">
-              {editingPostId === post.id ? (
-                <>
-                  <TextField
-                    value={editPostCaption}
-                    onChange={(e) => setEditPostCaption(e.target.value)}
-                    fullWidth
-                    multiline
-                  />
-                  <Button variant="contained" color="primary" onClick={() => handleSavePost(post.id)}>Save</Button>
-                  <Button onClick={() => setEditingPostId(null)}>Cancel</Button>
-                </>
-              ) : (
-                <span className="feedPostText" dangerouslySetInnerHTML={{ __html: post.caption }}></span>
-              )}
-              {post.imageId && postImages[post.id] && (
-                <img className="feedPostImg" src={postImages[post.id]} alt="Post image" />
-              )}
-            </div>
-            <div className="feedPostBottom">
-              <div className="feedPostBottomLeft">
-                <div className="reactionButton"
-                  onMouseEnter={() => setShowReactions(prev => ({ ...prev, [post.id]: true }))}
-                  onMouseLeave={() => setShowReactions(prev => ({ ...prev, [post.id]: false }))}>
-                  {userReactions[post.id] ? (
-                    <span className="reactionOpener selected" role="img" aria-label={userReactions[post.id]}>
-                      {getReactionEmoji(userReactions[post.id])}
-                    </span>
-                  ) : (
-                    <span className="reactionOpener" role="img" aria-label="thumbs up">👍</span>
-                  )}
-                  {showReactions[post.id] && (
-                    <div className="reactionOptions">
-                      {Object.keys(reactionTypes).map(type => (
-                        <span key={type}
-                              className={userReactions[post.id] === type ? 'selected' : ''}
-                              role="img"
-                              aria-label={type}
-                              onClick={() => handleReaction(post.id, type)}>
-                          {getReactionEmoji(type)}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                <span className="feedPostReactionCounter" onClick={() => fetchReactions(post.id)}>
-                  {reactionsCount[post.id] || 0} people reacted
-                </span>
-              </div>
-              </div>
-              <div className="feedPostBottomRight">
-                <span 
-                  className="feedPostCommentText" 
-                  onClick={() => handleOpenComments(post.id)}
-                  onMouseEnter={(e) => (e.currentTarget.style.color = 'blue')}
-                  onMouseLeave={(e) => (e.currentTarget.style.color = 'black')}
-                  style={{ cursor: 'pointer' }}
-                >
-                  {commentsCount[post.id] || 0} comments
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
+        <Post
+          key={post.id}
+          post={post}
+          profilePicture={profilePicture}
+          userReactions={userReactions}
+          reactionsCount={reactionsCount}
+          commentsCount={commentsCount}
+          showReactions={showReactions}
+          handleReaction={handleReaction}
+          fetchReactions={fetchReactions}
+          handleOpenComments={handleOpenComments}
+          editingPostId={editingPostId}
+          editPostCaption={editPostCaption}
+          handleEditPost={handleEditPost}
+          handleSavePost={handleSavePost}
+          setEditPostCaption={setEditPostCaption}
+          handleDeletePost={handleDeletePost}
+          postImages={postImages}
+          setShowReactions={setShowReactions}
+        />
       ))}
       {pageIndex < totalPages && (
         <Button onClick={loadMorePosts} variant="contained" color="primary" style={{ marginTop: '10px' }}>
           Load More
         </Button>
       )}
-      <Modal open={openReactionModal} onClose={handleClose}>
-        <div className="modalContent">
-          <Typography variant="h6">Reactions</Typography>
-          {reactions.length === 0 && (
-            <Typography sx={{ mt: 2 }}>No reactions yet.</Typography>
-          )}
-          {reactions.length > 0 && reactions.map((reaction, index) => (
-            <div key={index} className="reactionItem">
-              <span>{reaction.reactionEmoji}</span>
-              <Avatar src={reaction.avatar} alt={reaction.userName} sx={{ margin: '0 10px' }} />
-              <Typography>{reaction.userName}</Typography>
-            </div>
-          ))}
-          <div className="paginationControls">
-            <Button
-              disabled={pageIndex === 1}
-              onClick={() => fetchReactions(currentPostId!, pageIndex - 1)}
-              style={{ float: 'left' }}
-            >
-              Previous
-            </Button>
-            <Typography>{pageIndex} / {totalPages}</Typography>
-            <Button
-              disabled={pageIndex === totalPages}
-              onClick={() => fetchReactions(currentPostId!, pageIndex + 1)}
-              style={{ float: 'right' }}
-            >
-              Next
-            </Button>
-          </div>
-        </div>
-      </Modal>
-      <Modal open={openCommentModal} onClose={handleClose}>
-        <div className="modalContentLarge">
-          <Typography variant="h6">Comments</Typography>
-          <div className="addCommentContainer">
-            <RichTextEditor content={newComment} setContent={setNewComment} />
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleAddComment}
-              style={{ marginTop: '10px' }}
-            >
-              Submit
-            </Button>
-          </div>
-          <div className="commentsContainer">
-            {comments.length === 0 && (
-              <Typography sx={{ mt: 2 }}>No comments yet.</Typography>
-            )}
-            {comments.length > 0 && comments.map((comment, index) => (
-              <div key={index} className="commentItem">
-                <Avatar src={comment.avatar} alt={comment.userName} sx={{ margin: '0 10px' }} />
-                <div>
-                  <Typography>{comment.userName}</Typography>
-                  {editingCommentId === comment.id ? (
-                    <>
-                      <TextField
-                        value={editCommentText}
-                        onChange={(e) => setEditCommentText(e.target.value)}
-                        fullWidth
-                        multiline
-                      />
-                      <Button variant="contained" color="primary" onClick={handleUpdateComment}>Save</Button>
-                      <Button onClick={() => setEditingCommentId(null)}>Cancel</Button>
-                    </>
-                  ) : (
-                    <Typography sx={{ marginLeft: '10px' }} dangerouslySetInnerHTML={{ __html: comment.text }}></Typography>
-                  )}
-                </div>
-                {comment.userId === getUserIdFromToken() && (
-                  <div>
-                    <Button onClick={() => handleEditComment(comment)}>Edit</Button>
-                    <Button onClick={() => handleDeleteComment(comment.id)}>Delete</Button>
-                  </div>
-                )}
-              </div>
-            ))}
-            <div className="paginationControls">
-              <Button
-                disabled={currentCommentPageIndex === 1}
-                onClick={() => fetchComments(currentPostId!, currentCommentPageIndex - 1)}
-                style={{ float: 'left' }}
-              >
-                Previous
-              </Button>
-              <Typography>{currentCommentPageIndex} / {commentTotalPages}</Typography>
-              <Button
-                disabled={currentCommentPageIndex === commentTotalPages}
-                onClick={() => fetchComments(currentPostId!, currentCommentPageIndex + 1)}
-                style={{ float: 'right' }}
-              >
-                Next
-              </Button>
-            </div>
-          </div>
-        </div>
-      </Modal>
+      <ReactionModal
+        open={openReactionModal}
+        onClose={handleClose}
+        reactions={reactions}
+        pageIndex={pageIndex}
+        totalPages={totalPages}
+        fetchReactions={fetchReactions}
+        currentPostId={currentPostId}
+      />
+      <CommentModal
+        open={openCommentModal}
+        onClose={handleClose}
+        comments={comments}
+        newComment={newComment}
+        setNewComment={setNewComment}
+        handleAddComment={handleAddComment}
+        editingCommentId={editingCommentId}
+        editCommentText={editCommentText}
+        setEditCommentText={setEditCommentText}
+        handleUpdateComment={handleUpdateComment}
+        handleDeleteComment={handleDeleteComment}
+        currentCommentPageIndex={currentCommentPageIndex}
+        commentTotalPages={commentTotalPages}
+        fetchComments={fetchComments}
+        currentPostId={currentPostId}
+        setEditingCommentId={setEditingCommentId}
+      />
     </div>
   );
 };

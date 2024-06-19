@@ -8,6 +8,7 @@ export interface ResponseComment {
     imageId: string;
     avatar: string;
     commentText: string;
+    isModerated: boolean;
 }
 
 export interface FormattedComment {

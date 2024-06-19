@@ -11,6 +11,7 @@ namespace VisualVibes.App.MappingProfiles
         public PostMappings()
         {
             CreateMap<Post, JoinedResponsePostDto>()
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.UserName))
                 .ForMember(dest => dest.Comments, opt => opt.MapFrom(src => src.Comments))
                 .ForMember(dest => dest.Reactions, opt => opt.MapFrom(src => src.Reactions));
 

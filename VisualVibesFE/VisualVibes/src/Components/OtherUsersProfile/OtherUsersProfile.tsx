@@ -436,7 +436,7 @@ const OtherUsersProfile: React.FC = () => {
     }
 
     return (
-        <div className="otherUserProfileContainer">
+        <div className="otherUserPersonalFeedContainer">
             <Navbar />
             <div className="otherUserProfileContent">
                 <div className="otherUserPersonalFeedContainer">
@@ -473,62 +473,63 @@ const OtherUsersProfile: React.FC = () => {
                         </Button>
                     </div>
                     {posts.map((post) => (
-                        <div key={post.id} className="feedPost">
-                            <div className="feedPostWrapper">
-                                <div className="feedPostTop">
-                                    <div className="feedPostTopLeft">
-                                        <Avatar alt={user.userName} src={profilePicture} className="feedPostProfileImg" />
-                                        <span className="feedPostUsername"> {user.userName}</span>
-                                    </div>
-                                    <div className="feedPostTopRight">
-                                        <span className="feedPostDate">{formatPostDate(post.createdAt)}</span>
+                        <div key={post.id} className="otherUserFeedPost">
+                            <div className="otherUserFeedPostWrapper">
+                                <div className="otherUserFeedPostTop">
+                                    <div className="otherUserFeedPostTopLeft">
+                                        <Avatar alt={user?.userName} src={profilePicture} className="otherUserFeedPostProfileImg" />
+                                        <div className="otherUserFeedPostUserInfo">
+                                            <span className="otherUserFeedPostUsername">{user?.userName}</span>
+                                            <span className="otherUserFeedPostDate">{formatPostDate(post.createdAt)}</span>
+                                        </div>
                                     </div>
                                 </div>
-                                <div className="feedPostCenter">
-                                    <span className="feedPostText" dangerouslySetInnerHTML={{ __html: post.caption }}></span>
+                                <div className="otherUserFeedPostCenter">
+                                    <span className="otherUserFeedPostText" dangerouslySetInnerHTML={{ __html: post.caption }}></span>
                                     {post.imageId && postImages[post.id] && (
-                                        <img className="feedPostImg" src={postImages[post.id]} alt="Post image" />
+                                        <img className="otherUserFeedPostImg" src={postImages[post.id]} alt="Post image" />
                                     )}
                                 </div>
-                                <div className="feedPostBottom">
-                                    <div className="feedPostBottomLeft">
-                                        <div
-                                            className="reactionButton"
-                                            onMouseEnter={() => setShowReactions((prev) => ({ ...prev, [post.id]: true }))}
-                                            onMouseLeave={() => setShowReactions((prev) => ({ ...prev, [post.id]: false }))}
-                                        >
-                                            {userReactions[post.id] ? (
-                                                <span className="reactionOpener" role="img" aria-label={userReactions[post.id]}>{getReactionEmoji(userReactions[post.id])}</span>
-                                            ) : (
-                                                <span className="reactionOpener" role="img" aria-label="thumbs up">👍</span>
-                                            )}
-                                            {showReactions[post.id] && (
-                                                <div className="reactionOptions">
+                                <div className="otherUserFeedPostBottom">
+                                    <div
+                                        className="otherUserReactionButton"
+                                        onMouseEnter={() => setShowReactions((prev) => ({ ...prev, [post.id]: true }))}
+                                        onMouseLeave={() => setShowReactions((prev) => ({ ...prev, [post.id]: false }))}
+                                    >
+                                        {userReactions[post.id] ? (
+                                            <span className="otherUserReactionOpener" role="img" aria-label={userReactions[post.id]}>{getReactionEmoji(userReactions[post.id])}</span>
+                                        ) : (
+                                            <span className="otherUserReactionOpener" role="img" aria-label="thumbs up">👍</span>
+                                        )}
+                                        {showReactions[post.id] && (
+                                            <div className="otherUserReactionOptions">
                                                 {Object.keys(reactionTypes).map(type => (
-                                                  <span key={type}
+                                                    <span key={type}
                                                         className={userReactions[post.id] === type ? 'selected' : ''}
                                                         role="img"
                                                         aria-label={type}
                                                         onClick={() => handleReaction(post.id, type)}>
-                                                    {getReactionEmoji(type)}
-                                                  </span>
+                                                        {getReactionEmoji(type)}
+                                                    </span>
                                                 ))}
-                                              </div>
-                                            )}
-                                            <span
-                                                className="feedPostReactionCounter"
-                                                onClick={() => fetchReactions(post.id)}
-                                                onMouseEnter={(e) => (e.currentTarget.style.color = 'blue')}
-                                                onMouseLeave={(e) => (e.currentTarget.style.color = 'black')}
-                                                style={{ cursor: 'pointer' }}
-                                            >
-                                                {reactionsCount[post.id] || 0} people reacted
-                                            </span>
-                                        </div>
+                                            </div>
+                                        )}
                                     </div>
-                                    <div className="feedPostBottomRight">
+                                    <div className="otherUserFeedPostStats"
+                                        onMouseEnter={() => setShowReactions((prev) => ({ ...prev, [post.id]: true }))}
+                                        onMouseLeave={() => setShowReactions((prev) => ({ ...prev, [post.id]: false }))}
+                                    >
                                         <span
-                                            className="feedPostCommentText"
+                                            className="otherUserFeedPostReactionCounter"
+                                            onClick={() => fetchReactions(post.id)}
+                                            onMouseEnter={(e) => (e.currentTarget.style.color = 'blue')}
+                                            onMouseLeave={(e) => (e.currentTarget.style.color = 'black')}
+                                            style={{ cursor: 'pointer' }}
+                                        >
+                                            {reactionsCount[post.id] || 0} people reacted
+                                        </span>
+                                        <span
+                                            className="otherUserFeedPostCommentText"
                                             onClick={() => handleOpenComments(post.id)}
                                             onMouseEnter={(e) => (e.currentTarget.style.color = 'blue')}
                                             onMouseLeave={(e) => (e.currentTarget.style.color = 'black')}
@@ -549,19 +550,19 @@ const OtherUsersProfile: React.FC = () => {
                 </div>
             </div>
             <Modal open={openReactionModal} onClose={handleClose}>
-                <div className="modalContent">
+                <div className="otherUserModalContent">
                     <Typography variant="h6">Reactions</Typography>
                     {reactions.length === 0 && (
                         <Typography sx={{ mt: 2 }}>No reactions yet.</Typography>
                     )}
                     {reactions.length > 0 && reactions.map((reaction, index) => (
-                        <div key={index} className="reactionItem">
+                        <div key={index} className="otherUserReactionItem">
                             <span>{reaction.reactionEmoji}</span>
                             <Avatar src={reaction.avatar} alt={reaction.userName} sx={{ margin: '0 10px' }} />
                             <Typography>{reaction.userName}</Typography>
                         </div>
                     ))}
-                    <div className="paginationControls">
+                    <div className="otherUserPaginationControls">
                         <Button
                             disabled={currentReactionPageIndex === 1}
                             onClick={() => fetchReactions(currentPostId!, currentReactionPageIndex - 1)}
@@ -581,9 +582,9 @@ const OtherUsersProfile: React.FC = () => {
                 </div>
             </Modal>
             <Modal open={openCommentModal} onClose={handleClose}>
-                <div className="modalContentLarge">
+                <div className="otherUserModalContentLarge">
                     <Typography variant="h6">Comments</Typography>
-                    <div className="addCommentContainer">
+                    <div className="otherUserAddCommentContainer">
                         <RichTextEditor content={newComment} setContent={setNewComment} />
                         <Button
                             variant="contained"
@@ -594,12 +595,12 @@ const OtherUsersProfile: React.FC = () => {
                             Submit
                         </Button>
                     </div>
-                    <div className="commentsContainer">
+                    <div className="otherUserCommentsContainer">
                         {comments.length === 0 && (
                             <Typography sx={{ mt: 2 }}>No comments yet.</Typography>
                         )}
                         {comments.length > 0 && comments.map((comment, index) => (
-                            <div key={index} className="commentItem">
+                            <div key={index} className="otherUserCommentItem">
                                 <Avatar src={comment.avatar} alt={comment.userName} sx={{ margin: '0 10px' }} />
                                 <div>
                                     <Typography>{comment.userName}</Typography>
@@ -626,7 +627,7 @@ const OtherUsersProfile: React.FC = () => {
                                 )}
                             </div>
                         ))}
-                        <div className="paginationControls">
+                        <div className="otherUserPaginationControls">
                             <Button
                                 disabled={currentCommentPageIndex === 1}
                                 onClick={() => fetchComments(currentPostId!, currentCommentPageIndex - 1)}
