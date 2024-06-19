@@ -1,5 +1,6 @@
 import React from "react";
-import { Modal, Typography, Avatar, Button, TextField } from "@mui/material";
+import { Modal, Typography, Avatar, Button, TextField, IconButton, Menu, MenuItem } from "@mui/material";
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { FormattedComment } from "../Models/ResponseComment";
 import RichTextEditor from "./RichTextEditor/RichTextEditor";
 import { getUserIdFromToken } from "../Utils/auth";
@@ -16,11 +17,13 @@ interface CommentModalProps {
   setEditCommentText: (text: string) => void;
   handleUpdateComment: () => void;
   handleDeleteComment: (commentId: string) => void;
+  handleModerateComment: (commentId: string, isModerated: boolean) => void;
   currentCommentPageIndex: number;
   commentTotalPages: number;
   fetchComments: (postId: string, pageIndex: number) => void;
   currentPostId: string | null;
   setEditingCommentId: (commentId: string | null) => void;
+  isAdmin: boolean;
 }
 
 const CommentModal: React.FC<CommentModalProps> = ({
@@ -35,12 +38,28 @@ const CommentModal: React.FC<CommentModalProps> = ({
   setEditCommentText,
   handleUpdateComment,
   handleDeleteComment,
+  handleModerateComment,
   currentCommentPageIndex,
   commentTotalPages,
   fetchComments,
   currentPostId,
   setEditingCommentId,
+  isAdmin,
 }) => {
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [moderatingCommentId, setModeratingCommentId] = React.useState<string | null>(null);
+  const userId = getUserIdFromToken();
+
+  const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>, commentId: string) => {
+    setAnchorEl(event.currentTarget);
+    setModeratingCommentId(commentId);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+    setModeratingCommentId(null);
+  };
+
   const handleEditComment = (commentId: string, text: string) => {
     setEditingCommentId(commentId);
     setEditCommentText(text);
@@ -51,19 +70,15 @@ const CommentModal: React.FC<CommentModalProps> = ({
       <div className="modalContentLarge">
         <Typography variant="h6">Comments</Typography>
         <div className="addCommentContainer">
-         
-
-              <RichTextEditor content={newComment} setContent={setNewComment} />
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleAddComment}
-                style={{ marginTop: "10px" }}
-              >
-                Add comment
-              </Button>
-            
-       
+          <RichTextEditor content={newComment} setContent={setNewComment} />
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleAddComment}
+            style={{ marginTop: "10px" }}
+          >
+            Add comment
+          </Button>
         </div>
         <div className="commentsContainer">
           {comments.length === 0 && (
@@ -79,46 +94,66 @@ const CommentModal: React.FC<CommentModalProps> = ({
                 />
                 <div>
                   <Typography>{comment.userName}</Typography>
-                  {editingCommentId === comment.id ? (
-                    <>
-                      <TextField
-                        value={editCommentText}
-                        onChange={(e) => setEditCommentText(e.target.value)}
-                        fullWidth
-                        multiline
-                      />
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={handleUpdateComment}
-                      >
-                        Save
-                      </Button>
-                      <Button onClick={() => setEditingCommentId(null)}>
-                        Cancel
-                      </Button>
-                    </>
+                  {comment.isModerated ? (
+                    <Typography variant="h6" color="error" sx={{ fontSize: '18px', fontWeight: 'bold' }}>
+                      This comment was moderated and is currently under review by one of our administrators!
+                    </Typography>
                   ) : (
-                    <Typography
-                      sx={{ marginLeft: "10px" }}
-                      dangerouslySetInnerHTML={{ __html: comment.text }}
-                    ></Typography>
+                    <>
+                      {editingCommentId === comment.id ? (
+                        <>
+                          <TextField
+                            value={editCommentText}
+                            onChange={(e) => setEditCommentText(e.target.value)}
+                            fullWidth
+                            multiline
+                          />
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={handleUpdateComment}
+                          >
+                            Save
+                          </Button>
+                          <Button onClick={() => setEditingCommentId(null)}>
+                            Cancel
+                          </Button>
+                        </>
+                      ) : (
+                        <Typography
+                          sx={{ marginLeft: "10px" }}
+                          dangerouslySetInnerHTML={{ __html: comment.text }}
+                        ></Typography>
+                      )}
+                    </>
                   )}
                 </div>
-                {comment.userId === getUserIdFromToken() && (
-                  <div>
-                    <Button
-                      onClick={() =>
-                        handleEditComment(comment.id, comment.text)
-                      }
-                    >
-                      Edit
-                    </Button>
-                    <Button onClick={() => handleDeleteComment(comment.id)}>
-                      Delete
-                    </Button>
-                  </div>
-                )}
+                <div>
+                  {comment.userId === userId && (
+                    <>
+                      <Button onClick={() => handleEditComment(comment.id, comment.text)}>
+                        Edit
+                      </Button>
+                      <Button onClick={() => handleDeleteComment(comment.id)}>
+                        Delete
+                      </Button>
+                    </>
+                  )}
+                  {isAdmin && (
+                    <IconButton onClick={(event) => handleMenuOpen(event, comment.id)}>
+                      <MoreVertIcon />
+                    </IconButton>
+                  )}
+                  <Menu
+                    anchorEl={anchorEl}
+                    open={Boolean(anchorEl) && moderatingCommentId === comment.id}
+                    onClose={handleMenuClose}
+                  >
+                    <MenuItem onClick={() => handleModerateComment(comment.id, comment.isModerated)}>
+                      {comment.isModerated ? 'Unmoderate' : 'Moderate'}
+                    </MenuItem>
+                  </Menu>
+                </div>
               </div>
             ))}
           <div className="paginationControls">

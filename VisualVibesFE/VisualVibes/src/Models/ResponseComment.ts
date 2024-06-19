@@ -18,4 +18,5 @@ export interface FormattedComment {
     avatar: string;
     text: string;
     createdAt: Date;
+    isModerated: boolean;
   }

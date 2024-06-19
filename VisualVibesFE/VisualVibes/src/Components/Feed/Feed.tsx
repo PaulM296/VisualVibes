@@ -5,7 +5,7 @@ import { getUserFeed } from '../../Services/UserFeedServiceApi';
 import { getImageById as getUserImageById } from '../../Services/UserServiceApi';
 import { getImageById as getPostImageById } from '../../Services/UserPostServiceApi';
 import { addReaction, deleteReaction, getPostReactions, updateReaction } from '../../Services/ReactionServiceApi';
-import { getPostComments, addComment, updateComment, deleteComment } from '../../Services/CommentServiceApi';
+import { getPostComments, addComment, updateComment, deleteComment, moderateComment, unmoderateComment } from '../../Services/CommentServiceApi';
 import { moderatePost, unmoderatePost } from '../../Services/UserPostServiceApi';
 import { FeedPost, UserFeed } from '../../Models/FeedPostInterface';
 import { getReactionEmoji } from '../../Utils/getReactionEmoji';
@@ -45,6 +45,8 @@ const Feed: React.FC = () => {
   const [editCommentText, setEditCommentText] = useState<string>('');
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [moderatingPostId, setModeratingPostId] = useState<string | null>(null);
+  const [commentAnchorEl, setCommentAnchorEl] = useState<null | HTMLElement>(null);
+  const [moderatingCommentId, setModeratingCommentId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchFeedData(1);
@@ -215,6 +217,7 @@ const Feed: React.FC = () => {
               avatar,
               text: comment.text,
               createdAt: comment.createdAt,
+              isModerated: comment.isModerated,
             };
           })
         );
@@ -316,6 +319,23 @@ const Feed: React.FC = () => {
     }
   };
 
+  const handleModerateComment = async (commentId: string, isModerated: boolean) => {
+    try {
+      if (isModerated) {
+        await unmoderateComment(commentId);
+      } else {
+        await moderateComment(commentId);
+      }
+      setComments((prevComments) =>
+        prevComments.map((comment) =>
+          comment.id === commentId ? { ...comment, isModerated: !isModerated } : comment
+        )
+      );
+    } catch (error) {
+      console.error('Error moderating comment:', error);
+    }
+  };
+
   const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>, postId: string) => {
     setAnchorEl(event.currentTarget);
     setModeratingPostId(postId);
@@ -324,6 +344,16 @@ const Feed: React.FC = () => {
   const handleMenuClose = () => {
     setAnchorEl(null);
     setModeratingPostId(null);
+  };
+
+  const handleCommentMenuOpen = (event: React.MouseEvent<HTMLButtonElement>, commentId: string) => {
+    setCommentAnchorEl(event.currentTarget);
+    setModeratingCommentId(commentId);
+  };
+
+  const handleCommentMenuClose = () => {
+    setCommentAnchorEl(null);
+    setModeratingCommentId(null);
   };
 
   if (loading) {
@@ -372,8 +402,8 @@ const Feed: React.FC = () => {
             </div>
             {post.isModerated ? (
               <div className="feedPostCenter">
-                <Typography variant="h6" color="error">
-                  THIS POST WAS MODERATED BY AN ADMIN
+                <Typography variant="h6" color="error" sx={{ fontSize: '16px', fontWeight: 'bold'}}>
+                    This post did not comply to our policies and has been moderated by one of our administrators!
                 </Typography>
               </div>
             ) : (
@@ -434,11 +464,6 @@ const Feed: React.FC = () => {
           </div>
           )
         })}
-        {/* {posts.map((post) => (
-          // <div key={post.postId} className="feedPost">
-           
-          </div>
-        ))} */}
         {pageIndex < totalPages && (
           <div className="centerButton">
             <Button onClick={loadMorePosts} variant="contained" color="primary" style={{ margin: 'auto', display: 'block' }}>
@@ -495,29 +520,55 @@ const Feed: React.FC = () => {
                   <Avatar src={comment.avatar} alt={comment.userName} sx={{ margin: '0 10px' }} />
                   <div>
                     <Typography>{comment.userName}</Typography>
-                    {editingCommentId === comment.id ? (
-                      <>
-                        <TextField
-                          value={editCommentText}
-                          onChange={(e) => setEditCommentText(e.target.value)}
-                          fullWidth
-                          multiline
-                        />
-                        <Button variant="contained" color="primary" onClick={handleUpdateComment}>
-                          Save
-                        </Button>
-                        <Button onClick={() => setEditingCommentId(null)}>Cancel</Button>
-                      </>
+                    {comment.isModerated ? (
+                      <Typography variant="h6" color="error" sx={{ fontSize: '18px', fontWeight: 'bold' }}>
+                        This comment was moderated and is currently under review by one of our administrators!
+                      </Typography>
                     ) : (
-                      <Typography sx={{ marginLeft: '10px' }} dangerouslySetInnerHTML={{ __html: comment.text }}></Typography>
+                      <>
+                        {editingCommentId === comment.id ? (
+                          <>
+                            <TextField
+                              value={editCommentText}
+                              onChange={(e) => setEditCommentText(e.target.value)}
+                              fullWidth
+                              multiline
+                            />
+                            <Button variant="contained" color="primary" onClick={handleUpdateComment}>
+                              Save
+                            </Button>
+                            <Button onClick={() => setEditingCommentId(null)}>Cancel</Button>
+                          </>
+                        ) : (
+                          <Typography sx={{ marginLeft: '10px' }} dangerouslySetInnerHTML={{ __html: comment.text }}></Typography>
+                        )}
+                      </>
                     )}
                   </div>
-                  {comment.userId === getUserIdFromToken() && (
-                    <div>
-                      <Button onClick={() => handleEditComment(comment)}>Edit</Button>
-                      <Button onClick={() => handleDeleteComment(comment.id)}>Delete</Button>
-                    </div>
-                  )}
+                  <div>
+                    {comment.userId === getUserIdFromToken() && (
+                      <>
+                        <Button onClick={() => handleEditComment(comment)}>Edit</Button>
+                        <Button onClick={() => handleDeleteComment(comment.id)}>Delete</Button>
+                      </>
+                    )}
+                    {isAdmin && (
+                      <>
+                        <IconButton onClick={(event) => handleCommentMenuOpen(event, comment.id)}>
+                          <MoreVertIcon />
+                        </IconButton>
+                        <Menu
+                          anchorEl={commentAnchorEl}
+                          open={Boolean(commentAnchorEl) && moderatingCommentId === comment.id}
+                          onClose={handleCommentMenuClose}
+                        >
+                          <MenuItem onClick={() => handleModerateComment(comment.id, comment.isModerated)}>
+                            {comment.isModerated ? 'Unmoderate' : 'Moderate'}
+                          </MenuItem>
+                        </Menu>
+                      </>
+                    )}
+                  </div>
                 </div>
               ))}
             <div className="paginationControls">

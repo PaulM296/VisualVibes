@@ -6,7 +6,7 @@ import { getUserIdFromToken } from '../../Utils/auth';
 import { getUserById, getImageById as getUserImageById } from '../../Services/UserServiceApi';
 import { getPostsByUserId, getImageById as getPostImageById, updatePost, removePost } from '../../Services/UserPostServiceApi';
 import { addReaction, deleteReaction, getPostReactions, updateReaction } from '../../Services/ReactionServiceApi';
-import { getPostComments, addComment, updateComment, deleteComment } from '../../Services/CommentServiceApi';
+import { getPostComments, addComment, updateComment, deleteComment, moderateComment, unmoderateComment } from '../../Services/CommentServiceApi';
 import { ResponsePostModel } from '../../Models/ReponsePostModel';
 import { getReactionEmoji } from '../../Utils/getReactionEmoji';
 import { ResponseReaction } from '../../Models/ResponseReaction';
@@ -19,6 +19,7 @@ import Post from '../Post/Post';
 import ReactionModal from '../ReactionModal';
 import CommentModal from '../CommentModal';
 import { reactionTypes } from '../../Utils/const/reactionTypes';
+import { useUser } from '../../Hooks/userContext';
 
 const MyUserProfile: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -44,6 +45,8 @@ const MyUserProfile: React.FC = () => {
   const [editCommentText, setEditCommentText] = useState<string>('');
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
   const [editPostCaption, setEditPostCaption] = useState<string>('');
+
+  const { isAdmin } = useUser();
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -281,7 +284,8 @@ const MyUserProfile: React.FC = () => {
             userName: comment.userName,
             avatar,
             text: comment.text,
-            createdAt: comment.createdAt
+            createdAt: comment.createdAt,
+            isModerated: comment.isModerated
           };
         }));
         setComments(formattedComments);
@@ -340,6 +344,23 @@ const MyUserProfile: React.FC = () => {
       fetchComments(currentPostId!, currentCommentPageIndex);
     } catch (error) {
       console.error('Error deleting comment:', error);
+    }
+  };
+
+  const handleModerateComment = async (commentId: string, isModerated: boolean) => {
+    try {
+      if (isModerated) {
+        await unmoderateComment(commentId);
+      } else {
+        await moderateComment(commentId);
+      }
+      setComments((prevComments) =>
+        prevComments.map((comment) =>
+          comment.id === commentId ? { ...comment, isModerated: !isModerated } : comment
+        )
+      );
+    } catch (error) {
+      console.error('Error moderating comment:', error);
     }
   };
 
@@ -424,11 +445,13 @@ const MyUserProfile: React.FC = () => {
         setEditCommentText={setEditCommentText}
         handleUpdateComment={handleUpdateComment}
         handleDeleteComment={handleDeleteComment}
+        handleModerateComment={handleModerateComment}
         currentCommentPageIndex={currentCommentPageIndex}
         commentTotalPages={commentTotalPages}
         fetchComments={fetchComments}
         currentPostId={currentPostId}
         setEditingCommentId={setEditingCommentId}
+        isAdmin={isAdmin}
       />
     </div>
   );

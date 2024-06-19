@@ -5,7 +5,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Navbar from '../../Components/Navbar/Navbar';
 import { differenceInDays, differenceInHours, differenceInMinutes } from 'date-fns';
 import { addReaction, deleteReaction, getPostReactions, updateReaction } from '../../Services/ReactionServiceApi';
-import { getPostComments, addComment, updateComment, deleteComment } from '../../Services/CommentServiceApi';
+import { getPostComments, addComment, updateComment, deleteComment, moderateComment, unmoderateComment } from '../../Services/CommentServiceApi';
 import { getUserIdFromToken } from '../../Utils/auth';
 import { getReactionEmoji } from '../../Utils/getReactionEmoji';
 import { ReactionType } from '../../Models/ReactionType';
@@ -75,6 +75,8 @@ const OtherUsersProfile: React.FC = () => {
     const [reactionTotalPages, setReactionTotalPages] = useState(1);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [moderatingPostId, setModeratingPostId] = useState<string | null>(null);
+    const [commentAnchorEl, setCommentAnchorEl] = useState<null | HTMLElement>(null);
+    const [moderatingCommentId, setModeratingCommentId] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -323,7 +325,8 @@ const OtherUsersProfile: React.FC = () => {
                         userName: comment.userName,
                         avatar: avatar || '',
                         text: comment.text,
-                        createdAt: comment.createdAt
+                        createdAt: comment.createdAt,
+                        isModerated: comment.isModerated,
                     };
                 }));
                 setComments(formattedComments);
@@ -449,6 +452,23 @@ const OtherUsersProfile: React.FC = () => {
         }
     };
 
+    const handleModerateComment = async (commentId: string, isModerated: boolean) => {
+        try {
+            if (isModerated) {
+                await unmoderateComment(commentId);
+            } else {
+                await moderateComment(commentId);
+            }
+            setComments((prevComments) =>
+                prevComments.map((comment) =>
+                    comment.id === commentId ? { ...comment, isModerated: !isModerated } : comment
+                )
+            );
+        } catch (error) {
+            console.error('Error moderating comment:', error);
+        }
+    };
+
     const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>, postId: string) => {
         setAnchorEl(event.currentTarget);
         setModeratingPostId(postId);
@@ -457,6 +477,16 @@ const OtherUsersProfile: React.FC = () => {
     const handleMenuClose = () => {
         setAnchorEl(null);
         setModeratingPostId(null);
+    };
+
+    const handleCommentMenuOpen = (event: React.MouseEvent<HTMLButtonElement>, commentId: string) => {
+        setCommentAnchorEl(event.currentTarget);
+        setModeratingCommentId(commentId);
+    };
+
+    const handleCommentMenuClose = () => {
+        setCommentAnchorEl(null);
+        setModeratingCommentId(null);
     };
 
     if (loading || isLoadingFollow) {
@@ -534,8 +564,8 @@ const OtherUsersProfile: React.FC = () => {
                                 </div>
                                 {post.isModerated ? (
                                     <div className="otherUserFeedPostCenter">
-                                        <Typography variant="h6" color="error">
-                                            THIS POST WAS MODERATED BY AN ADMIN
+                                        <Typography variant="h6" color="error" sx={{ fontSize: '16px', fontWeight: 'bold'}}>
+                                            This post did not comply to our policies and has been moderated by one of our administrators!
                                         </Typography>
                                     </div>
                                 ) : (
@@ -662,25 +692,49 @@ const OtherUsersProfile: React.FC = () => {
                                 <Avatar src={comment.avatar} alt={comment.userName} sx={{ margin: '0 10px' }} />
                                 <div>
                                     <Typography>{comment.userName}</Typography>
-                                    {editingCommentId === comment.id ? (
-                                        <>
-                                            <TextField
-                                                value={editCommentText}
-                                                onChange={(e) => setEditCommentText(e.target.value)}
-                                                fullWidth
-                                                multiline
-                                            />
-                                            <Button variant="contained" color="primary" onClick={handleUpdateComment}>Save</Button>
-                                            <Button onClick={() => setEditingCommentId(null)}>Cancel</Button>
-                                        </>
+                                    {comment.isModerated ? (
+                                        <Typography variant="h6" color="error" sx={{ fontSize: '18px', fontWeight: 'bold' }}>
+                                            This comment was moderated and is currently under review by one of our administrators!
+                                        </Typography>
                                     ) : (
-                                        <Typography sx={{ mt: 1 }}>{comment.text}</Typography>
+                                        <>
+                                            {editingCommentId === comment.id ? (
+                                                <>
+                                                    <TextField
+                                                        value={editCommentText}
+                                                        onChange={(e) => setEditCommentText(e.target.value)}
+                                                        fullWidth
+                                                        multiline
+                                                    />
+                                                    <Button variant="contained" color="primary" onClick={handleUpdateComment}>Save</Button>
+                                                    <Button onClick={() => setEditingCommentId(null)}>Cancel</Button>
+                                                </>
+                                            ) : (
+                                                <Typography sx={{ mt: 1 }}>{comment.text}</Typography>
+                                            )}
+                                        </>
                                     )}
                                     {getUserIdFromToken() === comment.userId && (
                                         <div className="otherUserCommentActions">
                                             <Button onClick={() => handleEditComment(comment)}>Edit</Button>
                                             <Button onClick={() => handleDeleteComment(comment.id)}>Delete</Button>
                                         </div>
+                                    )}
+                                    {isAdmin && (
+                                        <>
+                                            <IconButton onClick={(event) => handleCommentMenuOpen(event, comment.id)}>
+                                                <MoreVertIcon />
+                                            </IconButton>
+                                            <Menu
+                                                anchorEl={commentAnchorEl}
+                                                open={Boolean(commentAnchorEl) && moderatingCommentId === comment.id}
+                                                onClose={handleCommentMenuClose}
+                                            >
+                                                <MenuItem onClick={() => handleModerateComment(comment.id, comment.isModerated)}>
+                                                    {comment.isModerated ? 'Unmoderate' : 'Moderate'}
+                                                </MenuItem>
+                                            </Menu>
+                                        </>
                                     )}
                                 </div>
                             </div>

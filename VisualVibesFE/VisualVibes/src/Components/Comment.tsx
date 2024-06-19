@@ -1,5 +1,6 @@
 import React from 'react';
-import { TextField, Button, Avatar, Typography } from '@mui/material';
+import { TextField, Button, Avatar, Typography, IconButton, Menu, MenuItem } from '@mui/material';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { getUserIdFromToken } from '../Utils/auth';
 import './Comment.css';
 
@@ -11,6 +12,7 @@ interface CommentProps {
     createdAt: Date;
     userId: string;
     avatar: string;
+    isModerated: boolean;
   };
   editingCommentId: string | null;
   editCommentText: string;
@@ -18,6 +20,8 @@ interface CommentProps {
   handleUpdateComment: () => void;
   handleEditComment: (commentId: string | null, text: string) => void;
   handleDeleteComment: (commentId: string) => void;
+  handleModerateComment: (commentId: string, isModerated: boolean) => void;
+  isAdmin: boolean;
 }
 
 const Comment: React.FC<CommentProps> = ({
@@ -28,8 +32,20 @@ const Comment: React.FC<CommentProps> = ({
   handleUpdateComment,
   handleEditComment,
   handleDeleteComment,
+  handleModerateComment,
+  isAdmin,
 }) => {
   const isEditing = editingCommentId === comment.id;
+  const userId = getUserIdFromToken();
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+
+  const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
 
   return (
     <div className="comment">
@@ -38,8 +54,34 @@ const Comment: React.FC<CommentProps> = ({
         <div className="commentHeader">
           <Typography>{comment.userName}</Typography>
           <span className="commentDate">{new Date(comment.createdAt).toLocaleString()}</span>
+          {(comment.userId === userId || isAdmin) && (
+            <IconButton onClick={handleMenuOpen}>
+              <MoreVertIcon />
+            </IconButton>
+          )}
+          <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleMenuClose}
+          >
+            {comment.userId === userId && (
+              <>
+                <MenuItem onClick={() => handleEditComment(comment.id, comment.text)}>Edit</MenuItem>
+                <MenuItem onClick={() => handleDeleteComment(comment.id)}>Delete</MenuItem>
+              </>
+            )}
+            {isAdmin && (
+              <MenuItem onClick={() => handleModerateComment(comment.id, comment.isModerated)}>
+                {comment.isModerated ? 'Unmoderate' : 'Moderate'}
+              </MenuItem>
+            )}
+          </Menu>
         </div>
-        {isEditing ? (
+        {comment.isModerated ? (
+          <Typography variant="h6" color="error" sx={{ fontSize: '18px', fontWeight: 'bold' }}>
+            This comment was moderated and is currently under review by one of our administrators!
+          </Typography>
+        ) : isEditing ? (
           <div className="commentEdit">
             <TextField
               value={editCommentText}
@@ -53,12 +95,6 @@ const Comment: React.FC<CommentProps> = ({
         ) : (
           <div className="commentText">
             <Typography dangerouslySetInnerHTML={{ __html: comment.text }} />
-            {comment.userId === getUserIdFromToken() && (
-              <div className="commentActions">
-                <Button onClick={() => handleEditComment(comment.id, comment.text)}>Edit</Button>
-                <Button onClick={() => handleDeleteComment(comment.id)}>Delete</Button>
-              </div>
-            )}
           </div>
         )}
       </div>
