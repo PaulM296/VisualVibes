@@ -14,6 +14,7 @@ export interface FeedPost {
     userProfileImageId: string;
     comments: ResponseComment[];
     reactions: ResponseReaction[];
+    isModerated: boolean;
   }
   
   export interface UserFeed {

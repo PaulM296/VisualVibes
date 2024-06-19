@@ -17,6 +17,7 @@ namespace VisualVibes.App.MappingProfiles
              .ForMember(dest => dest.PostImageId, opt => opt.MapFrom(src => src.ImageId))
              .ForMember(dest => dest.UserProfileImageId, opt => opt.MapFrom(src => src.User.UserProfile.ImageId))
              .ForMember(dest => dest.Comments, opt => opt.MapFrom(src => src.Comments))
+             .ForMember(dest => dest.isModerated, opt => opt.MapFrom(src => src.isModerated))
              .ForMember(dest => dest.Reactions, opt => opt.MapFrom(src => src.Reactions));
 
             CreateMap<FeedPost, FeedPostDto>()
@@ -29,6 +30,7 @@ namespace VisualVibes.App.MappingProfiles
                 .ForMember(dest => dest.Comments, opt => opt.MapFrom(src => src.Post.Comments))
                 .ForMember(dest => dest.Reactions, opt => opt.MapFrom(src => src.Post.Reactions))
                 .ForMember(dest => dest.Caption, opt => opt.MapFrom(src => src.Post.Caption))
+                .ForMember(dest => dest.isModerated, opt => opt.MapFrom(src => src.Post.isModerated))
                 .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => src.Post.CreatedAt));
         }
     }

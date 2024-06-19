@@ -15,6 +15,7 @@ namespace VisualVibes.App.DTOs.FeedDtos
         public int CommentCount { get; set; }
         public Guid PostImageId { get; set; }
         public Guid UserProfileImageId { get; set; }
+        public bool isModerated { get; set; }
         public ICollection<ResponseCommentDto> Comments { get; set; }
         public ICollection<ResponseReactionDto> Reactions { get; set; }
     }

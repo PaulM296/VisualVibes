@@ -9,14 +9,13 @@ import './UserSettings.css';
 import Navbar from '../../Components/Navbar/Navbar';
 
 const UserSettings: React.FC = () => {
-  const { user, setUser, isAdmin } = useUser();
+  const { user, setUser } = useUser();
   const [editable, setEditable] = useState(false);
   const [formData, setFormData] = useState<FormData | null>(null);
   const [localUser, setLocalUser] = useState(user);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [profilePicture, setProfilePicture] = useState<string>('');
 
-  console.log(user, isAdmin);
 
   useEffect(() => {
     if (user) {

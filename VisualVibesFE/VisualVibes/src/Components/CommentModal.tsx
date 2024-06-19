@@ -1,8 +1,8 @@
-import React from 'react';
-import { Modal, Typography, Avatar, Button, TextField } from '@mui/material';
-import { FormattedComment } from '../Models/ResponseComment'
-import RichTextEditor from './RichTextEditor/RichTextEditor';
-import { getUserIdFromToken } from '../Utils/auth';
+import React from "react";
+import { Modal, Typography, Avatar, Button, TextField } from "@mui/material";
+import { FormattedComment } from "../Models/ResponseComment";
+import RichTextEditor from "./RichTextEditor/RichTextEditor";
+import { getUserIdFromToken } from "../Utils/auth";
 
 interface CommentModalProps {
   open: boolean;
@@ -24,9 +24,22 @@ interface CommentModalProps {
 }
 
 const CommentModal: React.FC<CommentModalProps> = ({
-  open, onClose, comments, newComment, setNewComment, handleAddComment, editingCommentId, editCommentText,
-  setEditCommentText, handleUpdateComment, handleDeleteComment, currentCommentPageIndex, commentTotalPages,
-  fetchComments, currentPostId, setEditingCommentId,
+  open,
+  onClose,
+  comments,
+  newComment,
+  setNewComment,
+  handleAddComment,
+  editingCommentId,
+  editCommentText,
+  setEditCommentText,
+  handleUpdateComment,
+  handleDeleteComment,
+  currentCommentPageIndex,
+  commentTotalPages,
+  fetchComments,
+  currentPostId,
+  setEditingCommentId,
 }) => {
   const handleEditComment = (commentId: string, text: string) => {
     setEditingCommentId(commentId);
@@ -38,59 +51,95 @@ const CommentModal: React.FC<CommentModalProps> = ({
       <div className="modalContentLarge">
         <Typography variant="h6">Comments</Typography>
         <div className="addCommentContainer">
-          <RichTextEditor content={newComment} setContent={setNewComment} />
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleAddComment}
-            style={{ marginTop: '10px' }}
-          >
-            Submit
-          </Button>
+         
+
+              <RichTextEditor content={newComment} setContent={setNewComment} />
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleAddComment}
+                style={{ marginTop: "10px" }}
+              >
+                Add comment
+              </Button>
+            
+       
         </div>
         <div className="commentsContainer">
-          {comments.length === 0 && <Typography sx={{ mt: 2 }}>No comments yet.</Typography>}
-          {comments.length > 0 && comments.map((comment, index) => (
-            <div key={index} className="commentItem">
-              <Avatar src={comment.avatar} alt={comment.userName} sx={{ margin: '0 10px' }} />
-              <div>
-                <Typography>{comment.userName}</Typography>
-                {editingCommentId === comment.id ? (
-                  <>
-                    <TextField
-                      value={editCommentText}
-                      onChange={(e) => setEditCommentText(e.target.value)}
-                      fullWidth
-                      multiline
-                    />
-                    <Button variant="contained" color="primary" onClick={handleUpdateComment}>Save</Button>
-                    <Button onClick={() => setEditingCommentId(null)}>Cancel</Button>
-                  </>
-                ) : (
-                  <Typography sx={{ marginLeft: '10px' }} dangerouslySetInnerHTML={{ __html: comment.text }}></Typography>
+          {comments.length === 0 && (
+            <Typography sx={{ mt: 2 }}>No comments yet.</Typography>
+          )}
+          {comments.length > 0 &&
+            comments.map((comment, index) => (
+              <div key={index} className="commentItem">
+                <Avatar
+                  src={comment.avatar}
+                  alt={comment.userName}
+                  sx={{ margin: "0 10px" }}
+                />
+                <div>
+                  <Typography>{comment.userName}</Typography>
+                  {editingCommentId === comment.id ? (
+                    <>
+                      <TextField
+                        value={editCommentText}
+                        onChange={(e) => setEditCommentText(e.target.value)}
+                        fullWidth
+                        multiline
+                      />
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={handleUpdateComment}
+                      >
+                        Save
+                      </Button>
+                      <Button onClick={() => setEditingCommentId(null)}>
+                        Cancel
+                      </Button>
+                    </>
+                  ) : (
+                    <Typography
+                      sx={{ marginLeft: "10px" }}
+                      dangerouslySetInnerHTML={{ __html: comment.text }}
+                    ></Typography>
+                  )}
+                </div>
+                {comment.userId === getUserIdFromToken() && (
+                  <div>
+                    <Button
+                      onClick={() =>
+                        handleEditComment(comment.id, comment.text)
+                      }
+                    >
+                      Edit
+                    </Button>
+                    <Button onClick={() => handleDeleteComment(comment.id)}>
+                      Delete
+                    </Button>
+                  </div>
                 )}
               </div>
-              {comment.userId === getUserIdFromToken() && (
-                <div>
-                  <Button onClick={() => handleEditComment(comment.id, comment.text)}>Edit</Button>
-                  <Button onClick={() => handleDeleteComment(comment.id)}>Delete</Button>
-                </div>
-              )}
-            </div>
-          ))}
+            ))}
           <div className="paginationControls">
             <Button
               disabled={currentCommentPageIndex === 1}
-              onClick={() => fetchComments(currentPostId!, currentCommentPageIndex - 1)}
-              style={{ float: 'left' }}
+              onClick={() =>
+                fetchComments(currentPostId!, currentCommentPageIndex - 1)
+              }
+              style={{ float: "left" }}
             >
               Previous
             </Button>
-            <Typography>{currentCommentPageIndex} / {commentTotalPages}</Typography>
+            <Typography>
+              {currentCommentPageIndex} / {commentTotalPages}
+            </Typography>
             <Button
               disabled={currentCommentPageIndex === commentTotalPages}
-              onClick={() => fetchComments(currentPostId!, currentCommentPageIndex + 1)}
-              style={{ float: 'right' }}
+              onClick={() =>
+                fetchComments(currentPostId!, currentCommentPageIndex + 1)
+              }
+              style={{ float: "right" }}
             >
               Next
             </Button>

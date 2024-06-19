@@ -29,7 +29,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     fetchUser();
   }, []);
 
-  console.log(isLoggedIn);
 
   return (isLoggedIn ? (
     isBlocked ? (
@@ -43,7 +42,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
 export const useUser = (): UserContextType => {
   const context = useContext(userContext);
-  console.log(context);
   if (!context) {
     throw new Error('useUser must be used within a UserProvider');
   }

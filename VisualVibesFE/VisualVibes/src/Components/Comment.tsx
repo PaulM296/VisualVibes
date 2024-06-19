@@ -1,6 +1,7 @@
 import React from 'react';
 import { TextField, Button, Avatar, Typography } from '@mui/material';
 import { getUserIdFromToken } from '../Utils/auth';
+import './Comment.css';
 
 interface CommentProps {
   comment: {
