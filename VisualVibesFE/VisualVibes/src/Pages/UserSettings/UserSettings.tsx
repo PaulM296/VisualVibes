@@ -113,7 +113,6 @@ const UserSettings: React.FC = () => {
         <title>User Settings</title>
       </Helmet>
       <Navbar />
-      background-color: #D2E7E7;
       <div className="userSettingsContainer">
         <Container className="user-settings">
           <Box display="flex" alignItems="center" justifyContent="space-between" width="100%">

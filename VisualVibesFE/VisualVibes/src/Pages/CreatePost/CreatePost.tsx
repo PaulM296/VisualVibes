@@ -133,7 +133,7 @@ const CreatePost: React.FC = () => {
     return () => {
       document.removeEventListener('selectionchange', handleSelectionChange);
     };
-  }, []);
+  },);
 
   return (
     <>
