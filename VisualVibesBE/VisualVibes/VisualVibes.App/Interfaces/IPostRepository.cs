@@ -9,5 +9,6 @@ namespace VisualVibes.App.Interfaces
         Task<List<Post>> GetPostsByUserIdAsync(string userId);
 
         Task<PaginationResponseDto<Post>> GetPaginatedPostsByUserIdAsync(string userId, int pageIndex, int pageSize);
+        Task<PaginationResponseDto<Post>> GetPaginatedAdminPostsAsync(int pageIndex, int pageSize);
     }
 }

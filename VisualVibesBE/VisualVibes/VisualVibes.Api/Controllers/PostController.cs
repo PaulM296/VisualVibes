@@ -46,6 +46,14 @@ namespace VisualVibes.Api.Controllers
             return Ok(response);
         }
 
+        [HttpGet("admin-posts")]
+        public async Task<IActionResult> GetAdminPosts([FromQuery] PaginationRequestDto paginationRequest)
+        {
+            var query = new GetAdminPostsQuery(paginationRequest);
+            var result = await _mediator.Send(query);
+            return Ok(result);
+        }
+
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdatePost(Guid id, UpdatePostDto updatePostDto)
         {

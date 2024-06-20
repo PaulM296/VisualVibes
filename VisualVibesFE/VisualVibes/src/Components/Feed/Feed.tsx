@@ -370,7 +370,7 @@ const Feed: React.FC = () => {
         {posts.map((post) => {
           return (
             <div key={post.postId} className="feedPost">
-            <div className="feedPostWrapper">
+            <div className={post.isModerated? "feedPostWrapperModerated" : "feedPostWrapper"}>
             <div className="feedPostTop">
               <div className="feedPostTopLeft">
                 <Avatar
@@ -408,8 +408,9 @@ const Feed: React.FC = () => {
               </div>
             ) : (
               <>
+              <div className="feedPostText" dangerouslySetInnerHTML={{ __html: post.caption || '' }}></div>
                 <div className="feedPostCenter">
-                  <span className="feedPostText" dangerouslySetInnerHTML={{ __html: post.caption || '' }}></span>
+                  
                   {post.postImageId && postImages[post.postId] && (
                     <img className="feedPostImg" src={postImages[post.postId]} alt="Post image" />
                   )}

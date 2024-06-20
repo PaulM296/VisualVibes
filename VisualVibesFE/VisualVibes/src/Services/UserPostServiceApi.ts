@@ -73,6 +73,38 @@ const getPostsByUserId = async (
   };
 };
 
+const getAdminPosts = async (
+  paginationRequest: PaginationRequestDto
+): Promise<PaginationResponse<ResponsePostModel>> => {
+  const response = await apiClient.get<PaginationResponse<ResponsePostModel>>(
+    `/activityPosts/admin-posts`,
+    {
+      params: {
+        pageIndex: paginationRequest.pageIndex,
+        pageSize: paginationRequest.pageSize,
+      },
+    }
+  );
+
+  const posts = response.data.items.map((post) => ({
+    ...post,
+    createdAt: new Date(post.createdAt),
+    comments: post.comments.map((comment) => ({
+      ...comment,
+      createdAt: new Date(comment.createdAt),
+    })),
+    reactions: post.reactions.map((reaction) => ({
+      ...reaction,
+      timestamp: new Date(reaction.timestamp).toISOString(),
+    })),
+  }));
+
+  return {
+    ...response.data,
+    items: posts,
+  };
+};
+
 const updatePost = async (
   postId: string,
   updatePostDto: { caption: string }
@@ -101,6 +133,7 @@ export {
   createPost,
   getPostsByUserId,
   getImageById,
+  getAdminPosts,
   updatePost,
   removePost,
   moderatePost,

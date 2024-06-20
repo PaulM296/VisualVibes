@@ -1,4 +1,41 @@
 .rightbar {
-    flex: 25%;
+    flex: 32%;
+    width: 250px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    background-color: #0C7075;
     border-radius: 10px;
-}
+    position: sticky;
+    color: white;
+    height: 478px;
+    margin-top: 10px;
+  }
+  
+  .rightbar h3 {
+    margin: 30px 0px 0px 30px;
+    text-align: left;
+    color: white;
+    font-size: 1.2rem;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  
+  .rightBarPaginationControls {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+    padding: 0px 10px;
+  }
+  
+  .rightBarPaginationControls button {
+    background-color: #005f73;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  
+  .rightBarPaginationControls button:disabled {
+    background-color: #0C7075;
+    cursor: not-allowed;
+  }
+  
