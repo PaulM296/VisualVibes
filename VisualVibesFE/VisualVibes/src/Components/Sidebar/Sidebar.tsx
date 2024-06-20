@@ -49,9 +49,7 @@ const Sidebar: React.FC = () => {
     fetchFollowing();
   }, []);
 
-  if (loading) {
-    return <p>Loading...</p>;
-  }
+
 
   const handleUserClick = (userId: string) => {
     navigate(`/user/${userId}`);
@@ -60,7 +58,8 @@ const Sidebar: React.FC = () => {
   return (
     <div className="sidebar">
       <h3>Following</h3>
-      {following.length === 0 && (
+      {loading && 'Loading'}
+     {!loading &&<> {following.length === 0 && (
         <p className="no-following-message">You are not following anyone.</p>
       )}
       <div className="sidebarList">
@@ -72,7 +71,7 @@ const Sidebar: React.FC = () => {
               onClick={() => handleUserClick(user.followingId)}
             >
               <ListItemAvatar>
-                <Avatar src={avatars[user.imageId] || ""} alt={user.userName} />
+                <Avatar  style={{border: '1px solid black'}} src={avatars[user.imageId] || ""} alt={user.userName} />
               </ListItemAvatar>
               <ListItemText
                 primary={user.userName}
@@ -81,7 +80,7 @@ const Sidebar: React.FC = () => {
             </ListItem>
           ))}
         </List>
-      </div>
+      </div></>}
     </div>
   );
 };

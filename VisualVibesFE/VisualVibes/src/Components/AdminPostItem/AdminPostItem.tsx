@@ -12,9 +12,9 @@ const AdminPostItem: React.FC<AdminPostItemProps> = ({ post, avatarSrc }) => {
   return (
     <Box className="adminPostItem">
       <Box className="adminPostHeader">
-        <Avatar src={avatarSrc} alt={post.userName} />
+        <Avatar style ={{border: "1px solid black"}}src={avatarSrc} alt={post.userName} />
         <Box className="adminPostUserInfo">
-          <Typography variant="h6" className="adminPostUserName">
+          <Typography className="adminPostUserName">
             {post.userName}
           </Typography>
           <Typography variant="body2" className="adminPostDate">

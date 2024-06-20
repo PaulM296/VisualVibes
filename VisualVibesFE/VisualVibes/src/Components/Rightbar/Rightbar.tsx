@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { getAdminPosts, getImageById } from '../../Services/UserPostServiceApi';
-import { ResponsePostModel } from '../../Models/ReponsePostModel';
-import AdminPostItem from '../AdminPostItem/AdminPostItem';
-import './Rightbar.css';
+import React, { useEffect, useState } from "react";
+import { getAdminPosts, getImageById } from "../../Services/UserPostServiceApi";
+import { ResponsePostModel } from "../../Models/ReponsePostModel";
+import AdminPostItem from "../AdminPostItem/AdminPostItem";
+import "./Rightbar.css";
 
 const Rightbar: React.FC = () => {
   const [adminPosts, setAdminPosts] = useState<ResponsePostModel[]>([]);
@@ -22,14 +22,19 @@ const Rightbar: React.FC = () => {
         setAdminPosts(response.items);
         setTotalPages(response.totalPages);
 
-        const avatarPromises = response.items.map(post =>
-          getImageById(post.imageId).then(imageSrc => ({ [post.imageId]: imageSrc }))
+        const avatarPromises = response.items.map((post) =>
+          getImageById(post.imageId).then((imageSrc) => ({
+            [post.imageId]: imageSrc,
+          }))
         );
         const avatarResults = await Promise.all(avatarPromises);
-        const avatarMap = avatarResults.reduce((acc, curr) => ({ ...acc, ...curr }), {});
+        const avatarMap = avatarResults.reduce(
+          (acc, curr) => ({ ...acc, ...curr }),
+          {}
+        );
         setAvatars(avatarMap);
       } catch (error) {
-        console.error('Error fetching admin posts:', error);
+        console.error("Error fetching admin posts:", error);
       } finally {
         setLoading(false);
       }
@@ -38,26 +43,45 @@ const Rightbar: React.FC = () => {
     fetchAdminPosts();
   }, [pageIndex]);
 
-  if (loading) {
-    return <p>Loading...</p>;
-  }
-
   return (
     <div className="rightbar">
       <h3>Admin Posts</h3>
-      {adminPosts.length === 0 ? (
-        <p>No posts by admins.</p>
-      ) : (
-        adminPosts.map((post) => (
-          <AdminPostItem key={post.id} post={post} avatarSrc={avatars[post.imageId] || ''} />
-        ))
+      {loading && "Loading"}
+      {!loading && (
+        <>
+          {" "}
+          {adminPosts.length === 0 ? (
+            <p>No posts by admins.</p>
+          ) : (
+            adminPosts.map((post) => (
+              <AdminPostItem
+                key={post.id}
+                post={post}
+                avatarSrc={avatars[post.imageId] || ""}
+              />
+            ))
+          )}
+          <div className="rightBarPaginationControls">
+            {pageIndex !== 1 && (
+              <button
+                className="previousButtonAdminPost"
+                disabled={pageIndex === 1}
+                onClick={() => setPageIndex(pageIndex - 1)}
+              >
+                Previous
+              </button>
+            )}
+            {pageIndex !== totalPages && <button className="previousButtonAdminPostEmpty"></button>}
+           {pageIndex !== totalPages  && <button
+              className="nextButtonAdminPost"
+              disabled={pageIndex === totalPages}
+              onClick={() => setPageIndex(pageIndex + 1)}
+            >
+              Next
+            </button>}
+          </div>
+        </>
       )}
-      <div className="rightBarPaginationControls">
-        <button disabled={pageIndex === 1} onClick={() => setPageIndex(pageIndex - 1)}>
-          Previous
-        </button>
-        <button disabled={pageIndex === totalPages} onClick={() => setPageIndex(pageIndex + 1)}>Next</button>
-      </div>
     </div>
   );
 };

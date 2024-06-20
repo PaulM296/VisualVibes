@@ -21,3 +21,13 @@ html, body {
 .homeContainer {
   height: auto;
 }
+
+.stickySidebar{
+  position: sticky;
+  top: 1px;
+}
+
+.stickyRightBar{
+  position: sticky;
+  top: 1px;
+}

@@ -42,9 +42,9 @@ const Home: React.FC = () => {
       <div className="homeContainer">
         <Navbar />
         <div className="homepageContent">
-          <Sidebar />
+          <div className='stickySidebar'><Sidebar /></div>
           <Feed />
-          <Rightbar />
+        <div className='stickyRightBar'><Rightbar /></div>  
         </div>
       </div>
       <Snackbar

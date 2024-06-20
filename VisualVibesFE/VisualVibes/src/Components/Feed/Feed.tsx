@@ -1,52 +1,93 @@
-import React, { useEffect, useState } from 'react';
-import { Avatar, Typography, Modal, Button, TextField, IconButton, Menu, MenuItem } from '@mui/material';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { getUserFeed } from '../../Services/UserFeedServiceApi';
-import { getImageById as getUserImageById } from '../../Services/UserServiceApi';
-import { getImageById as getPostImageById } from '../../Services/UserPostServiceApi';
-import { addReaction, deleteReaction, getPostReactions, updateReaction } from '../../Services/ReactionServiceApi';
-import { getPostComments, addComment, updateComment, deleteComment, moderateComment, unmoderateComment } from '../../Services/CommentServiceApi';
-import { moderatePost, unmoderatePost } from '../../Services/UserPostServiceApi';
-import { FeedPost, UserFeed } from '../../Models/FeedPostInterface';
-import { getReactionEmoji } from '../../Utils/getReactionEmoji';
-import { ResponseReaction } from '../../Models/ResponseReaction';
-import { ReactionType } from '../../Models/ReactionType';
-import { ReactionWithEmoji } from '../../Models/ReactionWithEmoji';
-import { ResponseComment, FormattedComment } from '../../Models/ResponseComment';
-import RichTextEditor from '../RichTextEditor/RichTextEditor';
-import { getUserIdFromToken } from '../../Utils/auth';
-import { PaginationResponse } from '../../Models/PaginationResponse';
-import { useUser } from '../../Hooks/userContext';
-import './Feed.css';
-import { reactionTypes } from '../../Utils/const/reactionTypes';
-import { formatPostDate } from '../../Utils/formatPostDateUtil';
+import React, { useEffect, useState } from "react";
+import {
+  Avatar,
+  Typography,
+  Modal,
+  Button,
+  TextField,
+  IconButton,
+  Menu,
+  MenuItem,
+} from "@mui/material";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import { getUserFeed } from "../../Services/UserFeedServiceApi";
+import { getImageById as getUserImageById } from "../../Services/UserServiceApi";
+import { getImageById as getPostImageById } from "../../Services/UserPostServiceApi";
+import {
+  addReaction,
+  deleteReaction,
+  getPostReactions,
+  updateReaction,
+} from "../../Services/ReactionServiceApi";
+import {
+  getPostComments,
+  addComment,
+  updateComment,
+  deleteComment,
+  moderateComment,
+  unmoderateComment,
+} from "../../Services/CommentServiceApi";
+import {
+  moderatePost,
+  unmoderatePost,
+} from "../../Services/UserPostServiceApi";
+import { FeedPost, UserFeed } from "../../Models/FeedPostInterface";
+import { getReactionEmoji } from "../../Utils/getReactionEmoji";
+import { ResponseReaction } from "../../Models/ResponseReaction";
+import { ReactionType } from "../../Models/ReactionType";
+import { ReactionWithEmoji } from "../../Models/ReactionWithEmoji";
+import {
+  ResponseComment,
+  FormattedComment,
+} from "../../Models/ResponseComment";
+import RichTextEditor from "../RichTextEditor/RichTextEditor";
+import { getUserIdFromToken } from "../../Utils/auth";
+import { PaginationResponse } from "../../Models/PaginationResponse";
+import { useUser } from "../../Hooks/userContext";
+import "./Feed.css";
+import { reactionTypes } from "../../Utils/const/reactionTypes";
+import { formatPostDate } from "../../Utils/formatPostDateUtil";
 
 const Feed: React.FC = () => {
   const { isAdmin } = useUser();
   const [posts, setPosts] = useState<FeedPost[]>([]);
   const [postImages, setPostImages] = useState<{ [key: string]: string }>({});
-  const [profileImages, setProfileImages] = useState<{ [key: string]: string }>({});
+  const [profileImages, setProfileImages] = useState<{ [key: string]: string }>(
+    {}
+  );
   const [comments, setComments] = useState<FormattedComment[]>([]);
-  const [newComment, setNewComment] = useState<string>('');
+  const [newComment, setNewComment] = useState<string>("");
   const [loading, setLoading] = useState(true);
-  const [showReactions, setShowReactions] = useState<{ [key: string]: boolean }>({});
+  const [showReactions, setShowReactions] = useState<{
+    [key: string]: boolean;
+  }>({});
   const [openReactionModal, setOpenReactionModal] = useState(false);
   const [openCommentModal, setOpenCommentModal] = useState(false);
   const [reactions, setReactions] = useState<ReactionWithEmoji[]>([]);
-  const [userReactions, setUserReactions] = useState<{ [key: string]: string }>({});
+  const [userReactions, setUserReactions] = useState<{ [key: string]: string }>(
+    {}
+  );
   const [pageIndex, setPageIndex] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [reactionsCount, setReactionsCount] = useState<{ [key: string]: number }>({});
-  const [commentsCount, setCommentsCount] = useState<{ [key: string]: number }>({});
+  const [reactionsCount, setReactionsCount] = useState<{
+    [key: string]: number;
+  }>({});
+  const [commentsCount, setCommentsCount] = useState<{ [key: string]: number }>(
+    {}
+  );
   const [currentPostId, setCurrentPostId] = useState<string | null>(null);
   const [currentCommentPageIndex, setCurrentCommentPageIndex] = useState(1);
   const [commentTotalPages, setCommentTotalPages] = useState(1);
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
-  const [editCommentText, setEditCommentText] = useState<string>('');
+  const [editCommentText, setEditCommentText] = useState<string>("");
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [moderatingPostId, setModeratingPostId] = useState<string | null>(null);
-  const [commentAnchorEl, setCommentAnchorEl] = useState<null | HTMLElement>(null);
-  const [moderatingCommentId, setModeratingCommentId] = useState<string | null>(null);
+  const [commentAnchorEl, setCommentAnchorEl] = useState<null | HTMLElement>(
+    null
+  );
+  const [moderatingCommentId, setModeratingCommentId] = useState<string | null>(
+    null
+  );
 
   useEffect(() => {
     fetchFeedData(1);
@@ -54,21 +95,29 @@ const Feed: React.FC = () => {
 
   const fetchFeedData = async (pageIndex: number) => {
     try {
-      const data: PaginationResponse<UserFeed> = await getUserFeed(pageIndex, 10);
+      const data: PaginationResponse<UserFeed> = await getUserFeed(
+        pageIndex,
+        10
+      );
       const newPosts = data.items[0].posts;
-      setPosts((prevPosts) => (pageIndex === 1 ? newPosts : [...prevPosts, ...newPosts]));
+      setPosts((prevPosts) =>
+        pageIndex === 1 ? newPosts : [...prevPosts, ...newPosts]
+      );
       setPageIndex(data.pageIndex);
       setTotalPages(data.totalPages);
 
       const imagesPromises = newPosts.map(async (post) => {
         const postImagePromise = post.postImageId
           ? getPostImageById(post.postImageId)
-          : Promise.resolve('');
+          : Promise.resolve("");
         const profileImagePromise = post.userProfileImageId
           ? getUserImageById(post.userProfileImageId)
-          : Promise.resolve('');
+          : Promise.resolve("");
 
-        const [postImageSrc, profileImageSrc] = await Promise.all([postImagePromise, profileImagePromise]);
+        const [postImageSrc, profileImageSrc] = await Promise.all([
+          postImagePromise,
+          profileImagePromise,
+        ]);
 
         return {
           postId: post.postId,
@@ -87,15 +136,21 @@ const Feed: React.FC = () => {
         return acc;
       }, {} as { [key: string]: string });
 
-      const profileImagesMap = images.reduce((acc, { userProfileImageId, profileImageSrc }) => {
-        if (userProfileImageId && profileImageSrc) {
-          acc[userProfileImageId] = profileImageSrc;
-        }
-        return acc;
-      }, {} as { [key: string]: string });
+      const profileImagesMap = images.reduce(
+        (acc, { userProfileImageId, profileImageSrc }) => {
+          if (userProfileImageId && profileImageSrc) {
+            acc[userProfileImageId] = profileImageSrc;
+          }
+          return acc;
+        },
+        {} as { [key: string]: string }
+      );
 
       setPostImages((prevImages) => ({ ...prevImages, ...postImagesMap }));
-      setProfileImages((prevImages) => ({ ...prevImages, ...profileImagesMap }));
+      setProfileImages((prevImages) => ({
+        ...prevImages,
+        ...profileImagesMap,
+      }));
 
       const reactionsMap = newPosts.reduce((acc, post) => {
         acc[post.postId] = post.reactions.length;
@@ -108,7 +163,9 @@ const Feed: React.FC = () => {
       }, {} as { [key: string]: number });
 
       const userReactionsMap = newPosts.reduce((acc, post) => {
-        const userReaction = post.reactions.find((r) => r.userId === getUserIdFromToken());
+        const userReaction = post.reactions.find(
+          (r) => r.userId === getUserIdFromToken()
+        );
         if (userReaction) {
           acc[post.postId] = ReactionType[userReaction.reactionType];
         }
@@ -119,7 +176,7 @@ const Feed: React.FC = () => {
       setCommentsCount((prev) => ({ ...prev, ...commentsMap }));
       setUserReactions((prev) => ({ ...prev, ...userReactionsMap }));
     } catch (error) {
-      console.error('Error fetching feed data:', error);
+      console.error("Error fetching feed data:", error);
     } finally {
       setLoading(false);
     }
@@ -129,49 +186,62 @@ const Feed: React.FC = () => {
     try {
       const currentUserReactionType = userReactions[postId];
       const reactionTypeId = reactionTypes[reactionType];
-      const postIndex = posts.findIndex(post => post.postId === postId);
-      const reaction = posts[postIndex]?.reactions.find(r => r.userId === getUserIdFromToken());
+      const postIndex = posts.findIndex((post) => post.postId === postId);
+      const reaction = posts[postIndex]?.reactions.find(
+        (r) => r.userId === getUserIdFromToken()
+      );
 
       if (currentUserReactionType) {
         if (currentUserReactionType === reactionType) {
           if (reaction) {
             await deleteReaction(reaction.id);
-            setReactionsCount(prev => ({ ...prev, [postId]: prev[postId] - 1 }));
-            setUserReactions(prev => {
+            setReactionsCount((prev) => ({
+              ...prev,
+              [postId]: prev[postId] - 1,
+            }));
+            setUserReactions((prev) => {
               const newUserReactions = { ...prev };
               delete newUserReactions[postId];
               return newUserReactions;
             });
-            setPosts(prevPosts => {
+            setPosts((prevPosts) => {
               const updatedPosts = [...prevPosts];
-              updatedPosts[postIndex].reactions = updatedPosts[postIndex].reactions.filter(r => r.id !== reaction.id);
+              updatedPosts[postIndex].reactions = updatedPosts[
+                postIndex
+              ].reactions.filter((r) => r.id !== reaction.id);
               return updatedPosts;
             });
           }
         } else {
           if (reaction) {
             await updateReaction(reaction.id, reactionTypeId);
-            setUserReactions(prev => ({ ...prev, [postId]: reactionType }));
-            setPosts(prevPosts => {
+            setUserReactions((prev) => ({ ...prev, [postId]: reactionType }));
+            setPosts((prevPosts) => {
               const updatedPosts = [...prevPosts];
-              const reactionIndex = updatedPosts[postIndex].reactions.findIndex(r => r.id === reaction.id);
-              updatedPosts[postIndex].reactions[reactionIndex].reactionType = reactionTypeId;
+              const reactionIndex = updatedPosts[postIndex].reactions.findIndex(
+                (r) => r.id === reaction.id
+              );
+              updatedPosts[postIndex].reactions[reactionIndex].reactionType =
+                reactionTypeId;
               return updatedPosts;
             });
           }
         }
       } else {
         const newReaction = await addReaction(postId, reactionTypeId);
-        setReactionsCount(prev => ({ ...prev, [postId]: (prev[postId] || 0) + 1 }));
-        setUserReactions(prev => ({ ...prev, [postId]: reactionType }));
-        setPosts(prevPosts => {
+        setReactionsCount((prev) => ({
+          ...prev,
+          [postId]: (prev[postId] || 0) + 1,
+        }));
+        setUserReactions((prev) => ({ ...prev, [postId]: reactionType }));
+        setPosts((prevPosts) => {
           const updatedPosts = [...prevPosts];
           updatedPosts[postIndex].reactions.push(newReaction);
           return updatedPosts;
         });
       }
     } catch (error) {
-      console.error('Error handling reaction:', error);
+      console.error("Error handling reaction:", error);
     }
   };
 
@@ -180,12 +250,16 @@ const Feed: React.FC = () => {
       const reactionData = await getPostReactions(postId, pageIndex);
       const formattedReactions: ReactionWithEmoji[] = await Promise.all(
         reactionData.items.map(async (reaction: ResponseReaction) => {
-          const avatar = reaction.imageId ? await getUserImageById(reaction.imageId) : '';
+          const avatar = reaction.imageId
+            ? await getUserImageById(reaction.imageId)
+            : "";
           return {
             userName: reaction.userName,
             avatar,
             reactionType: ReactionType[reaction.reactionType],
-            reactionEmoji: getReactionEmoji(ReactionType[reaction.reactionType]),
+            reactionEmoji: getReactionEmoji(
+              ReactionType[reaction.reactionType]
+            ),
           };
         })
       );
@@ -195,11 +269,15 @@ const Feed: React.FC = () => {
       setTotalPages(reactionData.totalPages);
       setOpenReactionModal(true);
     } catch (error) {
-      console.error('Error fetching reactions:', error);
+      console.error("Error fetching reactions:", error);
     }
   };
 
-  const fetchComments = async (postId: string, pageIndex: number = 1, pageSize: number = 10) => {
+  const fetchComments = async (
+    postId: string,
+    pageIndex: number = 1,
+    pageSize: number = 10
+  ) => {
     try {
       const commentData = await getPostComments(postId, pageIndex, pageSize);
 
@@ -209,7 +287,9 @@ const Feed: React.FC = () => {
       } else {
         const formattedComments: FormattedComment[] = await Promise.all(
           commentData.items.map(async (comment: ResponseComment) => {
-            const avatar = comment.imageId ? await getUserImageById(comment.imageId) : '';
+            const avatar = comment.imageId
+              ? await getUserImageById(comment.imageId)
+              : "";
             return {
               id: comment.id,
               userId: comment.userId,
@@ -228,7 +308,7 @@ const Feed: React.FC = () => {
       setCurrentCommentPageIndex(pageIndex);
       setOpenCommentModal(true);
     } catch (error) {
-      console.error('Error fetching comments:', error);
+      console.error("Error fetching comments:", error);
       setComments([]);
       setCommentTotalPages(1);
       setOpenCommentModal(true);
@@ -237,7 +317,7 @@ const Feed: React.FC = () => {
 
   const handleAddComment = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (!token || !currentPostId || !newComment) return;
 
       await addComment(currentPostId, newComment);
@@ -247,10 +327,10 @@ const Feed: React.FC = () => {
         [currentPostId]: (prev[currentPostId] || 0) + 1,
       }));
 
-      setNewComment('');
+      setNewComment("");
       fetchComments(currentPostId, currentCommentPageIndex);
     } catch (error) {
-      console.error('Error adding comment:', error);
+      console.error("Error adding comment:", error);
     }
   };
 
@@ -261,15 +341,15 @@ const Feed: React.FC = () => {
 
   const handleUpdateComment = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (!token || !editingCommentId || !editCommentText) return;
 
       await updateComment(editingCommentId, editCommentText);
       setEditingCommentId(null);
-      setEditCommentText('');
+      setEditCommentText("");
       fetchComments(currentPostId!, currentCommentPageIndex);
     } catch (error) {
-      console.error('Error updating comment:', error);
+      console.error("Error updating comment:", error);
     }
   };
 
@@ -278,7 +358,7 @@ const Feed: React.FC = () => {
       await deleteComment(commentId);
       fetchComments(currentPostId!, currentCommentPageIndex);
     } catch (error) {
-      console.error('Error deleting comment:', error);
+      console.error("Error deleting comment:", error);
     }
   };
 
@@ -298,7 +378,7 @@ const Feed: React.FC = () => {
     try {
       await fetchFeedData(pageIndex + 1);
     } catch (error) {
-      console.error('Error loading more posts:', error);
+      console.error("Error loading more posts:", error);
     }
   };
 
@@ -315,11 +395,14 @@ const Feed: React.FC = () => {
         )
       );
     } catch (error) {
-      console.error('Error moderating post:', error);
+      console.error("Error moderating post:", error);
     }
   };
 
-  const handleModerateComment = async (commentId: string, isModerated: boolean) => {
+  const handleModerateComment = async (
+    commentId: string,
+    isModerated: boolean
+  ) => {
     try {
       if (isModerated) {
         await unmoderateComment(commentId);
@@ -328,15 +411,20 @@ const Feed: React.FC = () => {
       }
       setComments((prevComments) =>
         prevComments.map((comment) =>
-          comment.id === commentId ? { ...comment, isModerated: !isModerated } : comment
+          comment.id === commentId
+            ? { ...comment, isModerated: !isModerated }
+            : comment
         )
       );
     } catch (error) {
-      console.error('Error moderating comment:', error);
+      console.error("Error moderating comment:", error);
     }
   };
 
-  const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>, postId: string) => {
+  const handleMenuOpen = (
+    event: React.MouseEvent<HTMLButtonElement>,
+    postId: string
+  ) => {
     setAnchorEl(event.currentTarget);
     setModeratingPostId(postId);
   };
@@ -346,7 +434,10 @@ const Feed: React.FC = () => {
     setModeratingPostId(null);
   };
 
-  const handleCommentMenuOpen = (event: React.MouseEvent<HTMLButtonElement>, commentId: string) => {
+  const handleCommentMenuOpen = (
+    event: React.MouseEvent<HTMLButtonElement>,
+    commentId: string
+  ) => {
     setCommentAnchorEl(event.currentTarget);
     setModeratingCommentId(commentId);
   };
@@ -356,10 +447,6 @@ const Feed: React.FC = () => {
     setModeratingCommentId(null);
   };
 
-  if (loading) {
-    return <p>Loading...</p>;
-  }
-
   if (!posts.length) {
     return <p>No feed data available</p>;
   }
@@ -367,121 +454,214 @@ const Feed: React.FC = () => {
   return (
     <div className="feed">
       <div className="feedWrapper">
-        {posts.map((post) => {
-          return (
-            <div key={post.postId} className="feedPost">
-            <div className={post.isModerated? "feedPostWrapperModerated" : "feedPostWrapper"}>
-            <div className="feedPostTop">
-              <div className="feedPostTopLeft">
-                <Avatar
-                  alt={post.userName}
-                  src={profileImages[post.userProfileImageId] || 'defaultProfilePicture.jpg'}
-                  className="feedPostProfileImg"
-                />
-                <div className="feedPostUserInfo">
-                  <span className="feedPostUsername">{post.userName}</span>
-                  <span className="feedPostDate">{formatPostDate(post.createdAt)}</span>
-                </div>
-              </div>
-              {isAdmin && (
-                <div className="feedPostTopRight">
-                  <IconButton onClick={(event) => handleMenuOpen(event, post.postId)}>
-                    <MoreVertIcon />
-                  </IconButton>
-                  <Menu
-                    anchorEl={anchorEl}
-                    open={Boolean(anchorEl) && moderatingPostId === post.postId}
-                    onClose={handleMenuClose}
+        {loading && "Loading"}
+        {!loading && (
+          <>
+            {posts.map((post) => {
+              return (
+                <div key={post.postId} className="feedPost">
+                  <div
+                    className={
+                      post.isModerated
+                        ? "feedPostWrapperModerated"
+                        : "feedPostWrapper"
+                    }
                   >
-                    <MenuItem onClick={() => handleModeratePost(post.postId, post.isModerated)}>
-                      {post.isModerated ? 'Unmoderate' : 'Moderate'}
-                    </MenuItem>
-                  </Menu>
-                </div>
-              )}
-            </div>
-            {post.isModerated ? (
-              <div className="feedPostCenter">
-                <Typography variant="h6" color="error" sx={{ fontSize: '16px', fontWeight: 'bold'}}>
-                    This post did not comply to our policies and has been moderated by one of our administrators!
-                </Typography>
-              </div>
-            ) : (
-              <>
-              <div className="feedPostText" dangerouslySetInnerHTML={{ __html: post.caption || '' }}></div>
-                <div className="feedPostCenter">
-                  
-                  {post.postImageId && postImages[post.postId] && (
-                    <img className="feedPostImg" src={postImages[post.postId]} alt="Post image" />
-                  )}
-                </div>
-                <div className="feedPostBottom">
-                  <div 
-                    className="feedPostBottomLeft"
-                    onMouseEnter={() => setShowReactions(prev => ({ ...prev, [post.postId]: true }))}
-                    onMouseLeave={() => setShowReactions(prev => ({ ...prev, [post.postId]: false }))}  
-                  >
-                    <div className="reactionButton">
-                      {userReactions[post.postId] ? (
-                        <span className="reactionOpener selected" role="img" aria-label={userReactions[post.postId]}>
-                          {getReactionEmoji(userReactions[post.postId])}
-                        </span>
-                      ) : (
-                        <span className="reactionOpener" role="img" aria-label="thumbs up">👍</span>
-                      )}
-                      {showReactions[post.postId] && (
-                        <div className="reactionOptions">
-                          {Object.keys(reactionTypes).map(type => (
-                            <span key={type}
-                                  className={userReactions[post.postId] === type ? 'selected' : ''}
-                                  role="img"
-                                  aria-label={type}
-                                  onClick={() => handleReaction(post.postId, type)}>
-                              {getReactionEmoji(type)}
-                            </span>
-                          ))}
+                    <div className="feedPostTop">
+                      <div className="feedPostTopLeft">
+                        <Avatar
+                        style={{border: '1px solid black'}}
+                          alt={post.userName}
+                          src={
+                            profileImages[post.userProfileImageId] ||
+                            "defaultProfilePicture.jpg"
+                          }
+                          className="feedPostProfileImg"
+                        />
+                        <div className="feedPostUserInfo">
+                          <span className="feedPostUsername">
+                            {post.userName}
+                          </span>
+                          <span className="feedPostDate">
+                            {formatPostDate(post.createdAt)}
+                          </span>
+                        </div>
+                      </div>
+                      {isAdmin && (
+                        <div className="feedPostTopRight">
+                          <IconButton
+                            onClick={(event) =>
+                              handleMenuOpen(event, post.postId)
+                            }
+                          >
+                            <MoreVertIcon />
+                          </IconButton>
+                          <Menu
+                            anchorEl={anchorEl}
+                            open={
+                              Boolean(anchorEl) &&
+                              moderatingPostId === post.postId
+                            }
+                            onClose={handleMenuClose}
+                          >
+                            <MenuItem
+                              onClick={() =>
+                                handleModeratePost(
+                                  post.postId,
+                                  post.isModerated
+                                )
+                              }
+                            >
+                              {post.isModerated ? "Unmoderate" : "Moderate"}
+                            </MenuItem>
+                          </Menu>
                         </div>
                       )}
                     </div>
-                    <span className="feedPostReactionCounter" onClick={() => fetchReactions(post.postId)}>
-                      {reactionsCount[post.postId] || 0} people reacted
-                    </span>
-                  </div>
-                  <div className="feedPostBottomRight">
-                    <span 
-                      className="feedPostCommentText" 
-                      onClick={() => handleOpenComments(post.postId)}
-                      onMouseEnter={(e) => (e.currentTarget.style.color = 'blue')}
-                      onMouseLeave={(e) => (e.currentTarget.style.color = 'black')}
-                      style={{ cursor: 'pointer' }}
-                    >
-                      {commentsCount[post.postId] || 0} comments
-                    </span>
+                    {post.isModerated ? (
+                      <div className="feedPostCenter">
+                        <Typography
+                          variant="h6"
+                          color="error"
+                          sx={{ fontSize: "16px", fontWeight: "bold" }}
+                        >
+                          This post did not comply to our policies and has been
+                          moderated by one of our administrators!
+                        </Typography>
+                      </div>
+                    ) : (
+                      <>
+                        <div
+                          className="feedPostText"
+                          dangerouslySetInnerHTML={{
+                            __html: post.caption || "",
+                          }}
+                        ></div>
+                        <div className="feedPostCenter">
+                          {post.postImageId && postImages[post.postId] && (
+                            <img
+                              className="feedPostImg"
+                              src={postImages[post.postId]}
+                              alt="Post image"
+                            />
+                          )}
+                        </div>
+                        <div className="feedPostBottom">
+                          <div
+                            className="feedPostBottomLeft"
+                            onMouseEnter={() =>
+                              setShowReactions((prev) => ({
+                                ...prev,
+                                [post.postId]: true,
+                              }))
+                            }
+                            onMouseLeave={() =>
+                              setShowReactions((prev) => ({
+                                ...prev,
+                                [post.postId]: false,
+                              }))
+                            }
+                          >
+                            <div className="reactionButton">
+                              {userReactions[post.postId] ? (
+                                <span
+                                  className="reactionOpener selected"
+                                  role="img"
+                                  aria-label={userReactions[post.postId]}
+                                >
+                                  {getReactionEmoji(userReactions[post.postId])}
+                                </span>
+                              ) : (
+                                <span
+                                  className="reactionOpener"
+                                  role="img"
+                                  aria-label="thumbs up"
+                                >
+                                  👍
+                                </span>
+                              )}
+                              {showReactions[post.postId] && (
+                                <div className="reactionOptions">
+                                  {Object.keys(reactionTypes).map((type) => (
+                                    <span
+                                      key={type}
+                                      className={
+                                        userReactions[post.postId] === type
+                                          ? "selected"
+                                          : ""
+                                      }
+                                      role="img"
+                                      aria-label={type}
+                                      onClick={() =>
+                                        handleReaction(post.postId, type)
+                                      }
+                                    >
+                                      {getReactionEmoji(type)}
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                            <span
+                              className="feedPostReactionCounter"
+                              onClick={() => fetchReactions(post.postId)}
+                            >
+                              {reactionsCount[post.postId] || 0} people reacted
+                            </span>
+                          </div>
+                          <div className="feedPostBottomRight">
+                            <span
+                              className="feedPostCommentText"
+                              onClick={() => handleOpenComments(post.postId)}
+                              onMouseEnter={(e) =>
+                                (e.currentTarget.style.color = "blue")
+                              }
+                              onMouseLeave={(e) =>
+                                (e.currentTarget.style.color = "black")
+                              }
+                              style={{ cursor: "pointer" }}
+                            >
+                              {commentsCount[post.postId] || 0} comments
+                            </span>
+                          </div>
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
-              </>
+              );
+            })}
+            {pageIndex < totalPages && (
+              <div className="centerButton">
+                <Button
+                  onClick={loadMorePosts}
+                  variant="contained"
+                  color="primary"
+                  style={{ margin: "auto", display: "block" }}
+                >
+                  Load More
+                </Button>
+              </div>
             )}
-            </div>
-          </div>
-          )
-        })}
-        {pageIndex < totalPages && (
-          <div className="centerButton">
-            <Button onClick={loadMorePosts} variant="contained" color="primary" style={{ margin: 'auto', display: 'block' }}>
-              Load More
-            </Button>
-          </div>
+          </>
         )}
       </div>
+
       <Modal open={openReactionModal} onClose={handleClose}>
         <div className="modalContent">
           <Typography variant="h6">Reactions</Typography>
-          {reactions.length === 0 && <Typography sx={{ mt: 2 }}>No reactions yet.</Typography>}
+          {reactions.length === 0 && (
+            <Typography sx={{ mt: 2 }}>No reactions yet.</Typography>
+          )}
           {reactions.length > 0 &&
             reactions.map((reaction, index) => (
               <div key={index} className="reactionItem">
                 <span>{reaction.reactionEmoji}</span>
-                <Avatar src={reaction.avatar} alt={reaction.userName} sx={{ margin: '0 10px' }} />
+                <Avatar
+                  src={reaction.avatar}
+                  alt={reaction.userName}
+                  sx={{ margin: "0 10px" }}
+                />
                 <Typography>{reaction.userName}</Typography>
               </div>
             ))}
@@ -489,15 +669,17 @@ const Feed: React.FC = () => {
             <Button
               disabled={pageIndex === 1}
               onClick={() => fetchReactions(currentPostId!, pageIndex - 1)}
-              style={{ float: 'left' }}
+              style={{ float: "left" }}
             >
               Previous
             </Button>
-            <Typography>{pageIndex} / {totalPages}</Typography>
+            <Typography>
+              {pageIndex} / {totalPages}
+            </Typography>
             <Button
               disabled={pageIndex === totalPages}
               onClick={() => fetchReactions(currentPostId!, pageIndex + 1)}
-              style={{ float: 'right' }}
+              style={{ float: "right" }}
             >
               Next
             </Button>
@@ -509,21 +691,37 @@ const Feed: React.FC = () => {
           <Typography variant="h6">Comments</Typography>
           <div className="addCommentContainer">
             <RichTextEditor content={newComment} setContent={setNewComment} />
-            <Button variant="contained" color="primary" onClick={handleAddComment} style={{ marginTop: '10px' }}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleAddComment}
+              style={{ marginTop: "10px" }}
+            >
               Add Comment
             </Button>
           </div>
           <div className="commentsContainer">
-            {comments.length === 0 && <Typography sx={{ mt: 2 }}>No comments yet.</Typography>}
+            {comments.length === 0 && (
+              <Typography sx={{ mt: 2 }}>No comments yet.</Typography>
+            )}
             {comments.length > 0 &&
               comments.map((comment, index) => (
                 <div key={index} className="commentItem">
-                  <Avatar src={comment.avatar} alt={comment.userName} sx={{ margin: '0 10px' }} />
+                  <Avatar
+                    src={comment.avatar}
+                    alt={comment.userName}
+                    sx={{ margin: "0 10px" }}
+                  />
                   <div>
                     <Typography>{comment.userName}</Typography>
                     {comment.isModerated ? (
-                      <Typography variant="h6" color="error" sx={{ fontSize: '18px', fontWeight: 'bold' }}>
-                        This comment was moderated and is currently under review by one of our administrators!
+                      <Typography
+                        variant="h6"
+                        color="error"
+                        sx={{ fontSize: "18px", fontWeight: "bold" }}
+                      >
+                        This comment was moderated and is currently under review
+                        by one of our administrators!
                       </Typography>
                     ) : (
                       <>
@@ -531,17 +729,28 @@ const Feed: React.FC = () => {
                           <>
                             <TextField
                               value={editCommentText}
-                              onChange={(e) => setEditCommentText(e.target.value)}
+                              onChange={(e) =>
+                                setEditCommentText(e.target.value)
+                              }
                               fullWidth
                               multiline
                             />
-                            <Button variant="contained" color="primary" onClick={handleUpdateComment}>
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              onClick={handleUpdateComment}
+                            >
                               Save
                             </Button>
-                            <Button onClick={() => setEditingCommentId(null)}>Cancel</Button>
+                            <Button onClick={() => setEditingCommentId(null)}>
+                              Cancel
+                            </Button>
                           </>
                         ) : (
-                          <Typography sx={{ marginLeft: '10px' }} dangerouslySetInnerHTML={{ __html: comment.text }}></Typography>
+                          <Typography
+                            sx={{ marginLeft: "10px" }}
+                            dangerouslySetInnerHTML={{ __html: comment.text }}
+                          ></Typography>
                         )}
                       </>
                     )}
@@ -549,22 +758,40 @@ const Feed: React.FC = () => {
                   <div>
                     {comment.userId === getUserIdFromToken() && (
                       <>
-                        <Button onClick={() => handleEditComment(comment)}>Edit</Button>
-                        <Button onClick={() => handleDeleteComment(comment.id)}>Delete</Button>
+                        <Button onClick={() => handleEditComment(comment)}>
+                          Edit
+                        </Button>
+                        <Button onClick={() => handleDeleteComment(comment.id)}>
+                          Delete
+                        </Button>
                       </>
                     )}
                     {isAdmin && (
                       <>
-                        <IconButton onClick={(event) => handleCommentMenuOpen(event, comment.id)}>
+                        <IconButton
+                          onClick={(event) =>
+                            handleCommentMenuOpen(event, comment.id)
+                          }
+                        >
                           <MoreVertIcon />
                         </IconButton>
                         <Menu
                           anchorEl={commentAnchorEl}
-                          open={Boolean(commentAnchorEl) && moderatingCommentId === comment.id}
+                          open={
+                            Boolean(commentAnchorEl) &&
+                            moderatingCommentId === comment.id
+                          }
                           onClose={handleCommentMenuClose}
                         >
-                          <MenuItem onClick={() => handleModerateComment(comment.id, comment.isModerated)}>
-                            {comment.isModerated ? 'Unmoderate' : 'Moderate'}
+                          <MenuItem
+                            onClick={() =>
+                              handleModerateComment(
+                                comment.id,
+                                comment.isModerated
+                              )
+                            }
+                          >
+                            {comment.isModerated ? "Unmoderate" : "Moderate"}
                           </MenuItem>
                         </Menu>
                       </>
@@ -575,16 +802,22 @@ const Feed: React.FC = () => {
             <div className="paginationControls">
               <Button
                 disabled={currentCommentPageIndex === 1}
-                onClick={() => fetchComments(currentPostId!, currentCommentPageIndex - 1)}
-                style={{ float: 'left' }}
+                onClick={() =>
+                  fetchComments(currentPostId!, currentCommentPageIndex - 1)
+                }
+                style={{ float: "left" }}
               >
                 Previous
               </Button>
-              <Typography>{currentCommentPageIndex} / {commentTotalPages}</Typography>
+              <Typography>
+                {currentCommentPageIndex} / {commentTotalPages}
+              </Typography>
               <Button
                 disabled={currentCommentPageIndex === commentTotalPages}
-                onClick={() => fetchComments(currentPostId!, currentCommentPageIndex + 1)}
-                style={{ float: 'right' }}
+                onClick={() =>
+                  fetchComments(currentPostId!, currentCommentPageIndex + 1)
+                }
+                style={{ float: "right" }}
               >
                 Next
               </Button>

@@ -396,7 +396,7 @@ const MyUserProfile: React.FC = () => {
 
   return (
     <div className="userPersonalFeedContainer">
-      <UserProfileInfo profilePicture={profilePicture} username={user.userName} bio={user.bio} />
+     <div style ={{display: "flex", justifyContent: "flex-start", alignItems: "left"}}> <UserProfileInfo profilePicture={profilePicture} username={user.userName} bio={user.bio} /> </div>
       {posts.map((post) => (
         <Post
           key={post.id}
