@@ -86,6 +86,8 @@ const getAdminPosts = async (
     }
   );
 
+  console.log("Raw API Response:", response.data);
+
   const posts = response.data.items.map((post) => ({
     ...post,
     createdAt: new Date(post.createdAt),
@@ -98,6 +100,8 @@ const getAdminPosts = async (
       timestamp: new Date(reaction.timestamp).toISOString(),
     })),
   }));
+
+  console.log("Processed Posts:", posts);
 
   return {
     ...response.data,

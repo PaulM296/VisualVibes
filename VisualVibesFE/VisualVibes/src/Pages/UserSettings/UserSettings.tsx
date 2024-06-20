@@ -16,7 +16,6 @@ const UserSettings: React.FC = () => {
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [profilePicture, setProfilePicture] = useState<string>('');
 
-
   useEffect(() => {
     if (user) {
       setLocalUser(user);
@@ -117,6 +116,7 @@ const UserSettings: React.FC = () => {
           <Box display="flex" alignItems="center" justifyContent="space-between" width="100%">
             <Box position="relative">
               <Avatar
+                style={{ border: '1px solid #072E33' }}
                 src={profilePicture || '/default-profile.png'}
                 sx={{ width: 100, height: 100 }}
               />
@@ -156,7 +156,8 @@ const UserSettings: React.FC = () => {
               margin="normal"
               InputProps={{
                 readOnly: !editable,
-                classes: { input: 'text-field-small' },
+                classes: { input: editable ? '' : 'Mui-disabled' },
+                style: { pointerEvents: !editable ? 'none' : 'auto' },
               }}
               style={{ width: '80%' }}
             />
@@ -169,7 +170,8 @@ const UserSettings: React.FC = () => {
               margin="normal"
               InputProps={{
                 readOnly: !editable,
-                classes: { input: 'text-field-small' },
+                classes: { input: editable ? '' : 'Mui-disabled' },
+                style: { pointerEvents: !editable ? 'none' : 'auto' },
               }}
               style={{ width: '80%' }}
             />
@@ -182,7 +184,8 @@ const UserSettings: React.FC = () => {
               margin="normal"
               InputProps={{
                 readOnly: !editable,
-                classes: { input: 'text-field-small' },
+                classes: { input: editable ? '' : 'Mui-disabled' },
+                style: { pointerEvents: !editable ? 'none' : 'auto' },
               }}
               style={{ width: '80%' }}
             />
@@ -195,7 +198,8 @@ const UserSettings: React.FC = () => {
               margin="normal"
               InputProps={{
                 readOnly: !editable,
-                classes: { input: 'text-field-small' },
+                classes: { input: editable ? '' : 'Mui-disabled' },
+                style: { pointerEvents: !editable ? 'none' : 'auto' },
               }}
               style={{ width: '80%' }}
             />
@@ -210,7 +214,8 @@ const UserSettings: React.FC = () => {
               rows={2}
               InputProps={{
                 readOnly: !editable,
-                classes: { input: 'text-field-small' },
+                classes: { input: editable ? '' : 'Mui-disabled' },
+                style: { pointerEvents: !editable ? 'none' : 'auto' },
               }}
               style={{ width: '80%' }}
             />

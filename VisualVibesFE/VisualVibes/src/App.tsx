@@ -15,6 +15,8 @@ import { UserProvider } from "./Hooks/userContext";
 import { createTheme, ThemeProvider } from "@mui/material";
 import AdminPage from "./Pages/AdminPage/AdminPage";
 import UserBlocked from "./Pages/UserBlocked/UserBlocked";
+import ProtectedRoute from "./Components/ProtectedRoute";
+import Forbidden from "./Pages/Forbidden/Forbidden";
 
 const theme = createTheme({
   palette: {
@@ -51,10 +53,13 @@ const App: React.FC = () => {
             <Route path="/messages" element={<Messages />} />
             <Route path="/myUserProfile" element={<MyUserProfile />} />
             <Route path="/user/:userId" element={<OtherUserProfile />} />
-            <Route path="/admin" element={<AdminPage />} />
+            <Route element={<ProtectedRoute requiredRole={0} />}>
+              <Route path="/admin" element={<AdminPage />} />
+            </Route>
           </Route>
           <Route path="*" element={<NotFound />} />
           <Route path="/blocked" element={<UserBlocked />}/>
+          <Route path="/forbidden" element={<Forbidden />}/>
         </Routes>
       </HelmetProvider>
     </ThemeProvider>

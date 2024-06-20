@@ -1,4 +1,4 @@
-.notFoundContainer {
+.forbiddenContainer {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -6,24 +6,24 @@
     background-color: #D2E7E7;
 }
 
-.notFoundContent {
+.forbiddenContent {
     text-align: center;
     font-family: Arial, sans-serif;
 }
 
-.notFoundContent h1 {
+.forbiddenContent h1 {
     font-size: 116px;
     margin: 0;
     color: #072E33;
 }
 
-.notFoundContent p {
+.forbiddenContent p {
     font-size: 44px;
     margin: 10px 0;
     color: #072E33;
 }
 
-.notFoundContent span {
+.forbiddenContent span {
     display: block;
     margin: 20px 0;
     font-size: 18px;

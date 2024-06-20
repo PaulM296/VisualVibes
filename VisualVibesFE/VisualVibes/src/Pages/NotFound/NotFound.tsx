@@ -2,7 +2,7 @@ import React from 'react'
 import { Helmet } from 'react-helmet-async'
 import "./NotFound.css"
 
-const NotFound = () => {
+const NotFound: React.FC = () => {
   return (
     <>
         <Helmet>

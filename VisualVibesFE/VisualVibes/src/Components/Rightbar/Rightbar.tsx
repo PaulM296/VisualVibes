@@ -18,7 +18,6 @@ const Rightbar: React.FC = () => {
         setLoading(true);
         const paginationRequest = { pageIndex, pageSize };
         const response = await getAdminPosts(paginationRequest);
-        console.log("Admin Posts:", response.items);
         setAdminPosts(response.items);
         setTotalPages(response.totalPages);
 
@@ -49,7 +48,6 @@ const Rightbar: React.FC = () => {
       {loading && "Loading"}
       {!loading && (
         <>
-          {" "}
           {adminPosts.length === 0 ? (
             <p>No posts by admins.</p>
           ) : (
@@ -71,14 +69,18 @@ const Rightbar: React.FC = () => {
                 Previous
               </button>
             )}
-            {pageIndex !== totalPages && <button className="previousButtonAdminPostEmpty"></button>}
-           {pageIndex !== totalPages  && <button
-              className="nextButtonAdminPost"
-              disabled={pageIndex === totalPages}
-              onClick={() => setPageIndex(pageIndex + 1)}
-            >
-              Next
-            </button>}
+            {pageIndex !== totalPages && (
+              <>
+                <button className="previousButtonAdminPostEmpty"></button>
+                <button
+                  className="nextButtonAdminPost"
+                  disabled={pageIndex === totalPages}
+                  onClick={() => setPageIndex(pageIndex + 1)}
+                >
+                  Next
+                </button>
+              </>
+            )}
           </div>
         </>
       )}
