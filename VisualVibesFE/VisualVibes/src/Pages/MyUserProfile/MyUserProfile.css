@@ -16,3 +16,7 @@
     display: none;
 }
   
+.myProfileStickySidebar {
+    position: sticky;
+    top: 1px;
+}

@@ -11,3 +11,16 @@
   color: #072E33;
   margin-left: 10px;
 }
+
+.feedPostCenter {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.feedPostText {
+  color: #072E33;
+  margin-top: 10px;
+  text-align: left;
+  width: 100%;
+}

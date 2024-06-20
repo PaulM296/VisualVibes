@@ -1,84 +1,120 @@
-import React, { useEffect, useState } from 'react';
-import { Button } from '@mui/material';
-import './UserPersonalFeedTest.css';
-import { User } from '../../Models/User';
-import { getUserIdFromToken } from '../../Utils/auth';
-import { getUserById, getImageById as getUserImageById } from '../../Services/UserServiceApi';
-import { getPostsByUserId, getImageById as getPostImageById, updatePost, removePost } from '../../Services/UserPostServiceApi';
-import { addReaction, deleteReaction, getPostReactions, updateReaction } from '../../Services/ReactionServiceApi';
-import { getPostComments, addComment, updateComment, deleteComment, moderateComment, unmoderateComment } from '../../Services/CommentServiceApi';
-import { ResponsePostModel } from '../../Models/ReponsePostModel';
-import { getReactionEmoji } from '../../Utils/getReactionEmoji';
-import { ResponseReaction } from '../../Models/ResponseReaction';
-import { ReactionType } from '../../Models/ReactionType';
-import { ReactionWithEmoji } from '../../Models/ReactionWithEmoji';
-import { PaginationRequestDto, PaginationResponse } from '../../Models/PaginationResponse';
-import { ResponseComment, FormattedComment } from '../../Models/ResponseComment';
-import UserProfileInfo from '../UserProfileInfo';
-import Post from '../Post/Post';
-import ReactionModal from '../ReactionModal';
-import CommentModal from '../CommentModal';
-import { reactionTypes } from '../../Utils/const/reactionTypes';
-import { useUser } from '../../Hooks/userContext';
+import React, { useEffect, useState } from "react";
+import { Button } from "@mui/material";
+import "./UserPersonalFeedTest.css";
+import { User } from "../../Models/User";
+import { getUserIdFromToken } from "../../Utils/auth";
+import {
+  getUserById,
+  getImageById as getUserImageById,
+} from "../../Services/UserServiceApi";
+import {
+  getPostsByUserId,
+  getImageById as getPostImageById,
+  updatePost,
+  removePost,
+} from "../../Services/UserPostServiceApi";
+import {
+  addReaction,
+  deleteReaction,
+  getPostReactions,
+  updateReaction,
+} from "../../Services/ReactionServiceApi";
+import {
+  getPostComments,
+  addComment,
+  updateComment,
+  deleteComment,
+  moderateComment,
+  unmoderateComment,
+} from "../../Services/CommentServiceApi";
+import { ResponsePostModel } from "../../Models/ReponsePostModel";
+import { getReactionEmoji } from "../../Utils/getReactionEmoji";
+import { ResponseReaction } from "../../Models/ResponseReaction";
+import { ReactionType } from "../../Models/ReactionType";
+import { ReactionWithEmoji } from "../../Models/ReactionWithEmoji";
+import {
+  PaginationRequestDto,
+  PaginationResponse,
+} from "../../Models/PaginationResponse";
+import {
+  ResponseComment,
+  FormattedComment,
+} from "../../Models/ResponseComment";
+import UserProfileInfo from "../UserProfileInfo";
+import Post from "../Post/Post";
+import ReactionModal from "../ReactionModal";
+import CommentModal from "../CommentModal";
+import { reactionTypes } from "../../Utils/const/reactionTypes";
+import { useUser } from "../../Hooks/userContext";
 
 const MyUserProfile: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [posts, setPosts] = useState<ResponsePostModel[]>([]);
   const [postImages, setPostImages] = useState<{ [key: string]: string }>({});
   const [comments, setComments] = useState<FormattedComment[]>([]);
-  const [newComment, setNewComment] = useState<string>('');
+  const [newComment, setNewComment] = useState<string>("");
   const [loading, setLoading] = useState(true);
-  const [profilePicture, setProfilePicture] = useState<string>('defaultProfilePicture.jpg');
-  const [showReactions, setShowReactions] = useState<{ [key: string]: boolean }>({});
+  const [profilePicture, setProfilePicture] = useState<string>(
+    "defaultProfilePicture.jpg"
+  );
+  const [showReactions, setShowReactions] = useState<{
+    [key: string]: boolean;
+  }>({});
   const [openReactionModal, setOpenReactionModal] = useState(false);
   const [openCommentModal, setOpenCommentModal] = useState(false);
   const [reactions, setReactions] = useState<ReactionWithEmoji[]>([]);
-  const [userReactions, setUserReactions] = useState<{ [key: string]: string }>({});
+  const [userReactions, setUserReactions] = useState<{ [key: string]: string }>(
+    {}
+  );
   const [pageIndex, setPageIndex] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [reactionsCount, setReactionsCount] = useState<{ [key: string]: number }>({});
-  const [commentsCount, setCommentsCount] = useState<{ [key: string]: number }>({});
+  const [reactionsCount, setReactionsCount] = useState<{
+    [key: string]: number;
+  }>({});
+  const [commentsCount, setCommentsCount] = useState<{ [key: string]: number }>(
+    {}
+  );
   const [currentPostId, setCurrentPostId] = useState<string | null>(null);
   const [currentCommentPageIndex, setCurrentCommentPageIndex] = useState(1);
   const [commentTotalPages, setCommentTotalPages] = useState(1);
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
-  const [editCommentText, setEditCommentText] = useState<string>('');
+  const [editCommentText, setEditCommentText] = useState<string>("");
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
-  const [editPostCaption, setEditPostCaption] = useState<string>('');
+  const [editPostCaption, setEditPostCaption] = useState<string>("");
 
   const { isAdmin } = useUser();
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem("token");
         if (!token) {
-          console.error('Token not found in localStorage');
+          console.error("Token not found in localStorage");
           setLoading(false);
           return;
         }
-    
+
         const userId = getUserIdFromToken();
         if (!userId) {
-          console.error('User ID not found in token');
+          console.error("User ID not found in token");
           setLoading(false);
           return;
         }
-    
+
         const userData = await getUserById(userId);
         setUser(userData);
-    
+
         if (userData.imageId) {
           const imageSrc = await getUserImageById(userData.imageId);
           setProfilePicture(imageSrc);
         }
         await fetchPosts(userId, 1);
       } catch (error) {
-        console.error('Error fetching user data:', error);
+        console.error("Error fetching user data:", error);
       } finally {
         setLoading(false);
       }
-    };    
+    };
 
     fetchUserData();
   }, []);
@@ -86,13 +122,16 @@ const MyUserProfile: React.FC = () => {
   const fetchPosts = async (userId: string, pageIndex: number) => {
     const paginationRequest: PaginationRequestDto = {
       pageIndex: pageIndex,
-      pageSize: 10
+      pageSize: 10,
     };
 
-    const userPostsResponse: PaginationResponse<ResponsePostModel> = await getPostsByUserId(userId, paginationRequest);
+    const userPostsResponse: PaginationResponse<ResponsePostModel> =
+      await getPostsByUserId(userId, paginationRequest);
     const userPosts = userPostsResponse.items;
     setPosts((prevPosts) => {
-      const newPosts = userPosts.filter(post => !prevPosts.some(prevPost => prevPost.id === post.id));
+      const newPosts = userPosts.filter(
+        (post) => !prevPosts.some((prevPost) => prevPost.id === post.id)
+      );
       return [...prevPosts, ...newPosts];
     });
     setPageIndex(userPostsResponse.pageIndex);
@@ -105,10 +144,10 @@ const MyUserProfile: React.FC = () => {
           return { postId: post.id, imageSrc };
         } catch (error) {
           console.error(`Failed to fetch image for post ${post.id}:`, error);
-          return { postId: post.id, imageSrc: '' };
+          return { postId: post.id, imageSrc: "" };
         }
       }
-      return { postId: post.id, imageSrc: '' };
+      return { postId: post.id, imageSrc: "" };
     });
 
     const images = await Promise.all(imagesPromises);
@@ -132,7 +171,7 @@ const MyUserProfile: React.FC = () => {
     }, {} as { [key: string]: number });
 
     const userReactionsMap = userPosts.reduce((acc, post) => {
-      const userReaction = post.reactions.find(r => r.userId === userId);
+      const userReaction = post.reactions.find((r) => r.userId === userId);
       if (userReaction) {
         acc[post.id] = ReactionType[userReaction.reactionType];
       }
@@ -146,57 +185,70 @@ const MyUserProfile: React.FC = () => {
 
   const handleReaction = async (postId: string, reactionType: string) => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (!token) {
-        console.error('Token not found in localStorage');
+        console.error("Token not found in localStorage");
         return;
       }
-  
+
       const currentUserReactionType = userReactions[postId];
       const reactionTypeId = reactionTypes[reactionType];
-      const postIndex = posts.findIndex(post => post.id === postId);
-      const reaction = posts[postIndex]?.reactions.find(r => r.userId === user?.id);
-  
+      const postIndex = posts.findIndex((post) => post.id === postId);
+      const reaction = posts[postIndex]?.reactions.find(
+        (r) => r.userId === user?.id
+      );
+
       if (currentUserReactionType) {
         if (currentUserReactionType === reactionType) {
           if (reaction) {
             await deleteReaction(reaction.id);
-            setReactionsCount(prev => ({ ...prev, [postId]: prev[postId] - 1 }));
-            setUserReactions(prev => {
+            setReactionsCount((prev) => ({
+              ...prev,
+              [postId]: prev[postId] - 1,
+            }));
+            setUserReactions((prev) => {
               const newUserReactions = { ...prev };
               delete newUserReactions[postId];
               return newUserReactions;
             });
-            setPosts(prevPosts => {
+            setPosts((prevPosts) => {
               const updatedPosts = [...prevPosts];
-              updatedPosts[postIndex].reactions = updatedPosts[postIndex].reactions.filter(r => r.id !== reaction.id);
+              updatedPosts[postIndex].reactions = updatedPosts[
+                postIndex
+              ].reactions.filter((r) => r.id !== reaction.id);
               return updatedPosts;
             });
           }
         } else {
           if (reaction) {
             await updateReaction(reaction.id, reactionTypeId);
-            setUserReactions(prev => ({ ...prev, [postId]: reactionType }));
-            setPosts(prevPosts => {
+            setUserReactions((prev) => ({ ...prev, [postId]: reactionType }));
+            setPosts((prevPosts) => {
               const updatedPosts = [...prevPosts];
-              const reactionIndex = updatedPosts[postIndex].reactions.findIndex(r => r.id === reaction.id);
-              updatedPosts[postIndex].reactions[reactionIndex].reactionType = reactionTypeId;
+              const reactionIndex = updatedPosts[postIndex].reactions.findIndex(
+                (r) => r.id === reaction.id
+              );
+              updatedPosts[postIndex].reactions[reactionIndex].reactionType =
+                reactionTypeId;
               return updatedPosts;
             });
           }
         }
       } else {
         const newReaction = await addReaction(postId, reactionTypeId);
-        setReactionsCount(prev => ({ ...prev, [postId]: (prev[postId] || 0) + 1 }));
-        setUserReactions(prev => ({ ...prev, [postId]: reactionType }));
-        setPosts(prevPosts => {
+        setReactionsCount((prev) => ({
+          ...prev,
+          [postId]: (prev[postId] || 0) + 1,
+        }));
+        setUserReactions((prev) => ({ ...prev, [postId]: reactionType }));
+        setPosts((prevPosts) => {
           const updatedPosts = [...prevPosts];
           updatedPosts[postIndex].reactions.push(newReaction);
           return updatedPosts;
         });
       }
     } catch (error) {
-      console.error('Error handling reaction:', error);
+      console.error("Error handling reaction:", error);
     }
   };
 
@@ -207,87 +259,101 @@ const MyUserProfile: React.FC = () => {
 
   const handleSavePost = async (postId: string) => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (!token) return;
 
       await updatePost(postId, { caption: editPostCaption });
       setEditingPostId(null);
-      setPosts(prevPosts => {
+      setPosts((prevPosts) => {
         const updatedPosts = [...prevPosts];
-        const postIndex = updatedPosts.findIndex(post => post.id === postId);
+        const postIndex = updatedPosts.findIndex((post) => post.id === postId);
         if (postIndex !== -1) {
           updatedPosts[postIndex].caption = editPostCaption;
         }
         return updatedPosts;
       });
     } catch (error) {
-      console.error('Error saving post:', error);
+      console.error("Error saving post:", error);
     }
   };
 
   const handleDeletePost = async (postId: string) => {
     try {
       await removePost(postId);
-      setPosts(prevPosts => prevPosts.filter(post => post.id !== postId));
+      setPosts((prevPosts) => prevPosts.filter((post) => post.id !== postId));
     } catch (error) {
-      console.error('Error deleting post:', error);
+      console.error("Error deleting post:", error);
     }
   };
 
   const fetchReactions = async (postId: string, pageIndex: number = 1) => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (!token) {
-        console.error('Token not found in localStorage');
+        console.error("Token not found in localStorage");
         return;
       }
 
       const reactionData = await getPostReactions(postId, pageIndex);
-      const formattedReactions: ReactionWithEmoji[] = await Promise.all(reactionData.items.map(async (reaction: ResponseReaction) => {
-        const avatar = reaction.imageId ? await getUserImageById(reaction.imageId) : '';
-        return {
-          userName: reaction.userName,
-          avatar,
-          reactionType: ReactionType[reaction.reactionType],
-          reactionEmoji: getReactionEmoji(ReactionType[reaction.reactionType])
-        };
-      }));
+      const formattedReactions: ReactionWithEmoji[] = await Promise.all(
+        reactionData.items.map(async (reaction: ResponseReaction) => {
+          const avatar = reaction.imageId
+            ? await getUserImageById(reaction.imageId)
+            : "";
+          return {
+            userName: reaction.userName,
+            avatar,
+            reactionType: ReactionType[reaction.reactionType],
+            reactionEmoji: getReactionEmoji(
+              ReactionType[reaction.reactionType]
+            ),
+          };
+        })
+      );
       setReactions(formattedReactions);
       setCurrentPostId(postId);
       setPageIndex(pageIndex);
       setTotalPages(reactionData.totalPages);
       setOpenReactionModal(true);
     } catch (error) {
-      console.error('Error fetching reactions:', error);
+      console.error("Error fetching reactions:", error);
     }
   };
 
-  const fetchComments = async (postId: string, pageIndex: number = 1, pageSize: number = 10) => {
+  const fetchComments = async (
+    postId: string,
+    pageIndex: number = 1,
+    pageSize: number = 10
+  ) => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (!token) {
-        console.error('Token not found in localStorage');
+        console.error("Token not found in localStorage");
         return;
       }
 
       const commentData = await getPostComments(postId, pageIndex, pageSize);
-      
+
       if (!commentData.items || commentData.items.length === 0) {
         setComments([]);
         setCommentTotalPages(1);
       } else {
-        const formattedComments: FormattedComment[] = await Promise.all(commentData.items.map(async (comment: ResponseComment) => {
-          const avatar = comment.imageId ? await getUserImageById(comment.imageId) : '';
-          return {
-            id: comment.id,
-            userId: comment.userId,
-            userName: comment.userName,
-            avatar,
-            text: comment.text,
-            createdAt: comment.createdAt,
-            isModerated: comment.isModerated
-          };
-        }));
+        const formattedComments: FormattedComment[] = await Promise.all(
+          commentData.items.map(async (comment: ResponseComment) => {
+            const avatar = comment.imageId
+              ? await getUserImageById(comment.imageId)
+              : "";
+            return {
+              id: comment.id,
+              userId: comment.userId,
+              userName: comment.userName,
+              avatar,
+              text: comment.text,
+              createdAt: comment.createdAt,
+              isModerated: comment.isModerated,
+            };
+          })
+        );
         setComments(formattedComments);
         setCommentTotalPages(commentData.totalPages);
       }
@@ -295,7 +361,7 @@ const MyUserProfile: React.FC = () => {
       setCurrentCommentPageIndex(pageIndex);
       setOpenCommentModal(true);
     } catch (error) {
-      console.error('Error fetching comments:', error);
+      console.error("Error fetching comments:", error);
       setComments([]);
       setCommentTotalPages(1);
       setOpenCommentModal(true);
@@ -304,50 +370,53 @@ const MyUserProfile: React.FC = () => {
 
   const handleAddComment = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (!token || !currentPostId || !newComment) return;
 
       await addComment(currentPostId, newComment);
 
-      setCommentsCount(prev => ({
+      setCommentsCount((prev) => ({
         ...prev,
-        [currentPostId]: (prev[currentPostId] || 0) + 1
+        [currentPostId]: (prev[currentPostId] || 0) + 1,
       }));
 
-      setNewComment('');
+      setNewComment("");
       fetchComments(currentPostId, currentCommentPageIndex);
     } catch (error) {
-      console.error('Error adding comment:', error);
+      console.error("Error adding comment:", error);
     }
   };
 
   const handleUpdateComment = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (!token || !editingCommentId || !editCommentText) return;
-  
+
       await updateComment(editingCommentId, editCommentText);
       setEditingCommentId(null);
-      setEditCommentText('');
+      setEditCommentText("");
       fetchComments(currentPostId!, currentCommentPageIndex);
     } catch (error) {
-      console.error('Error updating comment:', error);
-    }
-  };
-  
-  const handleDeleteComment = async (commentId: string) => {
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) return;
-  
-      await deleteComment(commentId);
-      fetchComments(currentPostId!, currentCommentPageIndex);
-    } catch (error) {
-      console.error('Error deleting comment:', error);
+      console.error("Error updating comment:", error);
     }
   };
 
-  const handleModerateComment = async (commentId: string, isModerated: boolean) => {
+  const handleDeleteComment = async (commentId: string) => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      await deleteComment(commentId);
+      fetchComments(currentPostId!, currentCommentPageIndex);
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+    }
+  };
+
+  const handleModerateComment = async (
+    commentId: string,
+    isModerated: boolean
+  ) => {
     try {
       if (isModerated) {
         await unmoderateComment(commentId);
@@ -356,11 +425,13 @@ const MyUserProfile: React.FC = () => {
       }
       setComments((prevComments) =>
         prevComments.map((comment) =>
-          comment.id === commentId ? { ...comment, isModerated: !isModerated } : comment
+          comment.id === commentId
+            ? { ...comment, isModerated: !isModerated }
+            : comment
         )
       );
     } catch (error) {
-      console.error('Error moderating comment:', error);
+      console.error("Error moderating comment:", error);
     }
   };
 
@@ -378,11 +449,11 @@ const MyUserProfile: React.FC = () => {
 
   const loadMorePosts = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (!token || !user) return;
       await fetchPosts(user.id, pageIndex + 1);
     } catch (error) {
-      console.error('Error loading more posts:', error);
+      console.error("Error loading more posts:", error);
     }
   };
 
@@ -396,7 +467,22 @@ const MyUserProfile: React.FC = () => {
 
   return (
     <div className="userPersonalFeedContainer">
-     <div style ={{display: "flex", justifyContent: "flex-start", alignItems: "left"}}> <UserProfileInfo profilePicture={profilePicture} username={user.userName} bio={user.bio} /> </div>
+      <div
+        className="userPersonalFeedContent"
+        style={{
+          display: "flex",
+          justifyContent: "flex-start",
+          alignItems: "left",
+        }}
+      >
+        {" "}
+        <UserProfileInfo
+          profilePicture={profilePicture}
+          username={user.userName}
+          bio={user.bio}
+        />{" "}
+      </div>
+      <div className="userPersonalFeedMarginBottom"></div>
       {posts.map((post) => (
         <Post
           key={post.id}
@@ -420,7 +506,12 @@ const MyUserProfile: React.FC = () => {
         />
       ))}
       {pageIndex < totalPages && (
-        <Button onClick={loadMorePosts} variant="contained" color="primary" style={{ marginTop: '10px' }}>
+        <Button
+          onClick={loadMorePosts}
+          variant="contained"
+          color="primary"
+          style={{ marginTop: "10px" }}
+        >
           Load More
         </Button>
       )}

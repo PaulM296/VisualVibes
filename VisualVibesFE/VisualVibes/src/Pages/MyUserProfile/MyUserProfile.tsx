@@ -14,7 +14,9 @@ const MyUserProfile: React.FC = () => {
         <div className="userProfileContainer">
           <Navbar />
         <div className="userProfileContent">
-          <Sidebar />
+          <div className="myProfileStickySidebar">
+            <Sidebar />
+          </div>
           <UserPersonalFeedTest />
         </div>
       </div>
