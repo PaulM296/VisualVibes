@@ -50,7 +50,7 @@ const Post: React.FC<PostProps> = ({
       <div className="feedPostWrapper">
         <div className="feedPostTop">
           <div className="feedPostTopLeft">
-            <Avatar alt={post.userName} src={profilePicture} className="feedPostProfileImg" />
+            <Avatar style={{border: '1px solid #072E33'}} alt={post.userName} src={profilePicture} className="feedPostProfileImg" />
             <div className="feedPostUserDetails">
               <span className="feedPostUsername">{post.userName}</span>
               <span className="feedPostDate">{formatPostDate(post.createdAt)}</span>

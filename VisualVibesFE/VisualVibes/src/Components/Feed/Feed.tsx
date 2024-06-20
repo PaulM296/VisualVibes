@@ -470,7 +470,7 @@ const Feed: React.FC = () => {
                     <div className="feedPostTop">
                       <div className="feedPostTopLeft">
                         <Avatar
-                        style={{border: '1px solid black'}}
+                        style={{border: '1px solid #072E33'}}
                           alt={post.userName}
                           src={
                             profileImages[post.userProfileImageId] ||

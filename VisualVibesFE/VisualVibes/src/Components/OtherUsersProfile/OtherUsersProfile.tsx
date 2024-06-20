@@ -503,7 +503,7 @@ const OtherUsersProfile: React.FC = () => {
             <div className="otherUserProfileContent">
                 <div className="otherUserPersonalFeedContainer">
                     <div className="otherUserInfo">
-                        <Avatar alt={user.userName} src={profilePicture} className="avatar" style={{ width: '150px', height: '150px' }} />
+                        <Avatar alt={user.userName} src={profilePicture} className="avatar" style={{ border: '1px solid #072E33', width: '150px', height: '150px' }} />
                         <Typography className="username" style={{ marginLeft: '20px', fontSize: '24px', fontWeight: 'bold' }}>{user.userName}</Typography>
                     </div>
                     <Typography className="bio" style={{ marginTop: '10px', fontSize: '16px', textAlign: 'center', width: '100%' }}>
@@ -539,7 +539,7 @@ const OtherUsersProfile: React.FC = () => {
                             <div className="otherUserFeedPostWrapper">
                                 <div className="otherUserFeedPostTop">
                                     <div className="otherUserFeedPostTopLeft">
-                                        <Avatar alt={user?.userName} src={profilePicture} className="otherUserFeedPostProfileImg" />
+                                        <Avatar style={{border: '1px solid #072E33'}} alt={user?.userName} src={profilePicture} className="otherUserFeedPostProfileImg" />
                                         <div className="otherUserFeedPostUserInfo">
                                             <span className="otherUserFeedPostUsername">{user?.userName}</span>
                                             <span className="otherUserFeedPostDate">{formatPostDate(post.createdAt)}</span>
@@ -646,7 +646,7 @@ const OtherUsersProfile: React.FC = () => {
                     {reactions.length > 0 && reactions.map((reaction, index) => (
                         <div key={index} className="otherUserReactionItem">
                             <span>{reaction.reactionEmoji}</span>
-                            <Avatar src={reaction.avatar} alt={reaction.userName} sx={{ margin: '0 10px' }} />
+                            <Avatar style={{border: '1px solid #072E33'}} src={reaction.avatar} alt={reaction.userName} sx={{ margin: '0 10px' }} />
                             <Typography>{reaction.userName}</Typography>
                         </div>
                     ))}
@@ -689,7 +689,7 @@ const OtherUsersProfile: React.FC = () => {
                         )}
                         {comments.length > 0 && comments.map((comment, index) => (
                             <div key={index} className="otherUserCommentItem">
-                                <Avatar src={comment.avatar} alt={comment.userName} sx={{ margin: '0 10px' }} />
+                                <Avatar style={{border: '1px solid #072E33'}} src={comment.avatar} alt={comment.userName} sx={{ margin: '0 10px' }} />
                                 <div>
                                     <Typography>{comment.userName}</Typography>
                                     {comment.isModerated ? (

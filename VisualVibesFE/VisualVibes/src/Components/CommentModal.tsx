@@ -88,6 +88,7 @@ const CommentModal: React.FC<CommentModalProps> = ({
             comments.map((comment, index) => (
               <div key={index} className="commentItem">
                 <Avatar
+                  style={{border: '1px solid #072E33'}}
                   src={comment.avatar}
                   alt={comment.userName}
                   sx={{ margin: "0 10px" }}

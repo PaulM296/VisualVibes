@@ -21,7 +21,7 @@ const ReactionModal: React.FC<ReactionModalProps> = ({ open, onClose, reactions,
         {reactions.length > 0 && reactions.map((reaction, index) => (
           <div key={index} className="reactionItem">
             <span>{reaction.reactionEmoji}</span>
-            <Avatar src={reaction.avatar} alt={reaction.userName} sx={{ margin: '0 10px' }} />
+            <Avatar style={{border: '1px solid #072E33'}} src={reaction.avatar} alt={reaction.userName} sx={{ margin: '0 10px' }} />
             <Typography>{reaction.userName}</Typography>
           </div>
         ))}

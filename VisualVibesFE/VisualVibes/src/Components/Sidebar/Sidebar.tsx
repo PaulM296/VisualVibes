@@ -59,28 +59,28 @@ const Sidebar: React.FC = () => {
     <div className="sidebar">
       <h3>Following</h3>
       {loading && 'Loading'}
-     {!loading &&<> {following.length === 0 && (
+      {!loading && <> {following.length === 0 && (
         <p className="no-following-message">You are not following anyone.</p>
       )}
-      <div className="sidebarList">
-        <List>
-          {following.map((user) => (
-            <ListItem
-              key={user.followingId}
-              
-              onClick={() => handleUserClick(user.followingId)}
-            >
-              <ListItemAvatar>
-                <Avatar  style={{border: '1px solid black'}} src={avatars[user.imageId] || ""} alt={user.userName} />
-              </ListItemAvatar>
-              <ListItemText
-                primary={user.userName}
-                secondary={`${user.firstName} ${user.lastName}`}
-              />
-            </ListItem>
-          ))}
-        </List>
-      </div></>}
+        <div className="sidebarList">
+          <List>
+            {following.map((user) => (
+              <ListItem
+                key={user.followingId}
+
+                onClick={() => handleUserClick(user.followingId)}
+              >
+                <ListItemAvatar>
+                  <Avatar style={{ border: '1px solid #072E33' }} src={avatars[user.imageId] || ""} alt={user.userName} />
+                </ListItemAvatar>
+                <ListItemText
+                  primary={user.userName}
+                  secondary={`${user.firstName} ${user.lastName}`}
+                />
+              </ListItem>
+            ))}
+          </List>
+        </div></>}
     </div>
   );
 };

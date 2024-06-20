@@ -264,7 +264,7 @@ const Navbar = () => {
           aria-haspopup="true"
           color="inherit"
         >
-          <Avatar src={profilePicture} />
+          <Avatar style={{border: '1px solid #072E33'}} src={profilePicture} />
         </IconButton>
         <p>Profile</p>
       </MenuItem>
@@ -318,7 +318,7 @@ const Navbar = () => {
               <UserSearch>
                 {searchResults.map(user => (
                   <MenuItem key={user.id} onClick={() => navigate(`/user/${user.id}`)}>
-                    <Avatar src={user.profilePicture || undefined} alt={`${user.userName}'s profile`}>
+                    <Avatar style={{border: '1px solid #072E33'}} src={user.profilePicture || undefined} alt={`${user.userName}'s profile`}>
                       {user.userName.charAt(0)}
                     </Avatar>
                     <p>{user.userName} ({user.firstName} {user.lastName})</p>
@@ -353,7 +353,7 @@ const Navbar = () => {
               onClick={handleProfileMenuOpen}
               color="inherit"
             >
-              <Avatar src={profilePicture} />
+              <Avatar style={{border: '1px solid #072E33'}} src={profilePicture} />
             </IconButton>
           </Box>
           <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
