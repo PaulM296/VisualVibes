@@ -100,8 +100,8 @@ const Post: React.FC<PostProps> = ({
             <span
               className="feedPostCommentText"
               onClick={() => handleOpenComments(post.id)}
-              onMouseEnter={(e) => (e.currentTarget.style.color = 'blue')}
-              onMouseLeave={(e) => (e.currentTarget.style.color = 'black')}
+              onMouseEnter={(e) => (e.currentTarget.style.color = '#0C7075')}
+              onMouseLeave={(e) => (e.currentTarget.style.color = '#072E33')}
               style={{ cursor: 'pointer' }}
             >
               {commentsCount[post.id] || 0} comments

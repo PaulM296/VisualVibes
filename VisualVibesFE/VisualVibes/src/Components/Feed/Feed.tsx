@@ -605,6 +605,8 @@ const Feed: React.FC = () => {
                             <span
                               className="feedPostReactionCounter"
                               onClick={() => fetchReactions(post.postId)}
+                              onMouseEnter={(e) => (e.currentTarget.style.color = '#0C7075')}
+                              onMouseLeave={(e) => (e.currentTarget.style.color = '#072E33')}
                             >
                               {reactionsCount[post.postId] || 0} people reacted
                             </span>
@@ -614,10 +616,10 @@ const Feed: React.FC = () => {
                               className="feedPostCommentText"
                               onClick={() => handleOpenComments(post.postId)}
                               onMouseEnter={(e) =>
-                                (e.currentTarget.style.color = "blue")
+                                (e.currentTarget.style.color = "#0C7075")
                               }
                               onMouseLeave={(e) =>
-                                (e.currentTarget.style.color = "black")
+                                (e.currentTarget.style.color = "#072E33")
                               }
                               style={{ cursor: "pointer" }}
                             >
