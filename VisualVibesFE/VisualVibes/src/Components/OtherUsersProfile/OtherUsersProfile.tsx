@@ -1,26 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Avatar, Typography, Button, Modal, TextField, IconButton, Menu, MenuItem } from '@mui/material';
+import { Avatar, Typography, Button, Modal, IconButton, Menu, MenuItem } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Navbar from '../../Components/Navbar/Navbar';
 import { differenceInDays, differenceInHours, differenceInMinutes } from 'date-fns';
 import { addReaction, deleteReaction, getPostReactions, updateReaction } from '../../Services/ReactionServiceApi';
-import { getPostComments, addComment, updateComment, deleteComment, moderateComment, unmoderateComment } from '../../Services/CommentServiceApi';
 import { getUserIdFromToken } from '../../Utils/auth';
 import { getReactionEmoji } from '../../Utils/getReactionEmoji';
 import { ReactionType } from '../../Models/ReactionType';
-import RichTextEditor from '../RichTextEditor/RichTextEditor';
 import { ReactionWithEmoji } from '../../Models/ReactionWithEmoji';
 import { FormattedComment, ResponseComment } from '../../Models/ResponseComment';
-import { ResponseReaction } from '../../Models/ResponseReaction';
 import { getPostsByUserId, getImageById as getPostImageById, unmoderatePost, moderatePost } from '../../Services/UserPostServiceApi';
 import { getImageById as getUserImageById, checkIfFollowing, followUser, unfollowUser, getUserById } from '../../Services/UserServiceApi';
 import UserFollowModal from '../UserFollowModal/UserFollowModal';
 import { PaginationRequestDto, PaginationResponse } from '../../Models/PaginationResponse';
 import { ResponsePostModel } from '../../Models/ReponsePostModel';
+import CommentModal from '../CommentModal';
 import './OtherUsersProfile.css';
 import { User } from '../../Models/User';
 import { useUser } from '../../Hooks/userContext';
+import { addComment, deleteComment, getPostComments, moderateComment, unmoderateComment, updateComment } from '../../Services/CommentServiceApi';
+import { ResponseReaction } from '../../Models/ResponseReaction';
 
 const formatPostDate = (date: Date | string) => {
     if (typeof date === 'string') {
@@ -75,8 +75,6 @@ const OtherUsersProfile: React.FC = () => {
     const [reactionTotalPages, setReactionTotalPages] = useState(1);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [moderatingPostId, setModeratingPostId] = useState<string | null>(null);
-    const [commentAnchorEl, setCommentAnchorEl] = useState<null | HTMLElement>(null);
-    const [moderatingCommentId, setModeratingCommentId] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -362,11 +360,6 @@ const OtherUsersProfile: React.FC = () => {
         }
     };
 
-    const handleEditComment = (comment: FormattedComment) => {
-        setEditingCommentId(comment.id);
-        setEditCommentText(comment.text);
-    };
-
     const handleUpdateComment = async () => {
         try {
             const token = localStorage.getItem('token');
@@ -477,16 +470,6 @@ const OtherUsersProfile: React.FC = () => {
     const handleMenuClose = () => {
         setAnchorEl(null);
         setModeratingPostId(null);
-    };
-
-    const handleCommentMenuOpen = (event: React.MouseEvent<HTMLButtonElement>, commentId: string) => {
-        setCommentAnchorEl(event.currentTarget);
-        setModeratingCommentId(commentId);
-    };
-
-    const handleCommentMenuClose = () => {
-        setCommentAnchorEl(null);
-        setModeratingCommentId(null);
     };
 
     if (loading || isLoadingFollow) {
@@ -669,96 +652,26 @@ const OtherUsersProfile: React.FC = () => {
                     </div>
                 </div>
             </Modal>
-            <Modal open={openCommentModal} onClose={handleClose}>
-                <div className="otherUserModalContentLarge">
-                    <Typography variant="h6">Comments</Typography>
-                    <div className="otherUserAddCommentContainer">
-                        <RichTextEditor content={newComment} setContent={setNewComment} />
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            onClick={handleAddComment}
-                            style={{ marginTop: '10px' }}
-                        >
-                            Add Comment
-                        </Button>
-                    </div>
-                    <div className="otherUserCommentsContainer">
-                        {comments.length === 0 && (
-                            <Typography sx={{ mt: 2 }}>No comments yet.</Typography>
-                        )}
-                        {comments.length > 0 && comments.map((comment, index) => (
-                            <div key={index} className="otherUserCommentItem">
-                                <Avatar style={{border: '1px solid #072E33'}} src={comment.avatar} alt={comment.userName} sx={{ margin: '0 10px' }} />
-                                <div>
-                                    <Typography>{comment.userName}</Typography>
-                                    {comment.isModerated ? (
-                                        <Typography variant="h6" color="error" sx={{ fontSize: '18px', fontWeight: 'bold' }}>
-                                            This comment was moderated and is currently under review by one of our administrators!
-                                        </Typography>
-                                    ) : (
-                                        <>
-                                            {editingCommentId === comment.id ? (
-                                                <>
-                                                    <TextField
-                                                        value={editCommentText}
-                                                        onChange={(e) => setEditCommentText(e.target.value)}
-                                                        fullWidth
-                                                        multiline
-                                                    />
-                                                    <Button variant="contained" color="primary" onClick={handleUpdateComment}>Save</Button>
-                                                    <Button onClick={() => setEditingCommentId(null)}>Cancel</Button>
-                                                </>
-                                            ) : (
-                                                <Typography sx={{ mt: 1 }}>{comment.text}</Typography>
-                                            )}
-                                        </>
-                                    )}
-                                    {getUserIdFromToken() === comment.userId && (
-                                        <div className="otherUserCommentActions">
-                                            <Button onClick={() => handleEditComment(comment)}>Edit</Button>
-                                            <Button onClick={() => handleDeleteComment(comment.id)}>Delete</Button>
-                                        </div>
-                                    )}
-                                    {isAdmin && (
-                                        <>
-                                            <IconButton onClick={(event) => handleCommentMenuOpen(event, comment.id)}>
-                                                <MoreVertIcon />
-                                            </IconButton>
-                                            <Menu
-                                                anchorEl={commentAnchorEl}
-                                                open={Boolean(commentAnchorEl) && moderatingCommentId === comment.id}
-                                                onClose={handleCommentMenuClose}
-                                            >
-                                                <MenuItem onClick={() => handleModerateComment(comment.id, comment.isModerated)}>
-                                                    {comment.isModerated ? 'Unmoderate' : 'Moderate'}
-                                                </MenuItem>
-                                            </Menu>
-                                        </>
-                                    )}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                    <div className="otherUserPaginationControls">
-                        <Button
-                            disabled={currentCommentPageIndex === 1}
-                            onClick={() => fetchComments(currentPostId!, currentCommentPageIndex - 1)}
-                            style={{ float: 'left' }}
-                        >
-                            Previous
-                        </Button>
-                        <Typography>{currentCommentPageIndex} / {commentTotalPages}</Typography>
-                        <Button
-                            disabled={currentCommentPageIndex === commentTotalPages}
-                            onClick={() => fetchComments(currentPostId!, currentCommentPageIndex + 1)}
-                            style={{ float: 'right' }}
-                        >
-                            Next
-                        </Button>
-                    </div>
-                </div>
-            </Modal>
+            <CommentModal
+                open={openCommentModal}
+                onClose={handleClose}
+                comments={comments}
+                newComment={newComment}
+                setNewComment={setNewComment}
+                handleAddComment={handleAddComment}
+                editingCommentId={editingCommentId}
+                editCommentText={editCommentText}
+                setEditCommentText={setEditCommentText}
+                handleUpdateComment={handleUpdateComment}
+                handleDeleteComment={handleDeleteComment}
+                handleModerateComment={handleModerateComment}
+                currentCommentPageIndex={currentCommentPageIndex}
+                commentTotalPages={commentTotalPages}
+                fetchComments={fetchComments}
+                currentPostId={currentPostId}
+                setEditingCommentId={setEditingCommentId}
+                isAdmin={isAdmin}
+            />
             <UserFollowModal
             userId={userId!}
             type="following"
