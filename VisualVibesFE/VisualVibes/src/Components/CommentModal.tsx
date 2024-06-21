@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Modal,
   Typography,
@@ -56,11 +56,24 @@ const CommentModal: React.FC<CommentModalProps> = ({
   setEditingCommentId,
   isAdmin,
 }) => {
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [moderatingCommentId, setModeratingCommentId] = React.useState<string | null>(null);
-  const [openConfirmDialog, setOpenConfirmDialog] = React.useState<boolean>(false);
-  const [commentToDelete, setCommentToDelete] = React.useState<string | null>(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [moderatingCommentId, setModeratingCommentId] = useState<string | null>(null);
+  const [openConfirmDialog, setOpenConfirmDialog] = useState<boolean>(false);
+  const [commentToDelete, setCommentToDelete] = useState<string | null>(null);
+  const [newCharCount, setNewCharCount] = useState<number>(0);
+  const [editCharCount, setEditCharCount] = useState<number>(0);
   const userId = getUserIdFromToken();
+  const charLimit = 300;
+
+  useEffect(() => {
+    setNewCharCount(newComment.length);
+  }, [newComment]);
+
+  useEffect(() => {
+    if (editingCommentId) {
+      setEditCharCount(editCommentText.length);
+    }
+  }, [editCommentText, editingCommentId]);
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>, commentId: string) => {
     setAnchorEl(event.currentTarget);
@@ -75,6 +88,7 @@ const CommentModal: React.FC<CommentModalProps> = ({
   const handleEditComment = (commentId: string, text: string) => {
     setEditingCommentId(commentId);
     setEditCommentText(text);
+    setEditCharCount(text.length);
   };
 
   const handleDeleteClick = (commentId: string) => {
@@ -102,11 +116,15 @@ const CommentModal: React.FC<CommentModalProps> = ({
         <div className="addCommentContainer">
           <div className="editor-container">
             <RichTextEditor content={newComment} setContent={setNewComment} />
+            <Typography variant="body2" color={newCharCount > charLimit ? 'error' : 'textSecondary'}>
+              {newCharCount}/{charLimit} characters
+            </Typography>
           </div>
           <Button
             variant="contained"
             color="primary"
             onClick={handleAddComment}
+            disabled={newCharCount > charLimit}
           >
             Add comment
           </Button>
@@ -142,11 +160,15 @@ const CommentModal: React.FC<CommentModalProps> = ({
                             content={editCommentText}
                             setContent={setEditCommentText}
                           />
+                          <Typography variant="body2" color={editCharCount > charLimit ? 'error' : 'textSecondary'}>
+                            {editCharCount}/{charLimit} characters
+                          </Typography>
                           <div className="commentEdit">
                             <Button
                               variant="contained"
                               color="primary"
                               onClick={handleUpdateComment}
+                              disabled={editCharCount > charLimit}
                             >
                               Save
                             </Button>
