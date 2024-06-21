@@ -1,5 +1,5 @@
 import React from 'react';
-import { Avatar, Button, TextField } from '@mui/material';
+import { Avatar, Button, TextField, Typography } from '@mui/material';
 import MoreVertMenu from '../MoreVertMenu';
 import ReactionButton from '../ReactionButton';
 import { ResponsePostModel } from '../../Models/ReponsePostModel';
@@ -66,48 +66,58 @@ const Post: React.FC<PostProps> = ({
           </div>
         </div>
         <div className="feedPostCenter">
-          {editingPostId === post.id ? (
-            <>
-              <TextField
-                value={editPostCaption}
-                onChange={(e) => setEditPostCaption(e.target.value)}
-                fullWidth
-                multiline
-              />
-              <Button variant="contained" color="primary" onClick={() => handleSavePost(post.id)}>Save</Button>
-              <Button onClick={() => handleEditPost('', '')}>Cancel</Button>
-            </>
+          {post.isModerated ? (
+            <Typography variant="h6" color="error" sx={{ fontSize: '16px', fontWeight: 'bold'}}>
+              This post did not comply to our policies and has been moderated by one of our administrators!
+            </Typography>
           ) : (
-            <span className="feedPostText" dangerouslySetInnerHTML={{ __html: post.caption }}></span>
-          )}
-          {post.imageId && postImages[post.id] && (
-            <img className="feedPostImg" src={postImages[post.id]} alt="Post image" />
+            <>
+              {editingPostId === post.id ? (
+                <>
+                  <TextField
+                    value={editPostCaption}
+                    onChange={(e) => setEditPostCaption(e.target.value)}
+                    fullWidth
+                    multiline
+                  />
+                  <Button variant="contained" color="primary" onClick={() => handleSavePost(post.id)}>Save</Button>
+                  <Button onClick={() => handleEditPost('', '')}>Cancel</Button>
+                </>
+              ) : (
+                <span className="feedPostText" dangerouslySetInnerHTML={{ __html: post.caption }}></span>
+              )}
+              {post.imageId && postImages[post.id] && (
+                <img className="feedPostImg" src={postImages[post.id]} alt="Post image" />
+              )}
+            </>
           )}
         </div>
-        <div className="feedPostBottom">
-          <div className="feedPostBottomLeft">
-            <ReactionButton
-              postId={post.id}
-              userReactions={userReactions}
-              reactionsCount={reactionsCount}
-              handleReaction={handleReaction}
-              fetchReactions={fetchReactions}
-              showReactions={showReactions}
-              setShowReactions={setShowReactions}
-            />
+        {!post.isModerated && (
+          <div className="feedPostBottom">
+            <div className="feedPostBottomLeft">
+              <ReactionButton
+                postId={post.id}
+                userReactions={userReactions}
+                reactionsCount={reactionsCount}
+                handleReaction={handleReaction}
+                fetchReactions={fetchReactions}
+                showReactions={showReactions}
+                setShowReactions={setShowReactions}
+              />
+            </div>
+            <div className="feedPostBottomRight">
+              <span
+                className="feedPostCommentText"
+                onClick={() => handleOpenComments(post.id)}
+                onMouseEnter={(e) => (e.currentTarget.style.color = '#0C7075')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = '#072E33')}
+                style={{ cursor: 'pointer' }}
+              >
+                {commentsCount[post.id] || 0} comments
+              </span>
+            </div>
           </div>
-          <div className="feedPostBottomRight">
-            <span
-              className="feedPostCommentText"
-              onClick={() => handleOpenComments(post.id)}
-              onMouseEnter={(e) => (e.currentTarget.style.color = '#0C7075')}
-              onMouseLeave={(e) => (e.currentTarget.style.color = '#072E33')}
-              style={{ cursor: 'pointer' }}
-            >
-              {commentsCount[post.id] || 0} comments
-            </span>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );

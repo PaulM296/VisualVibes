@@ -5,8 +5,8 @@
 
 .otherUserProfileContent {
     display: flex;
-    height: 100vh;
-    padding-top: 0px;
+    height: 85.5vh;
+    padding-top: 60px;
     -ms-overflow-style: none;
     scrollbar-width: none;
     overflow: auto;
