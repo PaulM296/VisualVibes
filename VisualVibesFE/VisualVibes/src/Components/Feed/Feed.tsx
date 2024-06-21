@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import DOMPurify from 'dompurify';
 import {
   Avatar,
   Typography,
@@ -509,7 +510,7 @@ const Feed: React.FC = () => {
                         <div
                           className="feedPostText"
                           dangerouslySetInnerHTML={{
-                            __html: post.caption || "",
+                            __html: DOMPurify.sanitize(post.caption || ""),
                           }}
                         ></div>
                         <div className="feedPostCenter">

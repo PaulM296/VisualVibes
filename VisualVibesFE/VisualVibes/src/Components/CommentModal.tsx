@@ -9,6 +9,7 @@ import {
   MenuItem,
 } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
+import DOMPurify from 'dompurify';
 import { FormattedComment } from "../Models/ResponseComment";
 import RichTextEditor from "./RichTextEditor/RichTextEditor";
 import { getUserIdFromToken } from "../Utils/auth";
@@ -180,7 +181,7 @@ const CommentModal: React.FC<CommentModalProps> = ({
                       ) : (
                         <Typography
                           sx={{ marginLeft: "10px", maxWidth: '550px' }}
-                          dangerouslySetInnerHTML={{ __html: comment.text }}
+                          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(comment.text) }}
                         ></Typography>
                       )}
                     </>

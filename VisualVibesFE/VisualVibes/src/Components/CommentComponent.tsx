@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Avatar, Button, TextField, Typography, Snackbar } from '@mui/material';
+import DOMPurify from 'dompurify';
 import { deleteComment } from '../Services/CommentServiceApi';
 import ConfirmationDialog from './ConfirmationDialog';
 import { FormattedComment } from '../Models/ResponseComment';
@@ -48,6 +49,8 @@ const CommentComponent: React.FC<CommentProps> = ({ comment, onDelete, onUpdate 
     setSnackbarOpen(false);
   };
 
+  const sanitizedCommentText = DOMPurify.sanitize(comment.text);
+
   return (
     <>
       <div className="commentItem">
@@ -66,7 +69,7 @@ const CommentComponent: React.FC<CommentProps> = ({ comment, onDelete, onUpdate 
               <Button onClick={() => setEditingCommentId(null)}>Cancel</Button>
             </>
           ) : (
-            <Typography dangerouslySetInnerHTML={{ __html: comment.text }}></Typography>
+            <Typography dangerouslySetInnerHTML={{ __html: sanitizedCommentText }}></Typography>
           )}
         </div>
         <Button onClick={handleEditComment}>Edit</Button>

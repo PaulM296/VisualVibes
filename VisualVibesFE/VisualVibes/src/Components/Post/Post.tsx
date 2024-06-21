@@ -1,5 +1,6 @@
 import React from 'react';
 import { Avatar, Button, Typography } from '@mui/material';
+import DOMPurify from 'dompurify';
 import MoreVertMenu from '../MoreVertMenu';
 import ReactionButton from '../ReactionButton';
 import { ResponsePostModel } from '../../Models/ReponsePostModel';
@@ -46,6 +47,8 @@ const Post: React.FC<PostProps> = ({
   postImages,
   setShowReactions
 }) => {
+  const sanitizedCaption = DOMPurify.sanitize(post.caption);
+
   return (
     <div className="feedPost">
       <div className="feedPostWrapper">
@@ -83,7 +86,7 @@ const Post: React.FC<PostProps> = ({
                 </div>
               ) : (
                 <>
-                  <span className="feedPostText" dangerouslySetInnerHTML={{ __html: post.caption }}></span>
+                  <span className="feedPostText" dangerouslySetInnerHTML={{ __html: sanitizedCaption }}></span>
                   {post.imageId && postImages[post.id] && (
                     <img className="feedPostImg" src={postImages[post.id]} alt="Post image" />
                   )}

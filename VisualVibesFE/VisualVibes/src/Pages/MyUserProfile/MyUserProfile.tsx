@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet-async'
 import Navbar from '../../Components/Navbar/Navbar'
 import Sidebar from '../../Components/Sidebar/Sidebar'
 import './MyUserProfile.css'
-import UserPersonalFeedTest from '../../Components/UserPersonalFeedTest/UserPersonalFeedTest'
+import UserPersonalFeed from '../../Components/UserPersonalFeed/UserPersonalFeed'
 
 const MyUserProfile: React.FC = () => {
   return (
@@ -17,7 +17,7 @@ const MyUserProfile: React.FC = () => {
           <div className="myProfileStickySidebar">
             <Sidebar />
           </div>
-          <UserPersonalFeedTest />
+          <UserPersonalFeed />
         </div>
       </div>
     </div> 

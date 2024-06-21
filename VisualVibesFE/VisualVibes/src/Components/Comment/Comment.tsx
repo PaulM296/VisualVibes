@@ -5,6 +5,7 @@ import { getUserIdFromToken } from '../../Utils/auth';
 import RichTextEditor from '../RichTextEditor/RichTextEditor';
 import ConfirmationDialog from '../ConfirmationDialog';
 import './Comment.css';
+import DOMPurify from 'dompurify';
 
 interface CommentProps {
   comment: {
@@ -105,7 +106,7 @@ const Comment: React.FC<CommentProps> = ({
           </div>
         ) : (
           <div className="commentText">
-            <Typography dangerouslySetInnerHTML={{ __html: comment.text }} />
+            <Typography dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(comment.text) }} />
           </div>
         )}
       </div>

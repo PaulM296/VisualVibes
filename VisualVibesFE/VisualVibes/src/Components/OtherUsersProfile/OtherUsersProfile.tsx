@@ -21,6 +21,7 @@ import { User } from '../../Models/User';
 import { useUser } from '../../Hooks/userContext';
 import { addComment, deleteComment, getPostComments, moderateComment, unmoderateComment, updateComment } from '../../Services/CommentServiceApi';
 import { ResponseReaction } from '../../Models/ResponseReaction';
+import DOMPurify from 'dompurify';
 
 const formatPostDate = (date: Date | string) => {
     if (typeof date === 'string') {
@@ -554,7 +555,7 @@ const OtherUsersProfile: React.FC = () => {
                                 ) : (
                                     <>
                                         <div className="otherUserFeedPostCenter">
-                                            <span className="otherUserFeedPostText" dangerouslySetInnerHTML={{ __html: post.caption }}></span>
+                                            <span className="otherUserFeedPostText" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.caption) }}></span>
                                             {post.imageId && postImages[post.id] && (
                                                 <img className="otherUserFeedPostImg" src={postImages[post.id]} alt="Post image" />
                                             )}
