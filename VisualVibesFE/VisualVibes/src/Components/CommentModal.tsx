@@ -1,9 +1,19 @@
 import React from "react";
-import { Modal, Typography, Avatar, Button, TextField, IconButton, Menu, MenuItem } from "@mui/material";
-import MoreVertIcon from '@mui/icons-material/MoreVert';
+import {
+  Modal,
+  Typography,
+  Avatar,
+  Button,
+  IconButton,
+  Menu,
+  MenuItem,
+} from "@mui/material";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { FormattedComment } from "../Models/ResponseComment";
 import RichTextEditor from "./RichTextEditor/RichTextEditor";
 import { getUserIdFromToken } from "../Utils/auth";
+import ConfirmationDialog from "./ConfirmationDialog";
+import './Comment/Comment.css';
 
 interface CommentModalProps {
   open: boolean;
@@ -48,6 +58,8 @@ const CommentModal: React.FC<CommentModalProps> = ({
 }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [moderatingCommentId, setModeratingCommentId] = React.useState<string | null>(null);
+  const [openConfirmDialog, setOpenConfirmDialog] = React.useState<boolean>(false);
+  const [commentToDelete, setCommentToDelete] = React.useState<string | null>(null);
   const userId = getUserIdFromToken();
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>, commentId: string) => {
@@ -65,17 +77,36 @@ const CommentModal: React.FC<CommentModalProps> = ({
     setEditCommentText(text);
   };
 
+  const handleDeleteClick = (commentId: string) => {
+    setCommentToDelete(commentId);
+    setOpenConfirmDialog(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (commentToDelete) {
+      handleDeleteComment(commentToDelete);
+    }
+    setOpenConfirmDialog(false);
+    setCommentToDelete(null);
+  };
+
+  const handleCancelDelete = () => {
+    setOpenConfirmDialog(false);
+    setCommentToDelete(null);
+  };
+
   return (
     <Modal open={open} onClose={onClose}>
       <div className="modalContentLarge">
         <Typography variant="h6">Comments</Typography>
         <div className="addCommentContainer">
-          <RichTextEditor content={newComment} setContent={setNewComment} />
+          <div className="editor-container">
+            <RichTextEditor content={newComment} setContent={setNewComment} />
+          </div>
           <Button
             variant="contained"
             color="primary"
             onClick={handleAddComment}
-            style={{ marginTop: "10px" }}
           >
             Add comment
           </Button>
@@ -86,56 +117,60 @@ const CommentModal: React.FC<CommentModalProps> = ({
           )}
           {comments.length > 0 &&
             comments.map((comment, index) => (
-              <div key={index} className="commentItem">
+              <div key={index} className="commentItem comment">
                 <Avatar
-                  style={{border: '1px solid #072E33'}}
+                  style={{ border: "1px solid #072E33" }}
                   src={comment.avatar}
                   alt={comment.userName}
                   sx={{ margin: "0 10px" }}
                 />
-                <div>
+                <div className="commentContent">
                   <Typography>{comment.userName}</Typography>
                   {comment.isModerated ? (
-                    <Typography variant="h6" color="error" sx={{ fontSize: '18px', fontWeight: 'bold' }}>
+                    <Typography
+                      variant="h6"
+                      color="error"
+                      sx={{ fontSize: "18px", fontWeight: "bold" }}
+                    >
                       This comment was moderated and is currently under review by one of our administrators!
                     </Typography>
                   ) : (
                     <>
                       {editingCommentId === comment.id ? (
                         <>
-                          <TextField
-                            value={editCommentText}
-                            onChange={(e) => setEditCommentText(e.target.value)}
-                            fullWidth
-                            multiline
+                          <RichTextEditor
+                            content={editCommentText}
+                            setContent={setEditCommentText}
                           />
-                          <Button
-                            variant="contained"
-                            color="primary"
-                            onClick={handleUpdateComment}
-                          >
-                            Save
-                          </Button>
-                          <Button onClick={() => setEditingCommentId(null)}>
-                            Cancel
-                          </Button>
+                          <div className="commentEdit">
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              onClick={handleUpdateComment}
+                            >
+                              Save
+                            </Button>
+                            <Button onClick={() => setEditingCommentId(null)}>
+                              Cancel
+                            </Button>
+                          </div>
                         </>
                       ) : (
                         <Typography
-                          sx={{ marginLeft: "10px" }}
+                          sx={{ marginLeft: "10px", maxWidth: '550px' }}
                           dangerouslySetInnerHTML={{ __html: comment.text }}
                         ></Typography>
                       )}
                     </>
                   )}
                 </div>
-                <div>
+                <div className="commentActions">
                   {comment.userId === userId && (
                     <>
                       <Button onClick={() => handleEditComment(comment.id, comment.text)}>
                         Edit
                       </Button>
-                      <Button onClick={() => handleDeleteComment(comment.id)}>
+                      <Button onClick={() => handleDeleteClick(comment.id)}>
                         Delete
                       </Button>
                     </>
@@ -151,7 +186,7 @@ const CommentModal: React.FC<CommentModalProps> = ({
                     onClose={handleMenuClose}
                   >
                     <MenuItem onClick={() => handleModerateComment(comment.id, comment.isModerated)}>
-                      {comment.isModerated ? 'Unmoderate' : 'Moderate'}
+                      {comment.isModerated ? "Unmoderate" : "Moderate"}
                     </MenuItem>
                   </Menu>
                 </div>
@@ -160,10 +195,7 @@ const CommentModal: React.FC<CommentModalProps> = ({
           <div className="paginationControls">
             <Button
               disabled={currentCommentPageIndex === 1}
-              onClick={() =>
-                fetchComments(currentPostId!, currentCommentPageIndex - 1)
-              }
-              style={{ float: "left" }}
+              onClick={() => fetchComments(currentPostId!, currentCommentPageIndex - 1)}
             >
               Previous
             </Button>
@@ -172,15 +204,19 @@ const CommentModal: React.FC<CommentModalProps> = ({
             </Typography>
             <Button
               disabled={currentCommentPageIndex === commentTotalPages}
-              onClick={() =>
-                fetchComments(currentPostId!, currentCommentPageIndex + 1)
-              }
-              style={{ float: "right" }}
+              onClick={() => fetchComments(currentPostId!, currentCommentPageIndex + 1)}
             >
               Next
             </Button>
           </div>
         </div>
+        <ConfirmationDialog
+          open={openConfirmDialog}
+          title="Delete Comment"
+          message="Are you sure you want to delete this comment?"
+          onConfirm={handleConfirmDelete}
+          onClose={handleCancelDelete}
+        />
       </div>
     </Modal>
   );

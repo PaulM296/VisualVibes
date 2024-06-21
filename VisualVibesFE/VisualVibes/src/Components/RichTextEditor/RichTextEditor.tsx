@@ -60,7 +60,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({ content, setContent }) 
     return () => {
       document.removeEventListener('selectionchange', handleSelectionChange);
     };
-  }, []);
+  },);
 
   const handleInput = () => {
     if (editorRef.current) {

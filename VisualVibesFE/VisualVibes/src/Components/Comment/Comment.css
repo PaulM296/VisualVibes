@@ -1,0 +1,61 @@
+.addCommentContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.addCommentContainer .editor-container {
+  width: 100%;
+}
+
+.addCommentContainer Button {
+  padding: 5px 10px;
+  margin-top: 10px;
+}
+
+.commentItem {
+  display: flex;
+  align-items: flex-start;
+  padding: 10px;
+  border-bottom: 1px solid #e0e0e0;
+  max-width: 100%;
+}
+
+.commentContent {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.commentHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.commentText {
+  margin-left: 10px;
+  max-width: 550px;
+}
+
+.commentActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-left: auto;
+}
+
+.commentEdit {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.commentEdit Button {
+  padding: 5px 10px;
+}
