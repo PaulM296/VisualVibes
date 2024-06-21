@@ -1,10 +1,11 @@
 import React from 'react';
-import { Avatar, Button, TextField, Typography } from '@mui/material';
+import { Avatar, Button, Typography } from '@mui/material';
 import MoreVertMenu from '../MoreVertMenu';
 import ReactionButton from '../ReactionButton';
 import { ResponsePostModel } from '../../Models/ReponsePostModel';
 import { formatPostDate } from '../../Utils/formatPostDateUtil';
-import './Post.css'
+import RichTextEditor from '../RichTextEditor/RichTextEditor';
+import './Post.css';
 
 interface PostProps {
   post: ResponsePostModel;
@@ -50,7 +51,7 @@ const Post: React.FC<PostProps> = ({
       <div className="feedPostWrapper">
         <div className="feedPostTop">
           <div className="feedPostTopLeft">
-            <Avatar style={{border: '1px solid #072E33'}} alt={post.userName} src={profilePicture} className="feedPostProfileImg" />
+            <Avatar style={{ border: '1px solid #072E33' }} alt={post.userName} src={profilePicture} className="feedPostProfileImg" />
             <div className="feedPostUserDetails">
               <span className="feedPostUsername">{post.userName}</span>
               <span className="feedPostDate">{formatPostDate(post.createdAt)}</span>
@@ -67,27 +68,26 @@ const Post: React.FC<PostProps> = ({
         </div>
         <div className="feedPostCenter">
           {post.isModerated ? (
-            <Typography variant="h6" color="error" sx={{ fontSize: '16px', fontWeight: 'bold'}}>
+            <Typography variant="h6" color="error" sx={{ fontSize: '16px', fontWeight: 'bold' }}>
               This post did not comply to our policies and has been moderated by one of our administrators!
             </Typography>
           ) : (
             <>
               {editingPostId === post.id ? (
-                <>
-                  <TextField
-                    value={editPostCaption}
-                    onChange={(e) => setEditPostCaption(e.target.value)}
-                    fullWidth
-                    multiline
-                  />
-                  <Button variant="contained" color="primary" onClick={() => handleSavePost(post.id)}>Save</Button>
-                  <Button onClick={() => handleEditPost('', '')}>Cancel</Button>
-                </>
+                <div className="editorWrapper">
+                  <RichTextEditor content={editPostCaption} setContent={setEditPostCaption} />
+                  <div className="editorButtons">
+                    <Button className="saveButton" variant="contained" color="primary" onClick={() => handleSavePost(post.id)}>Save</Button>
+                    <Button className="cancelButton" onClick={() => handleEditPost('', '')}>Cancel</Button>
+                  </div>
+                </div>
               ) : (
-                <span className="feedPostText" dangerouslySetInnerHTML={{ __html: post.caption }}></span>
-              )}
-              {post.imageId && postImages[post.id] && (
-                <img className="feedPostImg" src={postImages[post.id]} alt="Post image" />
+                <>
+                  <span className="feedPostText" dangerouslySetInnerHTML={{ __html: post.caption }}></span>
+                  {post.imageId && postImages[post.id] && (
+                    <img className="feedPostImg" src={postImages[post.id]} alt="Post image" />
+                  )}
+                </>
               )}
             </>
           )}

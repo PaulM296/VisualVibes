@@ -12,11 +12,19 @@
     display: flex;
     gap: 10px;
     margin-bottom: 10px;
+    align-items: center;
 }
   
 .emojiPickerContainer {
     position: relative;
 }
+
+.emojiPickerContainer .emojiPicker {
+    position: absolute;
+    top: 40px;
+    left: 0;
+    z-index: 1000;
+  }
   
 .active {
     background-color: rgba(0, 0, 0, 0.1);
