@@ -208,3 +208,7 @@
     display: flex;
     flex-direction: column;
 }
+
+.otherUserPersonalFeedContainer .bio {
+  margin-bottom: 10px;
+}

@@ -13,6 +13,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { getUserIdFromToken } from '../../Utils/auth';
 import { getImageById, getUserById, searchUsers } from '../../Services/UserServiceApi';
 import { User } from '../../Models/User';
+import { useUser } from '../../Hooks/userContext';
+import SupervisorAccountRoundedIcon from '@mui/icons-material/SupervisorAccountRounded';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -79,8 +81,10 @@ const UserSearch = styled('div')(({ theme }) => ({
 }));
 
 const Navbar = () => {
+  const { isAdmin } = useUser();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState<null | HTMLElement>(null);
+  const [hamburgerAnchorEl, setHamburgerAnchorEl] = useState<null | HTMLElement>(null);
   const [profilePicture, setProfilePicture] = useState<string>('defaultProfilePicture.jpg');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [searchResults, setSearchResults] = useState<User[]>([]);
@@ -91,6 +95,7 @@ const Navbar = () => {
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+  const isHamburgerMenuOpen = Boolean(hamburgerAnchorEl);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -137,6 +142,14 @@ const Navbar = () => {
     setMobileMoreAnchorEl(event.currentTarget);
   };
 
+  const handleHamburgerMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setHamburgerAnchorEl(event.currentTarget);
+  };
+
+  const handleHamburgerMenuClose = () => {
+    setHamburgerAnchorEl(null);
+  };
+
   const handleUserProfileRedirection = () => {
     navigate('/myUserProfile');
   };
@@ -147,6 +160,10 @@ const Navbar = () => {
 
   const handleCreatePostRedirection = () => {
     navigate('/createPost');
+  };
+
+  const handleAdminPageRedirection = () => {
+    navigate('/admin');
   };
 
   const handleLogout = () => {
@@ -188,7 +205,7 @@ const Navbar = () => {
     <Menu
       anchorEl={anchorEl}
       anchorOrigin={{
-        vertical: 'top',
+        vertical: 'bottom',
         horizontal: 'right',
       }}
       id={menuId}
@@ -208,10 +225,6 @@ const Navbar = () => {
         <SettingsRoundedIcon sx={{ marginRight: 2 }} />
         Settings
       </MenuItem>
-      <MenuItem onClick={handleCreatePostRedirection}>
-        <AddCircleRoundedIcon sx={{ marginRight: 2 }} />
-        Create Post
-      </MenuItem>
       <MenuItem onClick={handleLogout}>
         <LogoutRoundedIcon sx={{ marginRight: 2 }}/>
         Logout
@@ -224,7 +237,7 @@ const Navbar = () => {
     <Menu
       anchorEl={mobileMoreAnchorEl}
       anchorOrigin={{
-        vertical: 'top',
+        vertical: 'bottom',
         horizontal: 'right',
       }}
       id={mobileMenuId}
@@ -271,6 +284,36 @@ const Navbar = () => {
     </Menu>
   );
 
+  const hamburgerMenuId = 'primary-hamburger-menu';
+  const renderHamburgerMenu = (
+    <Menu
+      anchorEl={hamburgerAnchorEl}
+      anchorOrigin={{
+        vertical: 'bottom',
+        horizontal: 'left',
+      }}
+      id={hamburgerMenuId}
+      keepMounted
+      transformOrigin={{
+        vertical: 'top',
+        horizontal: 'left',
+      }}
+      open={isHamburgerMenuOpen}
+      onClose={handleHamburgerMenuClose}
+    >
+      <MenuItem onClick={handleCreatePostRedirection}>
+        <AddCircleRoundedIcon sx={{ marginRight: 2 }} />
+        Create Post
+      </MenuItem>
+      {isAdmin && (
+        <MenuItem onClick={handleAdminPageRedirection}>
+          <SupervisorAccountRoundedIcon sx={{ marginRight: 2 }} />
+          Admin
+        </MenuItem>
+      )}
+    </Menu>
+  );
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="fixed">
@@ -281,6 +324,7 @@ const Navbar = () => {
             color="inherit"
             aria-label="open drawer"
             sx={{ mr: 2 }}
+            onClick={handleHamburgerMenuOpen}
           >
             <MenuIcon />
           </IconButton>
@@ -370,6 +414,7 @@ const Navbar = () => {
           </Box>
         </Toolbar>
       </AppBar>
+      {renderHamburgerMenu}
       {renderMobileMenu}
       {renderMenu}
     </Box>

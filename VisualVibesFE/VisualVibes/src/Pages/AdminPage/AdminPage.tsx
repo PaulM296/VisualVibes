@@ -5,6 +5,7 @@ import UserList from '../../Components/UserList/UserList';
 import Pagination from '../../Components/Pagination/Pagination';
 import { User } from '../../Models/User';
 import './AdminPage.css';
+import Navbar from '../../Components/Navbar/Navbar';
 
 const AdminPage: React.FC = () => {
   const { isAdmin } = useUser();
@@ -55,6 +56,9 @@ const AdminPage: React.FC = () => {
 
   return (
     <div className="admin-page">
+      <div className="adminPageNavbar">
+        <Navbar />
+      </div>
       <h1>VisualVibes Users</h1>
       <UserList users={users} userImages={userImages} onBlock={handleBlockUser} onUnblock={handleUnblockUser} />
       <Pagination pageIndex={pageIndex} totalPages={totalPages} setPageIndex={setPageIndex} />

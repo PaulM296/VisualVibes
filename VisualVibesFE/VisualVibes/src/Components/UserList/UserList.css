@@ -3,7 +3,8 @@
     flex-direction: column;
     gap: 10px;
     max-width: 1200px;
-    width: 100%
+    width: 100%;
+    color: #072E33;
   }
   
   .user-card {

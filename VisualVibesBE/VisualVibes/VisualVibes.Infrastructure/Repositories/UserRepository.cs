@@ -2,6 +2,7 @@
 using System.Linq.Expressions;
 using VisualVibes.App.DTOs.PaginationDtos;
 using VisualVibes.App.Interfaces;
+using VisualVibes.Domain.Enum;
 using VisualVibes.Domain.Models;
 using VisualVibes.Domain.Models.BaseEntity;
 using VisualVibes.Infrastructure.Exceptions;
@@ -91,6 +92,7 @@ namespace VisualVibes.Infrastructure.Repositories
                     .ThenInclude(f => f.Follower)
                 .Include(u => u.Following)
                     .ThenInclude(f => f.Following)
+                .Where(u => u.Role == Role.User)
                 .OrderBy(u => u.UserName)
                 .Skip((pageIndex - 1) * pageSize)
                 .Take(pageSize)

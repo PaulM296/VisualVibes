@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using VisualVibes.App.DTOs.UserDtos;
 using VisualVibes.App.Interfaces;
 using VisualVibes.App.Users.Queries;
+using VisualVibes.Domain.Enum;
 
 namespace VisualVibes.App.Users.QueriesHandler
 {
@@ -24,9 +25,10 @@ namespace VisualVibes.App.Users.QueriesHandler
         {
             var query = request.query.ToLower();
             var users = await _unitOfWork.UserRepository
-                .FindAsync(u => u.UserName.ToLower().Contains(query) ||
+                .FindAsync(u => (u.UserName.ToLower().Contains(query) ||
                                 u.UserProfile.FirstName.ToLower().Contains(query) ||
-                                u.UserProfile.LastName.ToLower().Contains(query));
+                                u.UserProfile.LastName.ToLower().Contains(query)) &&
+                                u.Role == Role.User);
 
             if (!users.Any())
             {

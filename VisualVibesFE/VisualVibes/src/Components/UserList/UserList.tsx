@@ -17,7 +17,7 @@ const UserList: React.FC<UserListProps> = ({ users, userImages, onBlock, onUnblo
         <div key={user.id} className="user-card">
           <Grid container alignItems="center" spacing={2}>
             <Grid item xs={1}>
-              <Avatar src={userImages[user.id] || '/default-avatar.png'} />
+              <Avatar style={{ border: '1px solid #072E33' }} src={userImages[user.id] || '/default-avatar.png'} />
             </Grid>
             <Grid item xs={2}>
               <Typography variant="body2">{user.userName}</Typography>
