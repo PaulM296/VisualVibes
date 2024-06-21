@@ -4,7 +4,6 @@ import {
   Typography,
   Modal,
   Button,
-  TextField,
   IconButton,
   Menu,
   MenuItem,
@@ -40,10 +39,10 @@ import {
   ResponseComment,
   FormattedComment,
 } from "../../Models/ResponseComment";
-import RichTextEditor from "../RichTextEditor/RichTextEditor";
 import { getUserIdFromToken } from "../../Utils/auth";
 import { PaginationResponse } from "../../Models/PaginationResponse";
 import { useUser } from "../../Hooks/userContext";
+import CommentModal from "../CommentModal";
 import "./Feed.css";
 import { reactionTypes } from "../../Utils/const/reactionTypes";
 import { formatPostDate } from "../../Utils/formatPostDateUtil";
@@ -82,12 +81,6 @@ const Feed: React.FC = () => {
   const [editCommentText, setEditCommentText] = useState<string>("");
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [moderatingPostId, setModeratingPostId] = useState<string | null>(null);
-  const [commentAnchorEl, setCommentAnchorEl] = useState<null | HTMLElement>(
-    null
-  );
-  const [moderatingCommentId, setModeratingCommentId] = useState<string | null>(
-    null
-  );
 
   useEffect(() => {
     fetchFeedData(1);
@@ -334,11 +327,6 @@ const Feed: React.FC = () => {
     }
   };
 
-  const handleEditComment = (comment: FormattedComment) => {
-    setEditingCommentId(comment.id);
-    setEditCommentText(comment.text);
-  };
-
   const handleUpdateComment = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -432,19 +420,6 @@ const Feed: React.FC = () => {
   const handleMenuClose = () => {
     setAnchorEl(null);
     setModeratingPostId(null);
-  };
-
-  const handleCommentMenuOpen = (
-    event: React.MouseEvent<HTMLButtonElement>,
-    commentId: string
-  ) => {
-    setCommentAnchorEl(event.currentTarget);
-    setModeratingCommentId(commentId);
-  };
-
-  const handleCommentMenuClose = () => {
-    setCommentAnchorEl(null);
-    setModeratingCommentId(null);
   };
 
   if (!posts.length) {
@@ -688,145 +663,26 @@ const Feed: React.FC = () => {
           </div>
         </div>
       </Modal>
-      <Modal open={openCommentModal} onClose={handleClose}>
-        <div className="modalContentLarge">
-          <Typography variant="h6">Comments</Typography>
-          <div className="addCommentContainer">
-            <RichTextEditor content={newComment} setContent={setNewComment} />
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleAddComment}
-              style={{ marginTop: "10px" }}
-            >
-              Add Comment
-            </Button>
-          </div>
-          <div className="commentsContainer">
-            {comments.length === 0 && (
-              <Typography sx={{ mt: 2 }}>No comments yet.</Typography>
-            )}
-            {comments.length > 0 &&
-              comments.map((comment, index) => (
-                <div key={index} className="commentItem">
-                  <Avatar
-                    src={comment.avatar}
-                    alt={comment.userName}
-                    sx={{ margin: "0 10px" }}
-                  />
-                  <div>
-                    <Typography>{comment.userName}</Typography>
-                    {comment.isModerated ? (
-                      <Typography
-                        variant="h6"
-                        color="error"
-                        sx={{ fontSize: "18px", fontWeight: "bold" }}
-                      >
-                        This comment was moderated and is currently under review
-                        by one of our administrators!
-                      </Typography>
-                    ) : (
-                      <>
-                        {editingCommentId === comment.id ? (
-                          <>
-                            <TextField
-                              value={editCommentText}
-                              onChange={(e) =>
-                                setEditCommentText(e.target.value)
-                              }
-                              fullWidth
-                              multiline
-                            />
-                            <Button
-                              variant="contained"
-                              color="primary"
-                              onClick={handleUpdateComment}
-                            >
-                              Save
-                            </Button>
-                            <Button onClick={() => setEditingCommentId(null)}>
-                              Cancel
-                            </Button>
-                          </>
-                        ) : (
-                          <Typography
-                            sx={{ marginLeft: "10px" }}
-                            dangerouslySetInnerHTML={{ __html: comment.text }}
-                          ></Typography>
-                        )}
-                      </>
-                    )}
-                  </div>
-                  <div>
-                    {comment.userId === getUserIdFromToken() && (
-                      <>
-                        <Button onClick={() => handleEditComment(comment)}>
-                          Edit
-                        </Button>
-                        <Button onClick={() => handleDeleteComment(comment.id)}>
-                          Delete
-                        </Button>
-                      </>
-                    )}
-                    {isAdmin && (
-                      <>
-                        <IconButton
-                          onClick={(event) =>
-                            handleCommentMenuOpen(event, comment.id)
-                          }
-                        >
-                          <MoreVertIcon />
-                        </IconButton>
-                        <Menu
-                          anchorEl={commentAnchorEl}
-                          open={
-                            Boolean(commentAnchorEl) &&
-                            moderatingCommentId === comment.id
-                          }
-                          onClose={handleCommentMenuClose}
-                        >
-                          <MenuItem
-                            onClick={() =>
-                              handleModerateComment(
-                                comment.id,
-                                comment.isModerated
-                              )
-                            }
-                          >
-                            {comment.isModerated ? "Unmoderate" : "Moderate"}
-                          </MenuItem>
-                        </Menu>
-                      </>
-                    )}
-                  </div>
-                </div>
-              ))}
-            <div className="paginationControls">
-              <Button
-                disabled={currentCommentPageIndex === 1}
-                onClick={() =>
-                  fetchComments(currentPostId!, currentCommentPageIndex - 1)
-                }
-                style={{ float: "left" }}
-              >
-                Previous
-              </Button>
-              <Typography>
-                {currentCommentPageIndex} / {commentTotalPages}
-              </Typography>
-              <Button
-                disabled={currentCommentPageIndex === commentTotalPages}
-                onClick={() =>
-                  fetchComments(currentPostId!, currentCommentPageIndex + 1)
-                }
-                style={{ float: "right" }}
-              >
-                Next
-              </Button>
-            </div>
-          </div>
-        </div>
-      </Modal>
+      <CommentModal
+        open={openCommentModal}
+        onClose={handleClose}
+        comments={comments}
+        newComment={newComment}
+        setNewComment={setNewComment}
+        handleAddComment={handleAddComment}
+        editingCommentId={editingCommentId}
+        editCommentText={editCommentText}
+        setEditCommentText={setEditCommentText}
+        handleUpdateComment={handleUpdateComment}
+        handleDeleteComment={handleDeleteComment}
+        handleModerateComment={handleModerateComment}
+        currentCommentPageIndex={currentCommentPageIndex}
+        commentTotalPages={commentTotalPages}
+        fetchComments={fetchComments}
+        currentPostId={currentPostId}
+        setEditingCommentId={setEditingCommentId}
+        isAdmin={isAdmin}
+      />
     </div>
   );
 };
